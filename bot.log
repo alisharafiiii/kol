@@ -1,0 +1,32 @@
+🧪 starting Enhanced Discord analytics bot...
+✅ Redis configuration loaded from environment
+🔑 Attempting to login...
+🤖 logged in as nabulines_bot#8452
+   Servers: 1
+   Redis: ✅ Connected
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 1 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 1 active servers
+📨 Logging message from alinabu in #🧲〉share-your-stuff
+   ✅ Message saved with sentiment: positive
+   📁 Channel name stored: 🧲〉share-your-stuff
+📨 Logging message from alinabu in #🧲〉share-your-stuff
+   ✅ Message saved with sentiment: negative
+   📁 Channel name stored: 🧲〉share-your-stuff
+📨 Logging message from alinabu in #🧲〉share-your-stuff
+   ✅ Message saved with sentiment: neutral
+   📁 Channel name stored: 🧲〉share-your-stuff
+📨 Logging message from alinabu in #🧲〉share-your-stuff
+   ✅ Message saved with sentiment: neutral
+   📁 Channel name stored: 🧲〉share-your-stuff
+📨 Logging message from alinabu in #🧲〉share-your-stuff
+   ✅ Message saved with sentiment: positive
+   📁 Channel name stored: 🧲〉share-your-stuff
+📨 Logging message from alinabu in #🧲〉share-your-stuff
+   ✅ Message saved with sentiment: negative
+   📁 Channel name stored: 🧲〉share-your-stuff

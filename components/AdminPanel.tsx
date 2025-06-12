@@ -139,7 +139,7 @@ type BarChartOptions = ChartOptions<'bar'>;
 type PieChartOptions = ChartOptions<'pie'>;
 type DoughnutChartOptions = ChartOptions<'doughnut'>;
 
-type Tab = 'dashboard' | 'search' | 'leaderboard' | 'roles' | 'twitter-roles' | 'products'
+type Tab = 'dashboard' | 'search' | 'leaderboard' | 'roles' | 'twitter-roles' | 'products' | 'discord'
 
 // Helper function to safely get follower count from social accounts
 const getFollowerCount = (data: unknown): number => {
@@ -1767,6 +1767,12 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
           >
             Products
           </button>
+          <button 
+            className={`px-4 py-2 ${activeTab === 'discord' ? 'bg-green-800' : ''}`}
+            onClick={() => setActiveTab('discord')}
+          >
+            Discord
+          </button>
           {/* Roles management tab – visible to admins only.  */}
           {/* Roles tabs removed */}
         </div>
@@ -2708,6 +2714,25 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                 className="px-6 py-2 bg-green-900 text-green-100 rounded hover:bg-green-800 transition-colors"
               >
                 Go to Products Page →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Discord Tab */}
+        {activeTab === 'discord' && (
+          <div className="space-y-6">
+            <h2 className="text-lg mb-4">Discord Analytics</h2>
+            <p className="text-sm opacity-70 mb-4">Monitor Discord server activity, sentiment analysis, and engagement metrics</p>
+            
+            {/* Redirect to Discord page */}
+            <div className="border border-green-300 p-8 text-center">
+              <p className="mb-4 text-green-300">Discord analytics has its own dedicated page for managing servers and viewing reports.</p>
+              <button
+                onClick={() => window.location.href = '/admin/discord'}
+                className="px-6 py-2 bg-green-900 text-green-100 rounded hover:bg-green-800 transition-colors"
+              >
+                Go to Discord Analytics →
               </button>
             </div>
           </div>

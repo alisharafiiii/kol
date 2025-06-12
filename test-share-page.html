@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Share Page</title>
+</head>
+<body>
+    <h1>Testing Share Page</h1>
+    <p>Project ID: project:discord:GEpk5t8yZkQzaWYDHDZHS</p>
+    <p>Encoded: project%3Adiscord%3AGEpk5t8yZkQzaWYDHDZHS</p>
+    
+    <h2>Direct Links:</h2>
+    <ul>
+        <li><a href="http://localhost:3000/discord/share/project:discord:GEpk5t8yZkQzaWYDHDZHS" target="_blank">With colons</a></li>
+        <li><a href="http://localhost:3000/discord/share/project%3Adiscord%3AGEpk5t8yZkQzaWYDHDZHS" target="_blank">URL encoded</a></li>
+    </ul>
+    
+    <h2>Test API Calls:</h2>
+    <button onclick="testAPI()">Test API</button>
+    <pre id="output"></pre>
+    
+    <script>
+        async function testAPI() {
+            const output = document.getElementById('output');
+            output.textContent = 'Testing...\n';
+            
+            try {
+                // Test project API
+                const projectId = 'project:discord:GEpk5t8yZkQzaWYDHDZHS';
+                const res1 = await fetch(`/api/public/discord/${projectId}`);
+                output.textContent += `Project API: ${res1.status} ${res1.statusText}\n`;
+                if (res1.ok) {
+                    const data = await res1.json();
+                    output.textContent += JSON.stringify(data, null, 2) + '\n\n';
+                } else {
+                    const error = await res1.text();
+                    output.textContent += `Error: ${error}\n\n`;
+                }
+                
+                // Test analytics API
+                const res2 = await fetch(`/api/public/discord/${projectId}/analytics?timeframe=weekly`);
+                output.textContent += `Analytics API: ${res2.status} ${res2.statusText}\n`;
+                if (res2.ok) {
+                    const data = await res2.json();
+                    output.textContent += `Total messages: ${data.metrics?.totalMessages || 0}\n`;
+                } else {
+                    const error = await res2.text();
+                    output.textContent += `Error: ${error}\n`;
+                }
+                
+            } catch (error) {
+                output.textContent += `Error: ${error.message}\n`;
+            }
+        }
+    </script>
+</body>
+</html> 
