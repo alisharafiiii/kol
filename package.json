@@ -75,5 +75,6 @@
   "bugs": {
     "url": "https://github.com/alisharafiiii/kol/issues"
   },
-  "homepage": "https://github.com/alisharafiiii/kol#readme"
+  "homepage": "https://github.com/alisharafiiii/kol#readme",
+  "packageManager": "pnpm@8.6.0"
 }
