@@ -307,12 +307,11 @@ client.on('messageCreate', async (message) => {
     };
     
     // Call API endpoint
-    const botToken = process.env.DISCORD_BOT_TOKEN || 'MTM4MTg2Nzc0Mjk1MjU1NDYxNg.G03q5T.P3PEmlg_rfm8G-cqUibwR8KknYofULEYFX0c60';
     const response = await fetch('http://localhost:3000/api/discord/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bot ${botToken}`
+        'Authorization': `Bot ${token}`
       },
       body: JSON.stringify(messageData)
     });
@@ -334,7 +333,12 @@ client.on('error', (error) => {
   console.error('❌ Discord client error:', error);
 });
 
-const token = process.env.DISCORD_BOT_TOKEN || 'MTM4MTg2Nzc0Mjk1MjU1NDYxNg.G03q5T.P3PEmlg_rfm8G-cqUibwR8KknYofULEYFX0c60';
+// Bot configuration
+const token = process.env.DISCORD_BOT_TOKEN;
+if (!token) {
+  console.error('❌ DISCORD_BOT_TOKEN environment variable is required');
+  process.exit(1);
+}
 
 console.log('🔑 Attempting to login...');
 

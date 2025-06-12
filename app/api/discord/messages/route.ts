@@ -5,7 +5,11 @@ export async function POST(request: NextRequest) {
   try {
     // Parse the bot token from Authorization header
     const authHeader = request.headers.get('authorization')
-    const botToken = process.env.DISCORD_BOT_TOKEN || 'MTM4MTg2Nzc0Mjk1MjU1NDYxNg.G03q5T.P3PEmlg_rfm8G-cqUibwR8KknYofULEYFX0c60'
+    const botToken = process.env.DISCORD_BOT_TOKEN
+    
+    if (!botToken) {
+      return NextResponse.json({ error: 'Discord bot token not configured' }, { status: 500 })
+    }
     
     if (!authHeader || authHeader !== `Bot ${botToken}`) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

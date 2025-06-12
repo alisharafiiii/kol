@@ -240,10 +240,14 @@ client.on('error', (error) => {
   console.error('❌ Discord client error:', error);
 });
 
-const token = process.env.DISCORD_BOT_TOKEN || 'MTM4MTg2Nzc0Mjk1MjU1NDYxNg.G03q5T.P3PEmlg_rfm8G-cqUibwR8KknYofULEYFX0c60';
+// Bot configuration
+const token = process.env.DISCORD_BOT_TOKEN;
+if (!token) {
+  console.error('❌ DISCORD_BOT_TOKEN environment variable is required');
+  process.exit(1);
+}
 
 console.log('🔑 Attempting to login...');
-
 client.login(token).catch(error => {
   console.error('❌ Failed to login:', error.message);
 }); 
