@@ -78,6 +78,7 @@ export async function POST(request: NextRequest) {
       name: data.name,
       startDate: data.startDate,
       endDate: data.endDate,
+      chains: data.chains || ['Solana'],
       projects: data.projects || [],
       projectBudgets: data.projectBudgets || {},
       teamMembers: data.teamMembers || [],

@@ -2,50 +2,85 @@
 
 import { useState, useEffect } from 'react'
 import { X, Search, Upload, Check } from './icons'
-import type { KOLTier, CampaignStage, DeviceStatus, PaymentStatus, SocialPlatform } from '@/lib/types/profile'
+import { KOL } from '@/lib/campaign'
+import { Product } from '@/lib/types/product'
+import { UnifiedProfile } from '@/lib/types/profile'
+import { ProfileService } from '@/lib/services/profile-service'
+import { Campaign } from '@/lib/campaign'
 
 interface AddKOLModalProps {
-  campaignId: string
-  campaignName: string
+  campaign: Campaign
   onClose: () => void
-  onKOLAdded: (kol: any) => void
+  onAdd: (kol: Omit<KOL, 'id' | 'lastUpdated'>) => Promise<void>
 }
 
-export default function AddKOLModal({ campaignId, campaignName, onClose, onKOLAdded }: AddKOLModalProps) {
-  // Form state
-  const [searchTerm, setSearchTerm] = useState('')
-  const [searchResults, setSearchResults] = useState<any[]>([])
-  const [isSearching, setIsSearching] = useState(false)
-  const [selectedKOL, setSelectedKOL] = useState<any>(null)
+export default function AddKOLModal({ campaign, onClose, onAdd }: AddKOLModalProps) {
+  // Search state
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState<UnifiedProfile[]>([])
+  const [searching, setSearching] = useState(false)
+  const [selectedProfile, setSelectedProfile] = useState<UnifiedProfile | null>(null)
   
-  // KOL details
-  const [kolHandle, setKolHandle] = useState('')
-  const [kolName, setKolName] = useState('')
-  const [kolImage, setKolImage] = useState('')
-  const [tier, setTier] = useState<KOLTier>('star')
-  const [contact, setContact] = useState('')
-  const [stage, setStage] = useState<CampaignStage>('reached_out')
-  const [deviceStatus, setDeviceStatus] = useState<DeviceStatus>('na')
-  const [budget, setBudget] = useState('')
-  const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>('pending')
-  const [links, setLinks] = useState('')
-  const [platform, setPlatform] = useState<SocialPlatform>('twitter')
+  // Product state
+  const [products, setProducts] = useState<Product[]>([])
+  const [loadingProducts, setLoadingProducts] = useState(true)
+  const [selectedProduct, setSelectedProduct] = useState<string>('')
+  
+  // KOL form data
+  const [formData, setFormData] = useState({
+    handle: '',
+    name: '',
+    pfp: '',
+    tier: 'micro' as KOL['tier'],
+    stage: 'reached out' as KOL['stage'],
+    device: 'na' as KOL['device'],
+    budget: '',
+    payment: 'pending' as KOL['payment'],
+    platform: ['x'] as string[],
+    contact: '',
+    links: [''] as string[],
+    views: 0,
+    productId: '',
+    productCost: 0,
+    productQuantity: 1
+  })
   
   // UI state
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
   
+  // Load products on mount
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch('/api/products/active')
+        if (res.ok) {
+          const data = await res.json()
+          setProducts(data)
+        } else {
+          console.error('Failed to fetch products:', res.status)
+        }
+      } catch (err) {
+        console.error('Error fetching products:', err)
+      } finally {
+        setLoadingProducts(false)
+      }
+    }
+    
+    fetchProducts()
+  }, [])
+  
   // Search for approved KOLs
   useEffect(() => {
     const searchKOLs = async () => {
-      if (searchTerm.length < 2) {
+      if (searchQuery.length < 2) {
         setSearchResults([])
         return
       }
       
-      setIsSearching(true)
+      setSearching(true)
       try {
-        const res = await fetch(`/api/profile/search?q=${encodeURIComponent(searchTerm)}&approved=true`)
+        const res = await fetch(`/api/profile/search?q=${encodeURIComponent(searchQuery)}&approved=true`)
         if (res.ok) {
           const data = await res.json()
           setSearchResults(data)
@@ -53,22 +88,24 @@ export default function AddKOLModal({ campaignId, campaignName, onClose, onKOLAd
       } catch (err) {
         console.error('Search error:', err)
       } finally {
-        setIsSearching(false)
+        setSearching(false)
       }
     }
     
     const debounce = setTimeout(searchKOLs, 300)
     return () => clearTimeout(debounce)
-  }, [searchTerm])
+  }, [searchQuery])
   
   // Handle KOL selection from search
-  const selectKOL = (kol: any) => {
-    setSelectedKOL(kol)
-    setKolHandle(kol.handle || kol.twitterHandle || '')
-    setKolName(kol.name || '')
-    setKolImage(kol.image || kol.profileImageUrl || '')
-    if (kol.tier) setTier(kol.tier)
-    setSearchTerm('')
+  const selectKOL = (kol: UnifiedProfile) => {
+    setFormData({
+      ...formData,
+      handle: kol.twitterHandle || '',
+      name: kol.name || '',
+      pfp: kol.profileImageUrl || '',
+      tier: kol.currentTier || 'micro'
+    })
+    setSearchQuery('')
     setSearchResults([])
   }
   
@@ -77,21 +114,18 @@ export default function AddKOLModal({ campaignId, campaignName, onClose, onKOLAd
     const file = e.target.files?.[0]
     if (!file) return
     
+    // Check file size (max 500KB to be safe)
+    if (file.size > 500 * 1024) {
+      setError('Image size must be less than 500KB')
+      return
+    }
+    
     // For now, convert to base64 - in production, upload to a service
     const reader = new FileReader()
     reader.onload = (e) => {
-      setKolImage(e.target?.result as string)
+      setFormData({ ...formData, pfp: e.target?.result as string })
     }
     reader.readAsDataURL(file)
-  }
-  
-  // Format contact field
-  const formatContact = (value: string): string => {
-    // Show formatted version in UI
-    if (value.startsWith('@')) {
-      return `Telegram: ${value}`
-    }
-    return value
   }
   
   // Submit form
@@ -99,8 +133,7 @@ export default function AddKOLModal({ campaignId, campaignName, onClose, onKOLAd
     e.preventDefault()
     setError('')
     
-    // Validate required fields
-    if (!kolHandle || !kolName || !budget) {
+    if (!formData.handle || !formData.name) {
       setError('Please fill in all required fields')
       return
     }
@@ -108,35 +141,29 @@ export default function AddKOLModal({ campaignId, campaignName, onClose, onKOLAd
     setIsSubmitting(true)
     
     try {
-      const res = await fetch(`/api/campaigns/${campaignId}/kols`, {
+      const res = await fetch(`/api/campaigns/${campaign.id}/kols`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          campaignName,
-          kolHandle,
-          kolName,
-          kolImage,
-          tier,
-          contact,
-          stage,
-          deviceStatus,
-          budget: parseFloat(budget),
-          paymentStatus,
-          links: links.split(',').map(l => l.trim()).filter(Boolean),
-          platform,
+          ...formData,
+          handle: formData.handle.replace('@', ''),
+          links: formData.links.filter(Boolean),
+          views: formData.views,
+          productId: selectedProduct,
+          productCost: selectedProduct ? products.find(p => p.id === selectedProduct)?.price || 0 : 0,
+          productQuantity: formData.productQuantity
         })
       })
       
       if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.error || 'Failed to add KOL')
+        throw new Error('Failed to add KOL')
       }
       
       const newKOL = await res.json()
-      onKOLAdded(newKOL)
+      await onAdd(newKOL)
       onClose()
-    } catch (err: any) {
-      setError(err.message || 'Failed to add KOL')
+    } catch (err) {
+      setError('Failed to add KOL. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -168,8 +195,8 @@ export default function AddKOLModal({ campaignId, campaignName, onClose, onKOLAd
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-green-500" />
                 <input
                   type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search by name or handle..."
                   className="w-full pl-10 pr-3 py-2 bg-black border border-green-500 rounded text-green-300 placeholder-green-700 focus:outline-none focus:border-green-400"
                 />
@@ -214,8 +241,8 @@ export default function AddKOLModal({ campaignId, campaignName, onClose, onKOLAd
                   </label>
                   <input
                     type="text"
-                    value={kolHandle}
-                    onChange={(e) => setKolHandle(e.target.value)}
+                    value={formData.handle}
+                    onChange={(e) => setFormData({...formData, handle: e.target.value})}
                     placeholder="@username"
                     className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 placeholder-green-700 focus:outline-none focus:border-green-400"
                     required
@@ -229,8 +256,8 @@ export default function AddKOLModal({ campaignId, campaignName, onClose, onKOLAd
                   </label>
                   <input
                     type="text"
-                    value={kolName}
-                    onChange={(e) => setKolName(e.target.value)}
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
                     placeholder="Display name"
                     className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 placeholder-green-700 focus:outline-none focus:border-green-400"
                     required
@@ -255,9 +282,9 @@ export default function AddKOLModal({ campaignId, campaignName, onClose, onKOLAd
                         <span className="text-green-300">Upload</span>
                       </div>
                     </label>
-                    {kolImage && (
+                    {formData.pfp && (
                       <img
-                        src={kolImage}
+                        src={formData.pfp}
                         alt="Preview"
                         className="w-10 h-10 rounded-full object-cover"
                       />
@@ -268,11 +295,11 @@ export default function AddKOLModal({ campaignId, campaignName, onClose, onKOLAd
                 {/* Tier */}
                 <div>
                   <label className="block text-sm font-medium text-green-300 mb-1">
-                    Tier *
+                    Tier
                   </label>
                   <select
-                    value={tier}
-                    onChange={(e) => setTier(e.target.value as KOLTier)}
+                    value={formData.tier}
+                    onChange={(e) => setFormData({...formData, tier: e.target.value as NonNullable<KOL['tier']>})}
                     className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 focus:outline-none focus:border-green-400"
                   >
                     <option value="hero">Hero</option>
@@ -290,14 +317,11 @@ export default function AddKOLModal({ campaignId, campaignName, onClose, onKOLAd
                   </label>
                   <input
                     type="text"
-                    value={contact}
-                    onChange={(e) => setContact(e.target.value)}
+                    value={formData.contact}
+                    onChange={(e) => setFormData({...formData, contact: e.target.value})}
                     placeholder="@telegram or email"
                     className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 placeholder-green-700 focus:outline-none focus:border-green-400"
                   />
-                  {contact && (
-                    <p className="text-xs text-green-400 mt-1">{formatContact(contact)}</p>
-                  )}
                 </div>
                 
                 {/* Stage */}
@@ -306,52 +330,90 @@ export default function AddKOLModal({ campaignId, campaignName, onClose, onKOLAd
                     Stage
                   </label>
                   <select
-                    value={stage}
-                    onChange={(e) => setStage(e.target.value as CampaignStage)}
+                    value={formData.stage}
+                    onChange={(e) => setFormData({...formData, stage: e.target.value as KOL['stage']})}
                     className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 focus:outline-none focus:border-green-400"
                   >
-                    <option value="reached_out">Reached Out</option>
-                    <option value="waiting_device">Waiting for Device</option>
-                    <option value="waiting_brief">Waiting for Brief</option>
-                    <option value="posted">Posted</option>
+                    <option value="reached out">Reached Out</option>
                     <option value="preparing">Preparing</option>
+                    <option value="posted">Posted</option>
                     <option value="done">Done</option>
+                    <option value="cancelled">Cancelled</option>
                   </select>
                 </div>
                 
-                {/* Device Status */}
+                {/* Product */}
                 <div>
                   <label className="block text-sm font-medium text-green-300 mb-1">
-                    Device
+                    Product
+                  </label>
+                  {loadingProducts ? (
+                    <div className="w-full bg-black border border-green-500 rounded px-3 py-2 text-gray-500">
+                      Loading products...
+                    </div>
+                  ) : (
+                    <select
+                      value={selectedProduct}
+                      onChange={(e) => {
+                        const productId = e.target.value
+                        const product = products.find(p => p.id === productId)
+                        setSelectedProduct(productId)
+                        setFormData({
+                          ...formData,
+                          productId,
+                          productCost: product?.price || 0
+                        })
+                      }}
+                      className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 focus:outline-none focus:border-green-400 cursor-pointer relative z-10"
+                    >
+                      <option value="">No product assigned</option>
+                      {products.map(product => (
+                        <option key={product.id} value={product.id}>
+                          {product.name} - ${product.price} {product.stock !== undefined && product.stock > 0 ? `(${product.stock} available)` : ''}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                  {selectedProduct && (
+                    <p className="text-xs text-green-400 mt-1">
+                      Product value: ${products.find(p => p.id === selectedProduct)?.price || 0}
+                    </p>
+                  )}
+                </div>
+                
+                {/* Device */}
+                <div>
+                  <label className="block text-sm font-medium text-green-300 mb-1">
+                    Device Status
                   </label>
                   <select
-                    value={deviceStatus}
-                    onChange={(e) => setDeviceStatus(e.target.value as DeviceStatus)}
+                    value={formData.device}
+                    onChange={(e) => setFormData({...formData, device: e.target.value as KOL['device']})}
                     className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 focus:outline-none focus:border-green-400"
                   >
-                    <option value="na">N/A</option>
-                    <option value="preparing">Preparing</option>
-                    <option value="on_way">On the Way</option>
-                    <option value="received">Received</option>
-                    <option value="issue">Issue</option>
-                    <option value="sent_before">Sent Before</option>
+                    <option value="na">➖ N/A</option>
+                    <option value="on the way">📦 On the Way</option>
+                    <option value="received">✅ Received</option>
+                    <option value="owns">🏠 Owns</option>
+                    <option value="sent before">📤 Sent Before</option>
+                    <option value="problem">⚠️ Problem</option>
                   </select>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Track device delivery status for this KOL
+                  </p>
                 </div>
                 
                 {/* Budget */}
                 <div>
                   <label className="block text-sm font-medium text-green-300 mb-1">
-                    Budget *
+                    Cash Budget
                   </label>
                   <input
-                    type="number"
-                    value={budget}
-                    onChange={(e) => setBudget(e.target.value)}
-                    placeholder="0"
-                    min="0"
-                    step="0.01"
+                    type="text"
+                    value={formData.budget}
+                    onChange={(e) => setFormData({...formData, budget: e.target.value})}
+                    placeholder="e.g. $500 or $0 for product-only"
                     className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 placeholder-green-700 focus:outline-none focus:border-green-400"
-                    required
                   />
                 </div>
                 
@@ -361,26 +423,25 @@ export default function AddKOLModal({ campaignId, campaignName, onClose, onKOLAd
                     Payment
                   </label>
                   <select
-                    value={paymentStatus}
-                    onChange={(e) => setPaymentStatus(e.target.value as PaymentStatus)}
+                    value={formData.payment}
+                    onChange={(e) => setFormData({...formData, payment: e.target.value as KOL['payment']})}
                     className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 focus:outline-none focus:border-green-400"
                   >
                     <option value="pending">Pending</option>
                     <option value="approved">Approved</option>
                     <option value="rejected">Rejected</option>
                     <option value="paid">Paid</option>
-                    <option value="revision">Revision</option>
                   </select>
                 </div>
                 
                 {/* Platform */}
                 <div>
                   <label className="block text-sm font-medium text-green-300 mb-1">
-                    Platform *
+                    Platform
                   </label>
                   <select
-                    value={platform}
-                    onChange={(e) => setPlatform(e.target.value as SocialPlatform)}
+                    value={formData.platform[0]}
+                    onChange={(e) => setFormData({...formData, platform: [e.target.value]})}
                     className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 focus:outline-none focus:border-green-400"
                   >
                     <option value="twitter">Twitter</option>
@@ -391,6 +452,20 @@ export default function AddKOLModal({ campaignId, campaignName, onClose, onKOLAd
                     <option value="linkedin">LinkedIn</option>
                   </select>
                 </div>
+                
+                {/* Initial Views */}
+                <div>
+                  <label className="block text-sm font-medium text-green-300 mb-1">
+                    Initial Views
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.views}
+                    onChange={(e) => setFormData({...formData, views: parseInt(e.target.value) || 0})}
+                    placeholder="0"
+                    className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 placeholder-green-700 focus:outline-none focus:border-green-400"
+                  />
+                </div>
               </div>
               
               {/* Links - full width */}
@@ -399,8 +474,8 @@ export default function AddKOLModal({ campaignId, campaignName, onClose, onKOLAd
                   Links
                 </label>
                 <textarea
-                  value={links}
-                  onChange={(e) => setLinks(e.target.value)}
+                  value={formData.links.join(', ')}
+                  onChange={(e) => setFormData({...formData, links: e.target.value.split(',').map(l => l.trim()).filter(Boolean)})}
                   placeholder="Enter links separated by commas"
                   rows={2}
                   className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 placeholder-green-700 focus:outline-none focus:border-green-400"
@@ -413,39 +488,29 @@ export default function AddKOLModal({ campaignId, campaignName, onClose, onKOLAd
             
             {/* Error message */}
             {error && (
-              <div className="p-3 bg-red-900/20 border border-red-500 rounded">
-                <p className="text-red-400 text-sm">{error}</p>
+              <div className="bg-red-900/20 border border-red-500 p-3 rounded text-sm text-red-400">
+                {error}
               </div>
             )}
+            
+            {/* Submit buttons */}
+            <div className="flex justify-end gap-3 pt-4">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-green-300 hover:text-green-100 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-4 py-2 bg-green-900 text-green-100 rounded hover:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? 'Adding...' : 'Add KOL'}
+              </button>
+            </div>
           </form>
-        </div>
-        
-        {/* Footer */}
-        <div className="p-4 border-t border-green-500 flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-2 text-green-300 hover:text-green-100 transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={isSubmitting}
-            className="px-4 py-2 bg-green-900 text-green-100 rounded hover:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-          >
-            {isSubmitting ? (
-              <>
-                <div className="w-4 h-4 border-2 border-green-100 border-t-transparent rounded-full animate-spin" />
-                Adding...
-              </>
-            ) : (
-              <>
-                <Check className="w-4 h-4" />
-                Add KOL
-              </>
-            )}
-          </button>
         </div>
       </div>
     </div>

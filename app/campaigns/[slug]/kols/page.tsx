@@ -526,7 +526,7 @@ export default function CampaignKOLsPage({ params }: { params: { slug: string } 
                     <td className="p-3">
                       <span className={`px-2 py-1 text-xs rounded ${
                         kol.tier === 'hero' ? 'bg-yellow-900/50 text-yellow-300' :
-                        kol.tier === 'legend' ? 'bg-purple-900/50 text-purple-300' :
+                        kol.tier === 'legend' ? 'bg-orange-900/50 text-orange-300' :
                         kol.tier === 'star' ? 'bg-blue-900/50 text-blue-300' :
                         kol.tier === 'rising' ? 'bg-green-900/50 text-green-300' :
                         'bg-gray-900/50 text-gray-300'

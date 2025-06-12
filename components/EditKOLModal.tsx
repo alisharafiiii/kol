@@ -1,440 +1,379 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, Upload, Check, Trash2 } from './icons'
-import type { CampaignKOL, KOLTier, CampaignStage, DeviceStatus, PaymentStatus, SocialPlatform } from '@/lib/types/profile'
+import { KOL } from '@/lib/campaign'
+import { Product } from '@/lib/types/product'
 
 interface EditKOLModalProps {
+  kol: KOL
   campaignId: string
-  kol: CampaignKOL
   onClose: () => void
-  onKOLUpdated: (kol: CampaignKOL) => void
-  onKOLRemoved: (kolHandle: string) => void
+  onUpdate: (updatedKol: KOL) => void
 }
 
-export default function EditKOLModal({ campaignId, kol, onClose, onKOLUpdated, onKOLRemoved }: EditKOLModalProps) {
-  // Form state - initialize with existing values
-  const [kolName, setKolName] = useState(kol.kolName)
-  const [kolImage, setKolImage] = useState(kol.kolImage || '')
-  const [tier, setTier] = useState<KOLTier>(kol.tier)
-  const [contact, setContact] = useState('')  // CampaignKOL doesn't have contact, will need to fetch from profile
-  const [stage, setStage] = useState<CampaignStage>(kol.stage)
-  const [deviceStatus, setDeviceStatus] = useState<DeviceStatus>(kol.deviceStatus || 'na')
-  const [budget, setBudget] = useState(kol.budget?.toString() || '')
-  const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>(kol.paymentStatus || 'pending')
-  const [links, setLinks] = useState(kol.links?.join(', ') || '')
-  const [platform, setPlatform] = useState<SocialPlatform>(kol.platform || 'twitter')
-  
-  // UI state
+export default function EditKOLModal({ kol, campaignId, onClose, onUpdate }: EditKOLModalProps) {
+  const [products, setProducts] = useState<Product[]>([])
+  const [loadingProducts, setLoadingProducts] = useState(true)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [kolData, setKolData] = useState({
+    handle: kol.handle || '',
+    name: kol.name || '',
+    pfp: kol.pfp || '',
+    tier: kol.tier || 'micro' as KOL['tier'],
+    stage: kol.stage || 'reached out',
+    device: kol.device || 'na',
+    budget: kol.budget || '',
+    payment: kol.payment || 'pending',
+    views: kol.views || 0,
+    likes: kol.likes || 0,
+    retweets: kol.retweets || 0,
+    comments: kol.comments || 0,
+    contact: kol.contact || '',
+    links: kol.links?.join(', ') || '',
+    platform: kol.platform || ['twitter'],
+    productId: kol.productId || '',
+    productCost: kol.productCost || 0
+  })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isRemoving, setIsRemoving] = useState(false)
   const [error, setError] = useState('')
   
-  // Handle image upload
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+  // Fetch products on mount
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch('/api/products/active')
+        if (res.ok) {
+          const data = await res.json()
+          setProducts(data)
+          
+          // If KOL has a product assigned, find and select it
+          if (kol.productId) {
+            const product = data.find((p: Product) => p.id === kol.productId)
+            setSelectedProduct(product || null)
+          }
+        } else {
+          console.error('Failed to fetch products:', res.status)
+        }
+      } catch (err) {
+        console.error('Error fetching products:', err)
+      } finally {
+        setLoadingProducts(false)
+      }
+    }
     
-    // For now, convert to base64 - in production, upload to a service
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      setKolImage(e.target?.result as string)
-    }
-    reader.readAsDataURL(file)
+    fetchProducts()
+  }, [kol.productId])
+  
+  // Handle product selection
+  const handleProductSelect = (productId: string) => {
+    const product = products.find(p => p.id === productId)
+    setSelectedProduct(product || null)
+    setKolData({
+      ...kolData,
+      productId,
+      productCost: product?.price || 0,
+      device: product ? 'owned' : 'na'
+    })
   }
   
-  // Format contact field
-  const formatContact = (value: string): string => {
-    // Show formatted version in UI
-    if (value.startsWith('@')) {
-      return `Telegram: ${value}`
-    }
-    return value
-  }
-  
-  // Submit form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
     
-    // Validate required fields
-    if (!kolName || !budget) {
+    if (!kolData.handle || !kolData.name) {
       setError('Please fill in all required fields')
       return
     }
     
     setIsSubmitting(true)
+    setError('')
     
     try {
-      const res = await fetch(`/api/campaigns/${campaignId}/kols`, {
+      const res = await fetch(`/api/campaigns/${campaignId}/kols/${kol.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          kolHandle: kol.kolHandle,
-          kolName,
-          kolImage,
-          tier,
-          contact,
-          stage,
-          deviceStatus,
-          budget: parseFloat(budget),
-          paymentStatus,
-          links: links.split(',').map(l => l.trim()).filter(Boolean),
-          platform,
+          ...kolData,
+          handle: kolData.handle.replace('@', ''),
+          links: kolData.links.split(',').map(l => l.trim()).filter(Boolean),
+          views: parseInt(kolData.views.toString()) || 0,
+          likes: parseInt(kolData.likes.toString()) || 0,
+          retweets: parseInt(kolData.retweets.toString()) || 0,
+          comments: parseInt(kolData.comments.toString()) || 0,
+          productId: selectedProduct?.id,
+          productCost: selectedProduct?.price || 0
         })
       })
       
       if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.error || 'Failed to update KOL')
+        throw new Error('Failed to update KOL')
       }
       
-      const updatedKOL = await res.json()
-      onKOLUpdated(updatedKOL)
+      const updatedKol = await res.json()
+      onUpdate(updatedKol)
       onClose()
-    } catch (err: any) {
-      setError(err.message || 'Failed to update KOL')
+    } catch (err) {
+      setError('Failed to update KOL. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
   }
-  
-  // Remove KOL from campaign
-  const handleRemove = async () => {
-    if (!confirm('Are you sure you want to remove this KOL from the campaign?')) {
-      return
-    }
-    
-    setIsRemoving(true)
-    setError('')
-    
-    try {
-      const res = await fetch(`/api/campaigns/${campaignId}/kols?kolHandle=${encodeURIComponent(kol.kolHandle)}`, {
-        method: 'DELETE',
-      })
-      
-      if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.error || 'Failed to remove KOL')
-      }
-      
-      onKOLRemoved(kol.kolHandle)
-      onClose()
-    } catch (err: any) {
-      setError(err.message || 'Failed to remove KOL')
-    } finally {
-      setIsRemoving(false)
-    }
-  }
-  
+
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-black border border-green-500 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-green-500">
-          <h2 className="text-xl font-bold text-green-300">Edit KOL Details</h2>
-          <button
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
+      <div className="bg-black border border-green-300 p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold">Edit KOL</h2>
+          <button 
             onClick={onClose}
-            className="p-1 hover:bg-green-900/50 rounded transition-colors"
+            className="text-green-300 hover:text-green-100"
           >
-            <X className="w-5 h-5 text-green-300" />
+            ✕
           </button>
         </div>
         
-        {/* Content */}
-        <div className="p-4 overflow-y-auto max-h-[calc(90vh-120px)]">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* KOL Info Header */}
-            <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
-              <div className="flex items-center gap-4">
-                {kolImage && (
-                  <img
-                    src={kolImage}
-                    alt={kolName}
-                    className="w-16 h-16 rounded-full object-cover"
-                  />
-                )}
-                <div>
-                  <h3 className="text-lg font-semibold text-green-300">@{kol.kolHandle}</h3>
-                  <p className="text-sm text-green-400">{kolName}</p>
-                  {kol.lastSyncedAt && (
-                    <p className="text-xs text-green-500">
-                      Last updated: {new Date(kol.lastSyncedAt).toLocaleDateString()}
-                    </p>
-                  )}
-                </div>
-              </div>
+        {/* KOL Info Header */}
+        <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4 mb-4">
+          <div className="flex items-center gap-4">
+            {kolData.pfp && (
+              <img
+                src={kolData.pfp}
+                alt={kolData.name}
+                className="w-16 h-16 rounded-full object-cover"
+              />
+            )}
+            <div>
+              <h3 className="text-lg font-semibold text-green-300">@{kolData.handle}</h3>
+              <p className="text-sm text-green-400">{kolData.name}</p>
+            </div>
+          </div>
+        </div>
+        
+        {error && (
+          <div className="bg-red-900/20 border border-red-500 p-3 mb-4 text-sm text-red-400">
+            {error}
+          </div>
+        )}
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm mb-1">Handle *</label>
+              <input
+                type="text"
+                value={kolData.handle}
+                onChange={e => setKolData({...kolData, handle: e.target.value})}
+                placeholder="@username"
+                className="w-full bg-black border border-green-300 p-2 text-sm"
+                required
+              />
             </div>
             
-            {/* Two column layout */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Name */}
-              <div>
-                <label className="block text-sm font-medium text-green-300 mb-1">
-                  Name *
-                </label>
-                <input
-                  type="text"
-                  value={kolName}
-                  onChange={(e) => setKolName(e.target.value)}
-                  placeholder="Display name"
-                  className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 placeholder-green-700 focus:outline-none focus:border-green-400"
-                  required
-                />
-              </div>
-              
-              {/* Profile Picture */}
-              <div>
-                <label className="block text-sm font-medium text-green-300 mb-1">
-                  Profile Picture
-                </label>
-                <div className="flex items-center gap-2">
-                  <label className="flex-1 cursor-pointer">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                    />
-                    <div className="flex items-center gap-2 px-3 py-2 bg-black border border-green-500 rounded hover:bg-green-900/30 transition-colors">
-                      <Upload className="w-4 h-4 text-green-300" />
-                      <span className="text-green-300">Change Picture</span>
-                    </div>
-                  </label>
-                </div>
-              </div>
-              
-              {/* Tier */}
-              <div>
-                <label className="block text-sm font-medium text-green-300 mb-1">
-                  Tier *
-                </label>
-                <select
-                  value={tier}
-                  onChange={(e) => setTier(e.target.value as KOLTier)}
-                  className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 focus:outline-none focus:border-green-400"
-                >
-                  <option value="hero">Hero</option>
-                  <option value="legend">Legend</option>
-                  <option value="star">Star</option>
-                  <option value="rising">Rising</option>
-                  <option value="micro">Micro</option>
-                </select>
-              </div>
-              
-              {/* Contact */}
-              <div>
-                <label className="block text-sm font-medium text-green-300 mb-1">
-                  Contact
-                </label>
-                <input
-                  type="text"
-                  value={contact}
-                  onChange={(e) => setContact(e.target.value)}
-                  placeholder="@telegram or email"
-                  className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 placeholder-green-700 focus:outline-none focus:border-green-400"
-                />
-                {contact && (
-                  <p className="text-xs text-green-400 mt-1">{formatContact(contact)}</p>
-                )}
-              </div>
-              
-              {/* Stage */}
-              <div>
-                <label className="block text-sm font-medium text-green-300 mb-1">
-                  Stage
-                </label>
-                <select
-                  value={stage}
-                  onChange={(e) => setStage(e.target.value as CampaignStage)}
-                  className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 focus:outline-none focus:border-green-400"
-                >
-                  <option value="reached_out">Reached Out</option>
-                  <option value="waiting_device">Waiting for Device</option>
-                  <option value="waiting_brief">Waiting for Brief</option>
-                  <option value="posted">Posted</option>
-                  <option value="preparing">Preparing</option>
-                  <option value="done">Done</option>
-                </select>
-              </div>
-              
-              {/* Device Status */}
-              <div>
-                <label className="block text-sm font-medium text-green-300 mb-1">
-                  Device
-                </label>
-                <select
-                  value={deviceStatus}
-                  onChange={(e) => setDeviceStatus(e.target.value as DeviceStatus)}
-                  className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 focus:outline-none focus:border-green-400"
-                >
-                  <option value="na">N/A</option>
-                  <option value="preparing">Preparing</option>
-                  <option value="on_way">On the Way</option>
-                  <option value="received">Received</option>
-                  <option value="issue">Issue</option>
-                  <option value="sent_before">Sent Before</option>
-                </select>
-              </div>
-              
-              {/* Budget */}
-              <div>
-                <label className="block text-sm font-medium text-green-300 mb-1">
-                  Budget *
-                </label>
-                <input
-                  type="number"
-                  value={budget}
-                  onChange={(e) => setBudget(e.target.value)}
-                  placeholder="0"
-                  min="0"
-                  step="0.01"
-                  className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 placeholder-green-700 focus:outline-none focus:border-green-400"
-                  required
-                />
-              </div>
-              
-              {/* Payment Status */}
-              <div>
-                <label className="block text-sm font-medium text-green-300 mb-1">
-                  Payment
-                </label>
-                <select
-                  value={paymentStatus}
-                  onChange={(e) => setPaymentStatus(e.target.value as PaymentStatus)}
-                  className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 focus:outline-none focus:border-green-400"
-                >
-                  <option value="pending">Pending</option>
-                  <option value="approved">Approved</option>
-                  <option value="rejected">Rejected</option>
-                  <option value="paid">Paid</option>
-                  <option value="revision">Revision</option>
-                </select>
-              </div>
-              
-              {/* Platform */}
-              <div>
-                <label className="block text-sm font-medium text-green-300 mb-1">
-                  Platform *
-                </label>
-                <select
-                  value={platform}
-                  onChange={(e) => setPlatform(e.target.value as SocialPlatform)}
-                  className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 focus:outline-none focus:border-green-400"
-                >
-                  <option value="twitter">Twitter</option>
-                  <option value="instagram">Instagram</option>
-                  <option value="youtube">YouTube</option>
-                  <option value="tiktok">TikTok</option>
-                  <option value="twitch">Twitch</option>
-                  <option value="linkedin">LinkedIn</option>
-                </select>
-              </div>
+            <div>
+              <label className="block text-sm mb-1">Name *</label>
+              <input
+                type="text"
+                value={kolData.name}
+                onChange={e => setKolData({...kolData, name: e.target.value})}
+                placeholder="Display Name"
+                className="w-full bg-black border border-green-300 p-2 text-sm"
+                required
+              />
             </div>
             
-            {/* Links - full width */}
+            <div>
+              <label className="block text-sm mb-1">Tier</label>
+              <select 
+                value={kolData.tier}
+                onChange={e => setKolData({...kolData, tier: e.target.value as NonNullable<KOL['tier']>})}
+                className="w-full bg-black border border-green-300 p-2 text-sm"
+              >
+                <option value="hero">Hero</option>
+                <option value="legend">Legend</option>
+                <option value="star">Star</option>
+                <option value="rising">Rising</option>
+                <option value="micro">Micro</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm mb-1">Stage</label>
+              <select 
+                value={kolData.stage}
+                onChange={e => setKolData({...kolData, stage: e.target.value as KOL['stage']})}
+                className="w-full bg-black border border-green-300 p-2 text-sm"
+              >
+                <option value="reached out">Reached Out</option>
+                <option value="preparing">Preparing</option>
+                <option value="posted">Posted</option>
+                <option value="done">Done</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+            
             <div>
               <label className="block text-sm font-medium text-green-300 mb-1">
-                Links
+                Product/Device
               </label>
-              <textarea
-                value={links}
-                onChange={(e) => setLinks(e.target.value)}
-                placeholder="Enter links separated by commas"
-                rows={2}
-                className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 placeholder-green-700 focus:outline-none focus:border-green-400"
-              />
-              <p className="text-xs text-green-400 mt-1">
-                Separate multiple links with commas
-              </p>
+              {loadingProducts ? (
+                <div className="w-full bg-black border border-green-500 rounded px-3 py-2 text-gray-500">
+                  Loading products...
+                </div>
+              ) : (
+                <select
+                  value={selectedProduct?.id || ''}
+                  onChange={(e) => {
+                    const product = products.find(p => p.id === e.target.value)
+                    setSelectedProduct(product || null)
+                    setKolData({
+                      ...kolData,
+                      productId: e.target.value,
+                      productCost: product?.price || 0,
+                      device: product ? 'owned' : 'na'
+                    })
+                  }}
+                  className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 focus:outline-none focus:border-green-400 cursor-pointer"
+                >
+                  <option value="">No product assigned</option>
+                  {products.map(product => (
+                    <option key={product.id} value={product.id}>
+                      {product.name} - ${product.price} {product.stock !== undefined && product.stock > 0 ? `(${product.stock} available)` : ''}
+                    </option>
+                  ))}
+                </select>
+              )}
+              {selectedProduct && (
+                <p className="text-xs text-green-400 mt-1">
+                  Product value: ${selectedProduct.price} (tracked separately from cash budget)
+                </p>
+              )}
             </div>
             
-            {/* Tweet Metrics - if available */}
-            {kol.metrics && kol.metrics.length > 0 && (
-              <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
-                <h4 className="text-sm font-medium text-green-300 mb-2">Tweet Performance</h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
-                  <div>
-                    <span className="text-green-400">Views:</span>{' '}
-                    <span className="text-green-300">{kol.totalViews?.toLocaleString() || 0}</span>
-                  </div>
-                  <div>
-                    <span className="text-green-400">Engagement:</span>{' '}
-                    <span className="text-green-300">{kol.totalEngagement?.toLocaleString() || 0}</span>
-                  </div>
-                  <div>
-                    <span className="text-green-400">Rate:</span>{' '}
-                    <span className="text-green-300">{(kol.engagementRate || 0).toFixed(2)}%</span>
-                  </div>
-                  <div>
-                    <span className="text-green-400">Score:</span>{' '}
-                    <span className="text-green-300">{kol.score?.toFixed(0) || 0}</span>
-                  </div>
-                </div>
-                {kol.lastSyncedAt && (
-                  <p className="text-xs text-green-500 mt-2">
-                    Last synced: {new Date(kol.lastSyncedAt).toLocaleDateString()}
-                  </p>
-                )}
-              </div>
-            )}
+            <div>
+              <label className="block text-sm mb-1">Cash Budget</label>
+              <input
+                type="text"
+                value={kolData.budget}
+                onChange={e => setKolData({...kolData, budget: e.target.value})}
+                placeholder="e.g. $500 or $0 for product-only"
+                className="w-full bg-black border border-green-300 p-2 text-sm"
+              />
+            </div>
             
-            {/* Error message */}
-            {error && (
-              <div className="p-3 bg-red-900/20 border border-red-500 rounded">
-                <p className="text-red-400 text-sm">{error}</p>
-              </div>
-            )}
-          </form>
-        </div>
-        
-        {/* Footer */}
-        <div className="p-4 border-t border-green-500 flex justify-between">
-          <button
-            onClick={handleRemove}
-            disabled={isRemoving}
-            className="px-4 py-2 bg-red-900 text-red-100 rounded hover:bg-red-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-          >
-            {isRemoving ? (
-              <>
-                <div className="w-4 h-4 border-2 border-red-100 border-t-transparent rounded-full animate-spin" />
-                Removing...
-              </>
-            ) : (
-              <>
-                <Trash2 className="w-4 h-4" />
-                Remove from Campaign
-              </>
-            )}
-          </button>
+            <div>
+              <label className="block text-sm mb-1">Payment Status</label>
+              <select 
+                value={kolData.payment}
+                onChange={e => setKolData({...kolData, payment: e.target.value as KOL['payment']})}
+                className="w-full bg-black border border-green-300 p-2 text-sm"
+              >
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="paid">Paid</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm mb-1">Contact</label>
+              <input
+                type="text"
+                value={kolData.contact}
+                onChange={e => setKolData({...kolData, contact: e.target.value})}
+                placeholder="Email or @telegram"
+                className="w-full bg-black border border-green-300 p-2 text-sm"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm mb-1">Platform</label>
+              <select 
+                value={kolData.platform[0]}
+                onChange={e => setKolData({...kolData, platform: [e.target.value]})}
+                className="w-full bg-black border border-green-300 p-2 text-sm"
+              >
+                <option value="twitter">Twitter</option>
+                <option value="instagram">Instagram</option>
+                <option value="youtube">YouTube</option>
+                <option value="tiktok">TikTok</option>
+                <option value="linkedin">LinkedIn</option>
+              </select>
+            </div>
+          </div>
           
-          <div className="flex gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-sm mb-1">Views</label>
+              <input
+                type="number"
+                value={kolData.views}
+                onChange={e => setKolData({...kolData, views: parseInt(e.target.value) || 0})}
+                placeholder="0"
+                className="w-full bg-black border border-green-300 p-2 text-sm"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm mb-1">Likes</label>
+              <input
+                type="number"
+                value={kolData.likes}
+                onChange={e => setKolData({...kolData, likes: parseInt(e.target.value) || 0})}
+                placeholder="0"
+                className="w-full bg-black border border-green-300 p-2 text-sm"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm mb-1">Retweets</label>
+              <input
+                type="number"
+                value={kolData.retweets}
+                onChange={e => setKolData({...kolData, retweets: parseInt(e.target.value) || 0})}
+                placeholder="0"
+                className="w-full bg-black border border-green-300 p-2 text-sm"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm mb-1">Comments</label>
+              <input
+                type="number"
+                value={kolData.comments}
+                onChange={e => setKolData({...kolData, comments: parseInt(e.target.value) || 0})}
+                placeholder="0"
+                className="w-full bg-black border border-green-300 p-2 text-sm"
+              />
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm mb-1">Links (comma separated)</label>
+            <textarea
+              value={kolData.links}
+              onChange={e => setKolData({...kolData, links: e.target.value})}
+              placeholder="https://twitter.com/username/status/123, https://..."
+              rows={3}
+              className="w-full bg-black border border-green-300 p-2 text-sm"
+            />
+          </div>
+          
+          <div className="flex justify-end gap-4 pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-green-300 hover:text-green-100 transition-colors"
+              className="px-4 py-2 border border-green-300 hover:bg-green-900"
             >
               Cancel
             </button>
             <button
-              onClick={handleSubmit}
+              type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 bg-green-900 text-green-100 rounded hover:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-4 py-2 bg-green-900 hover:bg-green-800 disabled:opacity-50"
             >
-              {isSubmitting ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-green-100 border-t-transparent rounded-full animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Check className="w-4 h-4" />
-                  Save Changes
-                </>
-              )}
+              {isSubmitting ? 'Updating...' : 'Update KOL'}
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   )

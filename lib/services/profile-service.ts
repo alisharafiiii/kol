@@ -57,7 +57,30 @@ export class ProfileService {
   static async getProfileByHandle(handle: string): Promise<UnifiedProfile | null> {
     try {
       const normalizedHandle = handle.replace('@', '').toLowerCase()
+      console.log('ProfileService.getProfileByHandle:', { handle, normalizedHandle })
+      
+      // Special handling for master admin
+      if (normalizedHandle === 'sharafi_eth') {
+        console.log('ProfileService: Returning master admin profile')
+        return {
+          id: 'sharafi_eth_admin',
+          name: 'sharafi_eth',
+          email: 'admin@kol.platform',
+          twitterHandle: 'sharafi_eth',
+          profileImageUrl: 'https://pbs.twimg.com/profile_images/1911790623893422080/vxsHVWbL_400x400.jpg',
+          role: 'admin',
+          approvalStatus: 'approved',
+          isKOL: false,
+          contacts: {},
+          socialLinks: {},
+          walletAddresses: {},
+          createdAt: new Date('2024-01-01'),
+          updatedAt: new Date(),
+        } as UnifiedProfile
+      }
+      
       const profileIds = await redis.smembers(`${this.INDEX_PREFIX}handle:${normalizedHandle}`)
+      console.log('ProfileService: Found profile IDs:', profileIds)
       
       if (profileIds.length === 0) return null
       
@@ -86,22 +109,31 @@ export class ProfileService {
       // Start with all profiles if no specific filters
       if (!filters.role && !filters.approvalStatus && !filters.tier) {
         const keys = await redis.keys(`${this.PREFIX}*`)
-        profileIds = keys.map(key => key.replace(this.PREFIX, ''))
+        profileIds = keys.map((key: string) => key.replace(this.PREFIX, ''))
       } else {
         // Use indexes for filtering
+        const setsToIntersect: string[][] = []
+        
         if (filters.role) {
           const roleIds = await redis.smembers(`${this.INDEX_PREFIX}role:${filters.role}`)
-          profileIds = profileIds.length ? profileIds.filter(id => roleIds.includes(id)) : roleIds
+          setsToIntersect.push(roleIds)
         }
         
         if (filters.approvalStatus) {
           const statusIds = await redis.smembers(`${this.INDEX_PREFIX}status:${filters.approvalStatus}`)
-          profileIds = profileIds.length ? profileIds.filter(id => statusIds.includes(id)) : statusIds
+          setsToIntersect.push(statusIds)
         }
         
         if (filters.tier) {
           const tierIds = await redis.smembers(`${this.INDEX_PREFIX}tier:${filters.tier}`)
-          profileIds = profileIds.length ? profileIds.filter(id => tierIds.includes(id)) : tierIds
+          setsToIntersect.push(tierIds)
+        }
+        
+        // Intersect all sets
+        if (setsToIntersect.length > 0) {
+          profileIds = setsToIntersect.reduce((acc, set) => 
+            acc.length === 0 ? set : acc.filter(id => set.includes(id))
+          )
         }
       }
       
@@ -233,7 +265,8 @@ export class ProfileService {
     authorId: string,
     authorName: string,
     content: string,
-    campaignId?: string
+    campaignId?: string,
+    authorImage?: string
   ): Promise<Note> {
     try {
       const profile = await this.getProfileById(profileId)
@@ -243,6 +276,7 @@ export class ProfileService {
         id: uuidv4(),
         authorId,
         authorName,
+        authorImage,
         content,
         createdAt: new Date(),
         campaignId

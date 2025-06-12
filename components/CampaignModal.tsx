@@ -20,6 +20,8 @@ export default function CampaignModal({ onClose, onCampaignCreated }: CampaignMo
   const [name, setName] = useState('')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
+  const [selectedChains, setSelectedChains] = useState<string[]>(['Solana'])
+  const [customChain, setCustomChain] = useState('')
   const [selectedProjects, setSelectedProjects] = useState<string[]>([])
   const [teamMembers, setTeamMembers] = useState<string[]>([])
   const [teamMemberInput, setTeamMemberInput] = useState('')
@@ -127,6 +129,7 @@ export default function CampaignModal({ onClose, onCampaignCreated }: CampaignMo
           name,
           startDate,
           endDate,
+          chains: selectedChains,
           projects: selectedProjects,
           teamMembers,
           projectBudgets
@@ -215,6 +218,85 @@ export default function CampaignModal({ onClose, onCampaignCreated }: CampaignMo
                 className="w-full px-3 py-2 bg-black border border-green-300 text-green-300 focus:outline-none focus:border-green-400"
                 required
               />
+            </div>
+          </div>
+
+          {/* Chains */}
+          <div>
+            <label className="block text-xs uppercase mb-2">Chains</label>
+            
+            {/* Selected chains */}
+            <div className="flex flex-wrap gap-2 mb-2">
+              {selectedChains.map(chain => (
+                <span
+                  key={chain}
+                  className="px-2 py-1 bg-yellow-900 border border-yellow-300 text-yellow-300 text-xs flex items-center gap-1"
+                >
+                  {chain}
+                  <button
+                    type="button"
+                    onClick={() => setSelectedChains(selectedChains.filter(c => c !== chain))}
+                    className="text-red-400 hover:text-red-300"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+            
+            {/* Chain options */}
+            <div className="grid grid-cols-4 gap-2 mb-2">
+              {['Solana', 'Ethereum', 'Polygon', 'BSC', 'Arbitrum', 'Optimism', 'Avalanche', 'Base'].map(chain => (
+                <button
+                  key={chain}
+                  type="button"
+                  onClick={() => {
+                    if (!selectedChains.includes(chain)) {
+                      setSelectedChains([...selectedChains, chain])
+                    }
+                  }}
+                  className={`px-2 py-1 border text-xs ${
+                    selectedChains.includes(chain)
+                      ? 'border-yellow-500 bg-yellow-900/50 text-yellow-300'
+                      : 'border-green-300 hover:bg-green-900'
+                  }`}
+                  disabled={selectedChains.includes(chain)}
+                >
+                  {chain}
+                </button>
+              ))}
+            </div>
+            
+            {/* Add custom chain */}
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={customChain}
+                onChange={(e) => setCustomChain(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    if (customChain && !selectedChains.includes(customChain)) {
+                      setSelectedChains([...selectedChains, customChain])
+                      setCustomChain('')
+                    }
+                  }
+                }}
+                placeholder="Add custom chain..."
+                className="flex-1 px-3 py-1 bg-black border border-green-300 text-green-300 text-xs focus:outline-none focus:border-green-400"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  if (customChain && !selectedChains.includes(customChain)) {
+                    setSelectedChains([...selectedChains, customChain])
+                    setCustomChain('')
+                  }
+                }}
+                className="px-3 py-1 bg-green-900 border border-green-300 text-xs hover:bg-green-800"
+              >
+                Add
+              </button>
             </div>
           </div>
 

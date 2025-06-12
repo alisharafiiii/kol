@@ -235,7 +235,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/",
+    signIn: "/api/auth/signin", // Use default NextAuth sign-in page
     error: "/auth/error",
     signOut: "/",
   },

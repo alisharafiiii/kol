@@ -128,11 +128,18 @@ export class NotificationService {
     // In production, use nodemailer or similar
     // For now, we'll simulate sending
     if (!SMTP_CONFIG.auth.user || !SMTP_CONFIG.auth.pass) {
-      console.log('[EMAIL SIMULATION]', {
-        to: notification.recipientEmail,
-        subject: notification.subject,
-        message: notification.message
-      })
+      console.log('📧 [EMAIL SIMULATION] - No SMTP credentials configured')
+      console.log('📧 =================== EMAIL CONTENT ===================')
+      console.log('📧 TO:', notification.recipientEmail)
+      console.log('📧 SUBJECT:', notification.subject)
+      console.log('📧 TYPE:', notification.type)
+      console.log('📧 PRIORITY:', notification.priority || 'normal')
+      console.log('📧 MESSAGE:')
+      console.log(notification.message)
+      if (notification.metadata) {
+        console.log('📧 METADATA:', JSON.stringify(notification.metadata, null, 2))
+      }
+      console.log('📧 =====================================================')
       return
     }
     

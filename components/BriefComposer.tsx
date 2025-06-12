@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { X, Save, Eye, FileText, Copy } from '@/components/icons'
+import { X, Save, Eye, FileText, Copy, Upload } from '@/components/icons'
 
 interface BriefComposerProps {
   campaignId: string
@@ -15,6 +15,13 @@ interface BriefTemplate {
   id: string
   name: string
   content: string
+}
+
+interface Asset {
+  id: string
+  type: 'image' | 'video'
+  url: string
+  name: string
 }
 
 const BRIEF_TEMPLATES: BriefTemplate[] = [
@@ -149,39 +156,154 @@ export default function BriefComposer({ campaignId, campaignName, initialBrief, 
   const [showPreview, setShowPreview] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<string>('')
   const [isSaving, setIsSaving] = useState(false)
+  const [assets, setAssets] = useState<Asset[]>([])
+  const [showSourceCode, setShowSourceCode] = useState(false)
   const editorRef = useRef<HTMLDivElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  
+  // Load IBM Plex font
+  useEffect(() => {
+    const link = document.createElement('link')
+    link.href = 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono&display=swap'
+    link.rel = 'stylesheet'
+    document.head.appendChild(link)
+    
+    return () => {
+      document.head.removeChild(link)
+    }
+  }, [])
   
   // Load initial brief or template
   useEffect(() => {
     if (initialBrief) {
       setContent(initialBrief)
+      if (editorRef.current) {
+        editorRef.current.innerHTML = initialBrief
+      }
     }
   }, [initialBrief])
+  
+  // Handle file upload
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files) return
+    
+    for (const file of Array.from(files)) {
+      try {
+        // Create FormData and upload to server
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('campaignId', campaignId)
+        
+        const response = await fetch('/api/upload/brief-image', {
+          method: 'POST',
+          body: formData
+        })
+        
+        if (!response.ok) {
+          const error = await response.json()
+          alert(error.error || 'Failed to upload image')
+          continue
+        }
+        
+        const data = await response.json()
+        
+        const asset: Asset = {
+          id: Date.now().toString() + Math.random(),
+          type: file.type.startsWith('video/') ? 'video' : 'image',
+          url: data.url,
+          name: file.name
+        }
+        setAssets(prev => [...prev, asset])
+        
+        // Insert asset at cursor position
+        insertAtCursor(asset)
+      } catch (error) {
+        console.error('Error uploading file:', error)
+        alert('Failed to upload file')
+      }
+    }
+  }
+  
+  // Insert asset at cursor
+  const insertAtCursor = (asset: Asset) => {
+    const assetHtml = asset.type === 'image' 
+      ? `<img src="${asset.url}" alt="${asset.name}" style="max-width: 100%; height: auto; margin: 1rem 0;" />`
+      : `<video src="${asset.url}" controls style="max-width: 100%; height: auto; margin: 1rem 0;">${asset.name}</video>`
+    
+    document.execCommand('insertHTML', false, assetHtml)
+    updateContent()
+  }
+  
+  // Update content state from editor
+  const updateContent = () => {
+    if (editorRef.current) {
+      setContent(editorRef.current.innerHTML)
+    }
+  }
   
   // Format selected text
   const formatText = (command: string, value?: string) => {
     document.execCommand(command, false, value)
+    updateContent()
     editorRef.current?.focus()
   }
   
-  // Insert link
-  const insertLink = () => {
-    const url = prompt('Enter URL:')
-    if (url) {
-      formatText('createLink', url)
+  // Insert element
+  const insertElement = (type: string) => {
+    let html = ''
+    switch (type) {
+      case 'h1':
+        html = '<h1>Heading 1</h1>'
+        break
+      case 'h2':
+        html = '<h2>Heading 2</h2>'
+        break
+      case 'h3':
+        html = '<h3>Heading 3</h3>'
+        break
+      case 'quote':
+        html = '<blockquote style="border-left: 4px solid #86efac; padding-left: 1rem; margin: 1rem 0; color: #86efac;">Quote text here</blockquote>'
+        break
+      case 'code':
+        html = '<pre style="background: #1a1a1a; padding: 1rem; border-radius: 0.5rem; overflow-x: auto;"><code>Code here</code></pre>'
+        break
+      case 'divider':
+        html = '<hr style="border: 0; height: 1px; background: #065f46; margin: 2rem 0;" />'
+        break
+      case 'table':
+        html = `
+          <table style="width: 100%; border-collapse: collapse; margin: 1rem 0;">
+            <thead>
+              <tr style="border-bottom: 2px solid #065f46;">
+                <th style="padding: 0.5rem; text-align: left;">Header 1</th>
+                <th style="padding: 0.5rem; text-align: left;">Header 2</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid #065f46;">
+                <td style="padding: 0.5rem;">Cell 1</td>
+                <td style="padding: 0.5rem;">Cell 2</td>
+              </tr>
+            </tbody>
+          </table>
+        `
+        break
     }
-  }
-  
-  // Insert list
-  const insertList = (type: 'ordered' | 'unordered') => {
-    formatText(type === 'ordered' ? 'insertOrderedList' : 'insertUnorderedList')
+    
+    document.execCommand('insertHTML', false, html)
+    updateContent()
   }
   
   // Apply template
   const applyTemplate = (templateId: string) => {
     const template = BRIEF_TEMPLATES.find(t => t.id === templateId)
     if (template) {
-      setContent(template.content.trim().replace('[Campaign Name]', campaignName))
+      const processedContent = template.content.trim().replace('[Campaign Name]', campaignName)
+      setContent(processedContent)
+      if (editorRef.current) {
+        editorRef.current.innerHTML = processedContent
+      }
       setSelectedTemplate(templateId)
     }
   }
@@ -199,17 +321,17 @@ export default function BriefComposer({ campaignId, campaignName, initialBrief, 
     }
   }
   
-  // Copy brief to clipboard
-  const copyToClipboard = () => {
-    const textContent = editorRef.current?.innerText || ''
-    navigator.clipboard.writeText(textContent).then(() => {
-      alert('Brief copied to clipboard!')
+  // Copy brief link to clipboard
+  const copyBriefLink = () => {
+    const briefUrl = `${window.location.origin}/brief/${campaignId}`
+    navigator.clipboard.writeText(briefUrl).then(() => {
+      alert('Brief link copied to clipboard! You can now test the access control.')
     })
   }
   
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-black border border-green-500 rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden">
+      <div className="bg-black border border-green-500 rounded-lg w-full max-w-6xl max-h-[95vh] overflow-hidden" style={{ fontFamily: '"IBM Plex Sans", sans-serif' }}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-green-500">
           <h2 className="text-xl font-bold text-green-300">Campaign Brief Editor</h2>
@@ -240,109 +362,268 @@ export default function BriefComposer({ campaignId, campaignName, initialBrief, 
             </select>
           </div>
           
-          {/* Formatting buttons */}
+          {/* Formatting buttons - Row 1 */}
           <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => formatText('bold')}
-              className="px-3 py-1 border border-green-500 text-green-300 rounded hover:bg-green-900/30 text-sm font-bold"
-              title="Bold"
-            >
-              B
-            </button>
-            <button
-              onClick={() => formatText('italic')}
-              className="px-3 py-1 border border-green-500 text-green-300 rounded hover:bg-green-900/30 text-sm italic"
-              title="Italic"
-            >
-              I
-            </button>
-            <button
-              onClick={() => formatText('underline')}
-              className="px-3 py-1 border border-green-500 text-green-300 rounded hover:bg-green-900/30 text-sm underline"
-              title="Underline"
-            >
-              U
-            </button>
-            <div className="w-px bg-green-500" />
+            <div className="flex gap-1 px-2 py-1 bg-green-900/20 rounded">
+              <button
+                onClick={() => formatText('bold')}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm font-bold"
+                title="Bold (Ctrl+B)"
+              >
+                B
+              </button>
+              <button
+                onClick={() => formatText('italic')}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm italic"
+                title="Italic (Ctrl+I)"
+              >
+                I
+              </button>
+              <button
+                onClick={() => formatText('underline')}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm underline"
+                title="Underline (Ctrl+U)"
+              >
+                U
+              </button>
+              <button
+                onClick={() => formatText('strikeThrough')}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm line-through"
+                title="Strikethrough"
+              >
+                S
+              </button>
+            </div>
             
-            <button
-              onClick={() => formatText('formatBlock', '<h2>')}
-              className="px-3 py-1 border border-green-500 text-green-300 rounded hover:bg-green-900/30 text-sm"
-              title="Heading 2"
-            >
-              H2
-            </button>
-            <button
-              onClick={() => formatText('formatBlock', '<h3>')}
-              className="px-3 py-1 border border-green-500 text-green-300 rounded hover:bg-green-900/30 text-sm"
-              title="Heading 3"
-            >
-              H3
-            </button>
-            <button
-              onClick={() => formatText('formatBlock', '<p>')}
-              className="px-3 py-1 border border-green-500 text-green-300 rounded hover:bg-green-900/30 text-sm"
-              title="Paragraph"
-            >
-              P
-            </button>
-            <div className="w-px bg-green-500" />
+            <div className="flex gap-1 px-2 py-1 bg-green-900/20 rounded">
+              <button
+                onClick={() => insertElement('h1')}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm"
+                title="Heading 1"
+              >
+                H1
+              </button>
+              <button
+                onClick={() => insertElement('h2')}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm"
+                title="Heading 2"
+              >
+                H2
+              </button>
+              <button
+                onClick={() => insertElement('h3')}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm"
+                title="Heading 3"
+              >
+                H3
+              </button>
+            </div>
             
-            <button
-              onClick={() => insertList('unordered')}
-              className="px-3 py-1 border border-green-500 text-green-300 rounded hover:bg-green-900/30 text-sm"
-              title="Bullet List"
-            >
-              • List
-            </button>
-            <button
-              onClick={() => insertList('ordered')}
-              className="px-3 py-1 border border-green-500 text-green-300 rounded hover:bg-green-900/30 text-sm"
-              title="Numbered List"
-            >
-              1. List
-            </button>
-            <div className="w-px bg-green-500" />
+            <div className="flex gap-1 px-2 py-1 bg-green-900/20 rounded">
+              <button
+                onClick={() => formatText('insertUnorderedList')}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm"
+                title="Bullet List"
+              >
+                • List
+              </button>
+              <button
+                onClick={() => formatText('insertOrderedList')}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm"
+                title="Numbered List"
+              >
+                1. List
+              </button>
+              <button
+                onClick={() => insertElement('quote')}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm"
+                title="Blockquote"
+              >
+                " Quote
+              </button>
+            </div>
             
-            <button
-              onClick={insertLink}
-              className="px-3 py-1 border border-green-500 text-green-300 rounded hover:bg-green-900/30 text-sm"
-              title="Insert Link"
-            >
-              🔗 Link
-            </button>
-            <button
-              onClick={() => setShowPreview(!showPreview)}
-              className="px-3 py-1 border border-green-500 text-green-300 rounded hover:bg-green-900/30 text-sm flex items-center gap-1"
-              title="Toggle Preview"
-            >
-              <Eye className="w-4 h-4" />
-              Preview
-            </button>
+            <div className="flex gap-1 px-2 py-1 bg-green-900/20 rounded">
+              <button
+                onClick={() => {
+                  const url = prompt('Enter URL:')
+                  if (url) {
+                    formatText('createLink', url)
+                  }
+                }}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm"
+                title="Insert Link"
+              >
+                🔗 Link
+              </button>
+              <button
+                onClick={() => formatText('unlink')}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm"
+                title="Remove Link"
+              >
+                ⛓️‍💥 Unlink
+              </button>
+            </div>
           </div>
+          
+          {/* Formatting buttons - Row 2 */}
+          <div className="flex flex-wrap gap-2">
+            <div className="flex gap-1 px-2 py-1 bg-green-900/20 rounded">
+              <button
+                onClick={() => formatText('justifyLeft')}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm"
+                title="Align Left"
+              >
+                ◀️ Left
+              </button>
+              <button
+                onClick={() => formatText('justifyCenter')}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm"
+                title="Align Center"
+              >
+                ⏸️ Center
+              </button>
+              <button
+                onClick={() => formatText('justifyRight')}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm"
+                title="Align Right"
+              >
+                ▶️ Right
+              </button>
+            </div>
+            
+            <div className="flex gap-1 px-2 py-1 bg-green-900/20 rounded">
+              <button
+                onClick={() => insertElement('code')}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm"
+                title="Code Block"
+              >
+                {'<>'} Code
+              </button>
+              <button
+                onClick={() => insertElement('table')}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm"
+                title="Insert Table"
+              >
+                ⊞ Table
+              </button>
+              <button
+                onClick={() => insertElement('divider')}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm"
+                title="Horizontal Rule"
+              >
+                — Divider
+              </button>
+            </div>
+            
+            <div className="flex gap-1 px-2 py-1 bg-green-900/20 rounded">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*,video/*"
+                multiple
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm flex items-center gap-1"
+                title="Upload Images/Videos"
+              >
+                <Upload className="w-4 h-4" />
+                Media
+              </button>
+              <button
+                onClick={() => formatText('removeFormat')}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm"
+                title="Clear Formatting"
+              >
+                🧹 Clear
+              </button>
+            </div>
+            
+            <div className="flex gap-1 px-2 py-1 bg-green-900/20 rounded ml-auto">
+              <button
+                onClick={() => setShowSourceCode(!showSourceCode)}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm"
+                title="View HTML Source"
+              >
+                {'</>'} HTML
+              </button>
+              <button
+                onClick={() => setShowPreview(!showPreview)}
+                className="px-2 py-1 hover:bg-green-900/50 rounded text-sm flex items-center gap-1"
+                title="Toggle Preview"
+              >
+                <Eye className="w-4 h-4" />
+                Preview
+              </button>
+            </div>
+          </div>
+          
+          {/* Assets preview */}
+          {assets.length > 0 && (
+            <div className="flex flex-wrap gap-2 p-2 bg-green-900/10 rounded">
+              <span className="text-xs text-green-400">Assets:</span>
+              {assets.map(asset => (
+                <div key={asset.id} className="relative group">
+                  {asset.type === 'image' ? (
+                    <img src={asset.url} alt={asset.name} className="w-16 h-16 object-cover border border-green-500 rounded" />
+                  ) : (
+                    <div className="w-16 h-16 border border-green-500 rounded flex items-center justify-center bg-green-900/20">
+                      <span className="text-lg">🎬</span>
+                    </div>
+                  )}
+                  <span className="absolute -bottom-5 left-0 right-0 text-xs text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    {asset.name.substring(0, 10)}...
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         
         {/* Content Area */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden" style={{ height: 'calc(100% - 240px)' }}>
           {showPreview ? (
-            <div className="p-6 overflow-y-auto max-h-[calc(90vh-250px)]">
+            <div className="p-6 overflow-y-auto h-full bg-white/5">
               <div className="prose prose-invert prose-green max-w-none">
                 <div 
                   dangerouslySetInnerHTML={{ __html: content }}
                   className="brief-preview"
+                  style={{ fontFamily: '"IBM Plex Sans", sans-serif' }}
                 />
               </div>
             </div>
+          ) : showSourceCode ? (
+            <textarea
+              value={content}
+              onChange={(e) => {
+                setContent(e.target.value)
+                if (editorRef.current) {
+                  editorRef.current.innerHTML = e.target.value
+                }
+              }}
+              className="w-full h-full p-6 bg-black text-green-300 focus:outline-none resize-none"
+              style={{
+                fontFamily: '"IBM Plex Mono", monospace',
+                fontSize: '13px',
+              }}
+              placeholder="HTML source code..."
+            />
           ) : (
             <div
               ref={editorRef}
               contentEditable
-              onInput={(e) => setContent(e.currentTarget.innerHTML)}
-              dangerouslySetInnerHTML={{ __html: content }}
-              className="p-6 min-h-[400px] max-h-[calc(90vh-250px)] overflow-y-auto focus:outline-none"
+              onInput={updateContent}
+              className="w-full h-full p-6 overflow-y-auto focus:outline-none"
+              data-placeholder="Start typing your brief or select a template..."
               style={{
-                lineHeight: 1.6,
+                fontFamily: '"IBM Plex Sans", sans-serif',
+                lineHeight: 1.8,
                 fontSize: '16px',
+                color: '#bbf7d0',
+                minHeight: '400px',
               }}
             />
           )}
@@ -351,11 +632,11 @@ export default function BriefComposer({ campaignId, campaignName, initialBrief, 
         {/* Footer */}
         <div className="p-4 border-t border-green-500 flex justify-between">
           <button
-            onClick={copyToClipboard}
-            className="px-4 py-2 border border-green-500 text-green-300 rounded hover:bg-green-900/30 transition-colors flex items-center gap-2"
+            onClick={copyBriefLink}
+            className="px-4 py-2 border border-purple-500 text-purple-300 rounded hover:bg-purple-900/30 transition-colors flex items-center gap-2"
           >
             <Copy className="w-4 h-4" />
-            Copy Text
+            Copy Brief Link
           </button>
           
           <div className="flex gap-3">
@@ -387,33 +668,56 @@ export default function BriefComposer({ campaignId, campaignName, initialBrief, 
       </div>
       
       <style jsx>{`
+        .brief-preview h1 {
+          font-size: 2rem;
+          font-weight: 700;
+          margin: 2rem 0 1.5rem;
+          color: #86efac;
+          font-family: "IBM Plex Sans", sans-serif;
+        }
         .brief-preview h2 {
           font-size: 1.5rem;
-          font-weight: bold;
+          font-weight: 600;
           margin: 1.5rem 0 1rem;
           color: #86efac;
+          font-family: "IBM Plex Sans", sans-serif;
         }
         .brief-preview h3 {
           font-size: 1.25rem;
-          font-weight: bold;
+          font-weight: 600;
           margin: 1.25rem 0 0.75rem;
           color: #86efac;
+          font-family: "IBM Plex Sans", sans-serif;
         }
         .brief-preview p {
           margin: 0.75rem 0;
           color: #bbf7d0;
+          font-family: "IBM Plex Sans", sans-serif;
+          line-height: 1.8;
         }
         .brief-preview ul, .brief-preview ol {
           margin: 0.75rem 0;
           padding-left: 1.5rem;
           color: #bbf7d0;
+          font-family: "IBM Plex Sans", sans-serif;
         }
         .brief-preview li {
           margin: 0.5rem 0;
+          line-height: 1.8;
         }
         .brief-preview strong {
           color: #86efac;
-          font-weight: bold;
+          font-weight: 600;
+        }
+        .brief-preview em {
+          font-style: italic;
+        }
+        .brief-preview u {
+          text-decoration: underline;
+        }
+        .brief-preview s {
+          text-decoration: line-through;
+          opacity: 0.7;
         }
         .brief-preview a {
           color: #60a5fa;
@@ -421,6 +725,95 @@ export default function BriefComposer({ campaignId, campaignName, initialBrief, 
         }
         .brief-preview a:hover {
           color: #93c5fd;
+        }
+        .brief-preview blockquote {
+          border-left: 4px solid #86efac;
+          padding-left: 1rem;
+          margin: 1rem 0;
+          color: #86efac;
+          font-style: italic;
+        }
+        .brief-preview pre {
+          background: #1a1a1a;
+          padding: 1rem;
+          border-radius: 0.5rem;
+          overflow-x: auto;
+          margin: 1rem 0;
+        }
+        .brief-preview code {
+          font-family: "IBM Plex Mono", monospace;
+          font-size: 0.9em;
+          color: #fbbf24;
+        }
+        .brief-preview hr {
+          border: 0;
+          height: 1px;
+          background: #065f46;
+          margin: 2rem 0;
+        }
+        .brief-preview table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 1rem 0;
+        }
+        .brief-preview th {
+          padding: 0.5rem;
+          text-align: left;
+          border-bottom: 2px solid #065f46;
+          color: #86efac;
+        }
+        .brief-preview td {
+          padding: 0.5rem;
+          border-bottom: 1px solid #065f46;
+        }
+        .brief-preview img, .brief-preview video {
+          margin: 1rem 0;
+          border-radius: 0.5rem;
+          border: 1px solid #065f46;
+          max-width: 100%;
+          height: auto;
+        }
+        
+        [contenteditable]:empty:before {
+          content: attr(data-placeholder);
+          color: #6b7280;
+          pointer-events: none;
+        }
+        
+        [contenteditable] {
+          outline: none;
+        }
+        
+        [contenteditable] h1,
+        [contenteditable] h2,
+        [contenteditable] h3 {
+          color: #86efac;
+          margin: 1rem 0 0.5rem;
+        }
+        
+        [contenteditable] a {
+          color: #60a5fa;
+          text-decoration: underline;
+        }
+        
+        [contenteditable] blockquote {
+          border-left: 4px solid #86efac;
+          padding-left: 1rem;
+          margin: 1rem 0;
+          color: #86efac;
+        }
+        
+        [contenteditable] pre {
+          background: #1a1a1a;
+          padding: 1rem;
+          border-radius: 0.5rem;
+          overflow-x: auto;
+          margin: 1rem 0;
+        }
+        
+        [contenteditable] code {
+          font-family: "IBM Plex Mono", monospace;
+          color: #fbbf24;
         }
       `}</style>
     </div>

@@ -47,7 +47,8 @@ export class TwitterSyncService {
     try {
       const cached = await redis.get(this.RATE_LIMIT_KEY)
       if (cached) {
-        return JSON.parse(cached as string)
+        const cachedStr = typeof cached === 'string' ? cached : JSON.stringify(cached)
+        return JSON.parse(cachedStr)
       }
       
       return {
@@ -58,7 +59,7 @@ export class TwitterSyncService {
     } catch (error) {
       console.error('Error getting rate limit:', error)
       return {
-        remaining: 0,
+        remaining: this.RATE_LIMITS.TWEETS_LOOKUP.limit,
         reset: Date.now() + this.RATE_LIMITS.TWEETS_LOOKUP.window,
         limit: this.RATE_LIMITS.TWEETS_LOOKUP.limit,
       }
@@ -212,8 +213,42 @@ export class TwitterSyncService {
     }
     
     try {
-      // Get all KOLs in the campaign
-      const kols = await CampaignKOLService.getCampaignKOLs(campaignId)
+      // First try to get KOLs from CampaignKOLService (new format)
+      let kols = await CampaignKOLService.getCampaignKOLs(campaignId)
+      
+      // If no KOLs found, try getting from campaign object (old format)
+      if (kols.length === 0) {
+        console.log('No KOLs in service, checking campaign object...')
+        const { getCampaign } = await import('@/lib/campaign')
+        const campaign = await getCampaign(campaignId)
+        
+        if (campaign && campaign.kols && campaign.kols.length > 0) {
+          console.log(`Found ${campaign.kols.length} KOLs in campaign object`)
+          // Convert old format KOLs to format expected by sync
+          kols = campaign.kols.map(kol => ({
+            id: kol.id,
+            campaignId: campaignId,
+            kolId: kol.id,
+            kolHandle: kol.handle,
+            kolName: kol.name,
+            kolImage: kol.pfp,
+            tier: kol.tier as any,
+            stage: kol.stage as any,
+            deviceStatus: kol.device as any,
+            budget: typeof kol.budget === 'string' ? parseFloat(kol.budget) || 0 : kol.budget,
+            paymentStatus: kol.payment as any,
+            links: kol.links || [],
+            platform: Array.isArray(kol.platform) ? kol.platform[0] as any : kol.platform as any,
+            contentType: 'tweet' as any,
+            totalViews: kol.views || 0,
+            totalEngagement: (kol.likes || 0) + (kol.retweets || 0) + (kol.comments || 0),
+            engagementRate: 0,
+            score: 0,
+            addedAt: kol.lastUpdated || new Date(),
+            addedBy: 'system',
+          }))
+        }
+      }
       
       // Collect all tweet IDs
       const tweetIdMap = new Map<string, string>() // tweetId -> kolId
@@ -231,6 +266,8 @@ export class TwitterSyncService {
         console.log('No tweets to sync for campaign', campaignId)
         return result
       }
+      
+      console.log(`Found ${tweetIdMap.size} tweets to sync`)
       
       // Check rate limit
       const rateLimit = await this.getRateLimitStatus()
@@ -253,12 +290,36 @@ export class TwitterSyncService {
         if (!kolId) continue
         
         try {
-          await CampaignKOLService.updateKOLMetrics(kolId, {
-            views: tweet.public_metrics.impression_count,
-            likes: tweet.public_metrics.like_count,
-            retweets: tweet.public_metrics.retweet_count,
-            replies: tweet.public_metrics.reply_count,
-          })
+          // Find the original KOL to update
+          const kol = kols.find(k => k.id === kolId)
+          if (!kol) continue
+          
+          // If it's from old format, update the campaign directly
+          if (kols.length > 0 && !await CampaignKOLService.getCampaignKOLs(campaignId).then(k => k.length)) {
+            // Directly update the campaign in Redis to bypass authorization
+            const campaign = await redis.json.get(campaignId, '$') as any
+            if (campaign && campaign[0]) {
+              const campaignData = campaign[0]
+              const kolIndex = campaignData.kols.findIndex((k: any) => k.id === kolId)
+              if (kolIndex >= 0) {
+                campaignData.kols[kolIndex].views = tweet.public_metrics.impression_count
+                campaignData.kols[kolIndex].likes = tweet.public_metrics.like_count
+                campaignData.kols[kolIndex].retweets = tweet.public_metrics.retweet_count
+                campaignData.kols[kolIndex].comments = tweet.public_metrics.reply_count
+                campaignData.kols[kolIndex].lastUpdated = new Date()
+                
+                await redis.json.set(campaignId, '$', campaignData)
+              }
+            }
+          } else {
+            // Update using CampaignKOLService
+            await CampaignKOLService.updateKOLMetrics(kolId, {
+              views: tweet.public_metrics.impression_count,
+              likes: tweet.public_metrics.like_count,
+              retweets: tweet.public_metrics.retweet_count,
+              replies: tweet.public_metrics.reply_count,
+            })
+          }
           
           result.synced++
         } catch (error) {

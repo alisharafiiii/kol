@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { findUserByWallet, findUserByUsername } from '@/lib/user-identity';
 import { redis, InfluencerProfile } from '@/lib/redis';
+import { ProfileService } from '@/lib/services/profile-service';
+import type { UnifiedProfile } from '@/lib/types/profile';
 
 export async function GET(req: NextRequest) {
   console.log('=== USER PROFILE API: Request received ===');
@@ -53,6 +55,46 @@ export async function GET(req: NextRequest) {
       // If no user found by wallet, or if handle is provided, try by handle
       if (!user && handle) {
         const normalizedHandle = handle.replace('@', '').toLowerCase();
+        console.log('USER PROFILE API: Searching by handle in ProfileService:', normalizedHandle);
+        
+        // First try ProfileService which has complete data
+        const unifiedProfile = await ProfileService.getProfileByHandle(normalizedHandle);
+        if (unifiedProfile) {
+          console.log('USER PROFILE API: Found unified profile');
+          // Return the complete profile data
+          const response = {
+            user: {
+              id: unifiedProfile.id,
+              name: unifiedProfile.name,
+              profileImageUrl: unifiedProfile.profileImageUrl?.replace('_normal', '_400x400'),
+              twitterHandle: unifiedProfile.twitterHandle,
+              approvalStatus: unifiedProfile.approvalStatus || 'pending',
+              role: unifiedProfile.role || 'user',
+              // Complete profile data
+              email: unifiedProfile.email,
+              phone: unifiedProfile.phone,
+              contacts: unifiedProfile.contacts,
+              shippingAddress: unifiedProfile.shippingAddress,
+              bio: unifiedProfile.bio,
+              country: unifiedProfile.country,
+              city: unifiedProfile.city,
+              socialLinks: unifiedProfile.socialLinks,
+              walletAddresses: unifiedProfile.walletAddresses,
+              createdAt: unifiedProfile.createdAt,
+              updatedAt: unifiedProfile.updatedAt,
+              notes: unifiedProfile.notes,
+              // KOL specific
+              isKOL: unifiedProfile.isKOL,
+              currentTier: unifiedProfile.currentTier,
+              kolMetrics: unifiedProfile.kolMetrics,
+              campaigns: unifiedProfile.campaigns
+            }
+          };
+          console.log('USER PROFILE API: Returning unified profile data');
+          return NextResponse.json(response);
+        }
+        
+        // Fall back to old Redis lookup
         console.log('USER PROFILE API: Searching by handle in Redis:', normalizedHandle);
         
         const userIds = await redis.smembers(`idx:username:${normalizedHandle}`);
@@ -105,7 +147,25 @@ export async function GET(req: NextRequest) {
         profileImageUrl: user.profileImageUrl?.replace('_normal', '_400x400'),
         twitterHandle: user.twitterHandle,
         approvalStatus: user.approvalStatus || 'pending',
-        role: user.role || 'user'
+        role: user.role || 'user',
+        // Add available fields from InfluencerProfile
+        bio: user.bio,
+        country: user.country,
+        shippingInfo: user.shippingInfo,
+        socialAccounts: user.socialAccounts,
+        walletAddresses: user.walletAddresses,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        adminNotes: user.adminNotes,
+        // KOL specific fields
+        followerCount: user.followerCount,
+        followingCount: user.followingCount,
+        audienceTypes: user.audienceTypes,
+        chains: user.chains,
+        postPricePerPost: user.postPricePerPost,
+        monthlySupportBudget: user.monthlySupportBudget,
+        campaigns: user.campaigns,
+        campaignHistory: user.campaignHistory
       }
     };
     console.log('USER PROFILE API: Returning user data:', JSON.stringify(response, null, 2));

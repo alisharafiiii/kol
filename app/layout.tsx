@@ -1,4 +1,4 @@
-import './globals.css'
+import '@/app/globals.css'
 import type { Metadata } from 'next'
 import WagmiProvider from '@/components/WagmiProvider'
 import OnchainKitProvider from '@/components/OnchainKitProvider'
@@ -7,6 +7,7 @@ import { Inter } from 'next/font/google'
 import UserIdentityManager from '@/components/UserIdentityManager'
 import LayoutWrapper from '@/components/LayoutWrapper'
 import { pressStart2P, ibmPlexMono } from './fonts'
+import '@/lib/ensure-upload-dirs'
 
 const inter = Inter({ subsets: ['latin'] })
 

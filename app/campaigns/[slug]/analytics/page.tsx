@@ -14,14 +14,75 @@ import {
   CHART_COLORS
 } from '@/components/charts/ChartComponents'
 import { PDFExporter } from '@/lib/pdf-export'
-import type { CampaignKOL, KOLTier, SocialPlatform } from '@/lib/types/profile'
-import type { Campaign } from '@/lib/campaign'
+import type { CampaignKOL, KOLTier, SocialPlatform, DeviceStatus, PaymentStatus, CampaignStage } from '@/lib/types/profile'
+import type { Campaign, KOL } from '@/lib/campaign'
 
 // Chart components placeholder - we'll implement with recharts
 interface ChartData {
   name: string
   value: number
   [key: string]: any
+}
+
+// Specific types for analytics data
+interface TierChartData extends ChartData {
+  views: number
+  budget: number
+  color?: string
+}
+
+interface PlatformChartData extends ChartData {
+  views: number
+}
+
+interface PaymentChartData extends ChartData {
+  amount: number
+}
+
+interface BudgetChartData extends ChartData {
+  percentage: number
+  color?: string
+}
+
+// Adapter function to convert KOL to CampaignKOL format
+function mapKOLToCampaignKOL(kol: KOL): CampaignKOL {
+  // Parse budget to get numeric value
+  let budgetValue = 0
+  if (kol.budget === 'free') {
+    budgetValue = 0
+  } else if (kol.budget === 'with device') {
+    budgetValue = 500 // Estimated device cost
+  } else {
+    // Parse numeric budget (remove $ and commas)
+    budgetValue = parseFloat(kol.budget.replace(/[$,]/g, '')) || 0
+  }
+  
+  return {
+    id: kol.id,
+    campaignId: '', // Will be filled from campaign context
+    kolId: kol.id, // Using same ID for now
+    kolHandle: kol.handle,
+    kolName: kol.name,
+    kolImage: kol.pfp,
+    tier: (kol.tier || 'micro') as KOLTier,
+    stage: kol.stage as CampaignStage,
+    deviceStatus: kol.device as DeviceStatus,
+    budget: budgetValue,
+    paymentStatus: kol.payment as PaymentStatus,
+    links: kol.links || [],
+    platform: (kol.platform[0] || 'twitter') as SocialPlatform,
+    contentType: 'tweet', // Default content type
+    metrics: undefined, // No metrics data in KOL type
+    totalViews: kol.views || 0,
+    totalEngagement: 0, // Not available in current KOL type
+    engagementRate: 0, // Not available in current KOL type
+    score: 0, // Not available in current KOL type
+    addedAt: new Date(kol.lastUpdated || Date.now()),
+    addedBy: kol.addedBy || '',
+    postedAt: undefined,
+    completedAt: kol.stage === 'done' ? new Date() : undefined,
+    lastSyncedAt: undefined,
+  }
 }
 
 export default function CampaignAnalyticsPage({ params }: { params: { slug: string } }) {
@@ -43,21 +104,20 @@ export default function CampaignAnalyticsPage({ params }: { params: { slug: stri
       setLoading(true)
       setError(null)
       
-      // Fetch campaign by slug
-      const campaignsRes = await fetch('/api/campaigns')
-      if (!campaignsRes.ok) throw new Error('Failed to load campaigns')
-      const campaigns = await campaignsRes.json()
+      // Fetch campaign by slug using the dedicated API endpoint
+      const campaignRes = await fetch(`/api/campaigns/slug/${params.slug}`)
+      if (!campaignRes.ok) {
+        if (campaignRes.status === 404) {
+          throw new Error('Campaign not found')
+        }
+        throw new Error('Failed to load campaign')
+      }
+      const campaignData = await campaignRes.json()
       
-      const campaign = campaigns.find((c: any) => c.slug === params.slug)
-      if (!campaign) throw new Error('Campaign not found')
+      setCampaign(campaignData)
       
-      setCampaign(campaign)
-      
-      // Fetch KOLs
-      const kolsRes = await fetch(`/api/campaigns/${campaign.id}/kols`)
-      if (!kolsRes.ok) throw new Error('Failed to load KOLs')
-      const kolsData = await kolsRes.json()
-      setKols(kolsData)
+      // Use KOLs from the campaign object - they're already included
+      setKols(campaignData.kols.map(mapKOLToCampaignKOL))
       
     } catch (err: any) {
       setError(err.message)
@@ -86,22 +146,22 @@ export default function CampaignAnalyticsPage({ params }: { params: { slug: stri
     averageEngagementRate: 0,
     
     // Tier distribution
-    tierDistribution: [] as ChartData[],
+    tierDistribution: [] as TierChartData[],
     
     // Platform breakdown
-    platformBreakdown: [] as ChartData[],
+    platformBreakdown: [] as PlatformChartData[],
     
     // Stage distribution
     stageDistribution: [] as ChartData[],
     
     // Payment status
-    paymentDistribution: [] as ChartData[],
+    paymentDistribution: [] as PaymentChartData[],
     
     // Top performers
     topPerformers: [] as any[],
     
     // Budget allocation
-    budgetByTier: [] as ChartData[],
+    budgetByTier: [] as BudgetChartData[],
     
     // Performance timeline
     performanceTimeline: [] as ChartData[],
@@ -231,6 +291,23 @@ export default function CampaignAnalyticsPage({ params }: { params: { slug: stri
     if (!campaign) return
     
     try {
+      // Get user session for profile image and name
+      const session = await fetch('/api/auth/session').then(res => res.json())
+      
+      // Convert logo to base64
+      let logoBase64 = ''
+      try {
+        const logoResponse = await fetch('/logo.png')
+        const logoBlob = await logoResponse.blob()
+        logoBase64 = await new Promise<string>((resolve) => {
+          const reader = new FileReader()
+          reader.onloadend = () => resolve(reader.result as string)
+          reader.readAsDataURL(logoBlob)
+        })
+      } catch (e) {
+        console.error('Failed to load logo:', e)
+      }
+      
       const exporter = new PDFExporter()
       const pdfBlob = await exporter.exportAnalytics({
         campaign,
@@ -243,7 +320,14 @@ export default function CampaignAnalyticsPage({ params }: { params: { slug: stri
         costPerEngagement: analytics.costPerEngagement,
         averageEngagementRate: analytics.averageEngagementRate,
         tierDistribution: analytics.tierDistribution,
-        topPerformers: analytics.topPerformers
+        topPerformers: analytics.topPerformers,
+        platformBreakdown: analytics.platformBreakdown,
+        stageDistribution: analytics.stageDistribution,
+        paymentDistribution: analytics.paymentDistribution,
+        timelineData: kols.length > 0 ? generateTimelineData(kols) : undefined,
+        userProfileImage: session?.user?.image,
+        userName: session?.user?.name,
+        logoBase64
       })
       
       PDFExporter.download(
@@ -254,6 +338,42 @@ export default function CampaignAnalyticsPage({ params }: { params: { slug: stri
       console.error('Error exporting PDF:', error)
       alert('Failed to export PDF. Please try again.')
     }
+  }
+  
+  // Generate timeline data from KOLs
+  const generateTimelineData = (kols: CampaignKOL[]) => {
+    // Group KOLs by date (using postedAt or addedAt)
+    const dateGroups: Record<string, { views: number; engagement: number; posts: number }> = {}
+    
+    kols.forEach(kol => {
+      const dateValue = kol.postedAt || kol.addedAt
+      const date = dateValue ? new Date(dateValue).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+      
+      if (!dateGroups[date]) {
+        dateGroups[date] = { views: 0, engagement: 0, posts: 0 }
+      }
+      
+      dateGroups[date].views += kol.totalViews || 0
+      dateGroups[date].engagement += kol.totalEngagement || 0
+      dateGroups[date].posts += 1
+    })
+    
+    // Convert to array and sort by date
+    const timeline = Object.entries(dateGroups)
+      .map(([date, data]) => ({
+        date,
+        views: data.views,
+        engagement: data.engagement,
+        posts: data.posts
+      }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .slice(-30) // Last 30 days
+    
+    // Format dates for display
+    return timeline.map(point => ({
+      ...point,
+      date: new Date(point.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    }))
   }
   
   if (loading) {

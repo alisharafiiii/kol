@@ -127,6 +127,18 @@ export default function CampaignCard({ campaign, onDelete, currentUser }: Campai
           <span>${totalBudget.toLocaleString()} USD</span>
         </div>
         
+        {/* Campaign metadata */}
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <span className="px-2 py-1 bg-yellow-900 border border-yellow-300 text-yellow-300">
+            {campaign.projects.length} PROJECTS
+          </span>
+          {campaign.chains && campaign.chains.length > 0 && (
+            <span className="px-2 py-1 bg-yellow-900 border border-yellow-300 text-yellow-300">
+              {campaign.chains.join(', ')}
+            </span>
+          )}
+        </div>
+        
         <div className="flex justify-between">
           <span className="text-gray-500">KOLs:</span>
           <span>{campaign.kols.length}</span>

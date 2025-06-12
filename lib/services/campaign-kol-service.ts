@@ -73,7 +73,10 @@ export class CampaignKOLService {
       )
       
       // Add to campaign's KOL list
-      await redis.sadd(`${this.CAMPAIGN_PREFIX}${data.campaignId}:kols`, campaignKOL.id)
+      const redisKey = data.campaignId.startsWith('campaign:') 
+        ? `${data.campaignId}:kols`
+        : `${this.CAMPAIGN_PREFIX}${data.campaignId}:kols`
+      await redis.sadd(redisKey, campaignKOL.id)
       
       // Update profile with campaign participation
       const participation: CampaignParticipation = {
@@ -157,10 +160,15 @@ export class CampaignKOLService {
    */
   static async getCampaignKOLs(campaignId: string): Promise<CampaignKOL[]> {
     try {
-      const kolIds = await redis.smembers(`${this.CAMPAIGN_PREFIX}${campaignId}:kols`)
+      // Check if campaignId already has the campaign: prefix
+      const redisKey = campaignId.startsWith('campaign:') 
+        ? `${campaignId}:kols`
+        : `${this.CAMPAIGN_PREFIX}${campaignId}:kols`
+      
+      const kolIds = await redis.smembers(redisKey)
       
       const kols = await Promise.all(
-        kolIds.map(async (id) => {
+        kolIds.map(async (id: string) => {
           const kol = await redis.json.get(`${this.PREFIX}${id}`)
           return this.deserializeKOL(kol)
         })
@@ -187,7 +195,10 @@ export class CampaignKOLService {
       
       // Remove from Redis
       await redis.del(`${this.PREFIX}${kolId}`)
-      await redis.srem(`${this.CAMPAIGN_PREFIX}${campaignId}:kols`, kolId)
+      const redisKey = campaignId.startsWith('campaign:') 
+        ? `${campaignId}:kols`
+        : `${this.CAMPAIGN_PREFIX}${campaignId}:kols`
+      await redis.srem(redisKey, kolId)
       
       // Remove from profile campaigns
       const profile = await ProfileService.getProfileById(campaignKOL.kolId)

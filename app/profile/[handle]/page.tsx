@@ -56,7 +56,7 @@ export default function ProfilePage({ params }: { params: { handle: string } }) 
   const getTierColor = (tier: string) => {
     switch (tier) {
       case 'hero': return 'text-yellow-300 bg-yellow-900/50'
-      case 'legend': return 'text-purple-300 bg-purple-900/50'
+      case 'legend': return 'text-orange-300 bg-orange-900/50'
       case 'star': return 'text-blue-300 bg-blue-900/50'
       case 'rising': return 'text-green-300 bg-green-900/50'
       case 'micro': return 'text-gray-300 bg-gray-900/50'

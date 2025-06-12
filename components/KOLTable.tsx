@@ -1,26 +1,60 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { KOL } from '@/lib/campaign'
+import type { Product } from '@/lib/types/product'
 import KOLProfileModal from './KOLProfileModal'
+import { ProductServiceClient } from '@/lib/services/product-service-client'
 
 interface KOLTableProps {
   kols: KOL[]
+  campaignId: string
   onUpdate: (kolId: string, updates: Partial<KOL>) => void
   onDelete: (kolId: string) => void
   canEdit: boolean
 }
 
-export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTableProps) {
+export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit }: KOLTableProps) {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editingField, setEditingField] = useState<string | null>(null)
   const [editValue, setEditValue] = useState('')
   const [selectedKOL, setSelectedKOL] = useState<{ handle: string; name: string } | null>(null)
+  const [products, setProducts] = useState<Product[]>([])
+  const [loadingProducts, setLoadingProducts] = useState(true)
+  const [showProductModal, setShowProductModal] = useState<string | null>(null)
+  const [updatingProduct, setUpdatingProduct] = useState<string | null>(null)
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([])
 
-  const stages: KOL['stage'][] = ['cancelled', 'reached-out', 'waiting-for-device', 'waiting-for-brief', 'posted', 'preparing', 'done']
-  const devices: KOL['device'][] = ['preparing', 'received', 'N/A', 'on-the-way', 'sent-before']
-  const payments: KOL['payment'][] = ['approved', 'paid', 'pending', 'rejected']
-  const tiers: KOL['tier'][] = ['hero', 'star', 'rising', 'micro']
+  const stages: KOL['stage'][] = ['reached out', 'preparing', 'posted', 'done', 'cancelled']
+  const devices: KOL['device'][] = ['na', 'on the way', 'received', 'owns', 'sent before', 'problem']
+  const payments: KOL['payment'][] = ['pending', 'approved', 'paid', 'rejected']
+  const tiers: KOL['tier'][] = ['hero', 'legend', 'star', 'rising', 'micro']
+
+  // Fetch products on mount
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const fetchedProducts = await ProductServiceClient.getActiveProducts()
+        setProducts(fetchedProducts)
+      } catch (error) {
+        console.error('Failed to fetch products:', error)
+      } finally {
+        setLoadingProducts(false)
+      }
+    }
+    fetchProducts()
+  }, [])
+
+  // Get all products assigned to a KOL (by handle)
+  const getKOLProducts = (handle: string) => {
+    return kols
+      .filter(k => k.handle === handle && k.productId)
+      .map(k => {
+        const product = products.find(p => p.id === k.productId)
+        return product ? { ...product, kolEntryId: k.id, productCost: k.productCost } : null
+      })
+      .filter(Boolean) as (Product & { kolEntryId: string; productCost?: number })[]
+  }
 
   const startEdit = (kolId: string, field: string, value: any) => {
     setEditingId(kolId)
@@ -28,18 +62,81 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
     setEditValue(Array.isArray(value) ? value.join(', ') : String(value || ''))
   }
 
-  const saveEdit = (kolId: string, field: string) => {
+  const saveEdit = async (kolId: string, field: string) => {
     let value: any = editValue
     
-    if (field === 'views') {
+    if (field === 'views' || field === 'likes' || field === 'retweets' || field === 'comments') {
       value = parseInt(editValue) || 0
     } else if (field === 'links' || field === 'platform') {
       value = editValue.split(',').map(v => v.trim()).filter(Boolean)
     }
     
-    onUpdate(kolId, { [field]: value })
-    setEditingId(null)
-    setEditingField(null)
+    // Find the KOL being edited
+    const editedKOL = kols.find(k => k.id === kolId)
+    if (!editedKOL) return
+    
+    // If editing a non-product field, update all entries for this handle
+    if (!['productId', 'productCost', 'productQuantity'].includes(field)) {
+      const kolsWithSameHandle = kols.filter(k => k.handle === editedKOL.handle)
+      
+      // Update all KOL entries with the same handle
+      try {
+        await Promise.all(
+          kolsWithSameHandle.map(k => onUpdate(k.id, { [field]: value }))
+        )
+        setEditingId(null)
+        setEditingField(null)
+        setEditValue('')
+      } catch (error) {
+        console.error('Error updating KOLs:', error)
+        alert('Failed to update. Please try again.')
+      }
+    } else {
+      // For product fields, only update the specific entry
+      try {
+        await onUpdate(kolId, { [field]: value })
+        setEditingId(null)
+        setEditingField(null)
+        setEditValue('')
+      } catch (error) {
+        console.error('Error updating KOL:', error)
+        alert('Failed to update. Please try again.')
+      }
+    }
+  }
+
+  const handleProductChange = async (kolId: string, productId: string | null) => {
+    setUpdatingProduct(kolId)
+    try {
+      if (productId === null) {
+        // Remove product - use empty strings instead of null
+        await onUpdate(kolId, { 
+          productId: '', 
+          productCost: 0,
+          productAssignmentId: ''
+        })
+      } else {
+        // Add/change product
+        const product = products.find(p => p.id === productId)
+        if (product) {
+          await onUpdate(kolId, { 
+            productId: product.id,
+            productCost: product.price
+          })
+        }
+      }
+      // Close modal only after successful update
+      setShowProductModal(null)
+      
+      // Optionally refresh products list to ensure we have latest data
+      const updatedProducts = await ProductServiceClient.getActiveProducts()
+      setProducts(updatedProducts)
+    } catch (error) {
+      console.error('Error updating product:', error)
+      alert('Failed to update product. Please try again.')
+    } finally {
+      setUpdatingProduct(null)
+    }
   }
 
   const cancelEdit = () => {
@@ -67,9 +164,22 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
     }
   }
 
+  const getDeviceColor = (device?: KOL['device']) => {
+    switch (device) {
+      case 'received': return 'bg-green-600 text-white w-24'
+      case 'owns': return 'bg-green-500 text-white w-24'
+      case 'on the way': return 'bg-yellow-500 text-black w-24'
+      case 'sent before': return 'bg-blue-500 text-white w-24'
+      case 'problem': return 'bg-red-600 text-white w-24'
+      case 'na': 
+      default: return 'bg-gray-600 text-white w-24'
+    }
+  }
+
   const getTierBadge = (tier?: KOL['tier']) => {
     switch (tier) {
       case 'hero': return { text: 'HERO', color: 'bg-purple-600 text-white' }
+      case 'legend': return { text: 'LEGEND', color: 'bg-orange-600 text-white' }
       case 'star': return { text: 'STAR', color: 'bg-yellow-500 text-black' }
       case 'rising': return { text: 'RISING', color: 'bg-blue-500 text-white' }
       case 'micro': return { text: 'MICRO', color: 'bg-gray-600 text-white' }
@@ -115,6 +225,31 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
     }
   }
 
+  const shortenUrl = (url: string, maxLength: number = 25) => {
+    try {
+      const urlObj = new URL(url)
+      const domain = urlObj.hostname.replace('www.', '')
+      const path = urlObj.pathname
+      
+      // For Twitter/X links, show the username
+      if (domain.includes('twitter.com') || domain.includes('x.com')) {
+        const match = path.match(/\/([^\/]+)\/status/)
+        if (match) return `x.com/${match[1]}/...`
+      }
+      
+      // For other links, show domain + shortened path
+      if (path.length > 1) {
+        const shortPath = path.length > 15 ? path.substring(0, 12) + '...' : path
+        return domain + shortPath
+      }
+      
+      return domain
+    } catch {
+      // If URL parsing fails, just truncate
+      return url.length > maxLength ? url.substring(0, maxLength) + '...' : url
+    }
+  }
+
   if (kols.length === 0) {
     return (
       <div className="border border-green-300 p-8 text-center">
@@ -122,6 +257,35 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
       </div>
     )
   }
+
+  // Group KOLs by handle to consolidate entries
+  const groupedKOLs = kols.reduce((acc, kol) => {
+    if (!acc[kol.handle]) {
+      acc[kol.handle] = {
+        mainKOL: kol,
+        products: []
+      }
+    }
+    // Update main KOL data with latest non-product info
+    Object.keys(kol).forEach(key => {
+      if (!['id', 'productId', 'productCost', 'productQuantity', 'productAssignmentId'].includes(key)) {
+        (acc[kol.handle].mainKOL as any)[key] = (kol as any)[key]
+      }
+    })
+    // Add product info if exists
+    if (kol.productId) {
+      acc[kol.handle].products.push({
+        kolEntryId: kol.id,
+        productId: kol.productId,
+        productCost: kol.productCost || 0,
+        productQuantity: kol.productQuantity || 1
+      })
+    } else if (!acc[kol.handle].mainKOL.id) {
+      // Ensure we have the main KOL ID for entries without products
+      acc[kol.handle].mainKOL.id = kol.id
+    }
+    return acc
+  }, {} as Record<string, { mainKOL: KOL, products: Array<{ kolEntryId: string, productId: string, productCost: number, productQuantity: number }> }>)
 
   return (
     <>
@@ -134,8 +298,12 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
               <th className="p-2 text-left text-xs uppercase">Stage</th>
               <th className="p-2 text-left text-xs uppercase">Device</th>
               <th className="p-2 text-left text-xs uppercase">Budget</th>
+              <th className="p-2 text-left text-xs uppercase">Product(s)</th>
               <th className="p-2 text-left text-xs uppercase">Payment</th>
               <th className="p-2 text-left text-xs uppercase">Views</th>
+              <th className="p-2 text-left text-xs uppercase">Likes</th>
+              <th className="p-2 text-left text-xs uppercase">RTs</th>
+              <th className="p-2 text-left text-xs uppercase">Comments</th>
               <th className="p-2 text-left text-xs uppercase">Contact</th>
               <th className="p-2 text-left text-xs uppercase">Links</th>
               <th className="p-2 text-left text-xs uppercase">Platform</th>
@@ -143,8 +311,8 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
             </tr>
           </thead>
           <tbody>
-            {kols.map(kol => (
-              <tr key={kol.id} className="border-b border-green-300 hover:bg-green-950/30">
+            {Object.values(groupedKOLs).map(({ mainKOL: kol, products: kolProductEntries }) => (
+              <tr key={kol.handle} className={`border-b border-green-300 hover:bg-green-950/30 ${editingId === kol.id ? 'bg-green-950/20' : ''}`}>
                 <td className="p-2">
                   <div className="flex items-center gap-2">
                     {kol.pfp ? (
@@ -170,6 +338,10 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
                       onBlur={() => saveEdit(kol.id, 'tier')}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') saveEdit(kol.id, 'tier')
+                        if (e.key === 'Escape') cancelEdit()
+                      }}
                       className="bg-black border border-green-300 text-xs p-1"
                       autoFocus
                     >
@@ -200,6 +372,10 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
                       onBlur={() => saveEdit(kol.id, 'stage')}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') saveEdit(kol.id, 'stage')
+                        if (e.key === 'Escape') cancelEdit()
+                      }}
                       className="bg-black border border-green-300 text-xs p-1"
                       autoFocus
                     >
@@ -208,12 +384,13 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
                       ))}
                     </select>
                   ) : (
-                    <span 
-                      className={`text-xs cursor-pointer ${getStageColor(kol.stage)}`}
+                    <button 
+                      className={`px-2 py-1 rounded text-xs ${getStageColor(kol.stage || 'reached out')} bg-gray-800 hover:bg-gray-700 transition-all ${canEdit ? 'cursor-pointer' : 'cursor-default'}`}
                       onClick={() => canEdit && startEdit(kol.id, 'stage', kol.stage)}
+                      disabled={!canEdit}
                     >
-                      {kol.stage}
-                    </span>
+                      {kol.stage || 'reached out'}
+                    </button>
                   )}
                 </td>
                 
@@ -223,20 +400,38 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
                       onBlur={() => saveEdit(kol.id, 'device')}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') saveEdit(kol.id, 'device')
+                        if (e.key === 'Escape') cancelEdit()
+                      }}
                       className="bg-black border border-green-300 text-xs p-1"
                       autoFocus
                     >
                       {devices.map(d => (
-                        <option key={d} value={d}>{d}</option>
+                        <option key={d} value={d}>
+                          {d === 'na' ? '➖ N/A' : 
+                           d === 'on the way' ? '📦 On the Way' : 
+                           d === 'received' ? '✅ Received' : 
+                           d === 'owns' ? '🏠 Owns' :
+                           d === 'sent before' ? '📤 Sent Before' :
+                           d === 'problem' ? '⚠️ Problem' :
+                           d}
+                        </option>
                       ))}
                     </select>
                   ) : (
-                    <span 
-                      className="text-xs cursor-pointer"
-                      onClick={() => canEdit && startEdit(kol.id, 'device', kol.device)}
+                    <button
+                      onClick={() => startEdit(kol.id, 'device', kol.device || 'na')}
+                      className={`px-2 py-1 rounded text-xs ${getDeviceColor(kol.device)} transition-all hover:opacity-80 ${canEdit ? 'cursor-pointer' : 'cursor-default'} text-center`}
+                      disabled={!canEdit}
                     >
-                      {kol.device}
-                    </span>
+                      {kol.device === 'na' && '➖ N/A'}
+                      {kol.device === 'on the way' && '📦 Shipping'}
+                      {kol.device === 'received' && '✅ Received'}
+                      {kol.device === 'owns' && '🏠 Owns'}
+                      {kol.device === 'sent before' && '📤 Sent'}
+                      {kol.device === 'problem' && '⚠️ Issue'}
+                    </button>
                   )}
                 </td>
                 
@@ -247,7 +442,10 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
                       onBlur={() => saveEdit(kol.id, 'budget')}
-                      onKeyDown={(e) => e.key === 'Enter' && saveEdit(kol.id, 'budget')}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') saveEdit(kol.id, 'budget')
+                        if (e.key === 'Escape') cancelEdit()
+                      }}
                       className="bg-black border border-green-300 text-xs p-1 w-24"
                       autoFocus
                     />
@@ -262,11 +460,258 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
                 </td>
                 
                 <td className="p-2">
+                  {(() => {
+                    if (loadingProducts) {
+                      return (
+                        <div className="text-xs text-gray-500 animate-pulse">
+                          Loading...
+                        </div>
+                      )
+                    }
+                    
+                    // Get all products for this KOL
+                    const kolProducts = kolProductEntries.map(pe => {
+                      const product = products.find(p => p.id === pe.productId)
+                      return product ? { 
+                        ...product, 
+                        kolEntryId: pe.kolEntryId, 
+                        productCost: pe.productCost,
+                        productQuantity: pe.productQuantity 
+                      } : null
+                    }).filter(Boolean) as (Product & { kolEntryId: string; productCost: number; productQuantity: number })[]
+                    
+                    const currentProduct = kol.productId && kol.productId !== '' ? products.find(p => p.id === kol.productId) : null
+                    
+                    if (showProductModal === kol.id) {
+                      return (
+                        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50" onClick={() => setShowProductModal(null)}>
+                          <div className="bg-black border border-green-300 p-4 rounded-lg max-w-3xl max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex items-center justify-between mb-3">
+                              <h3 className="text-sm font-bold text-green-300">Manage Products for @{kol.handle}</h3>
+                              <button
+                                onClick={() => setShowProductModal(null)}
+                                className="text-gray-400 hover:text-gray-200 text-lg"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                            
+                            {/* Current products */}
+                            {kolProducts.length > 0 && (
+                              <div className="mb-4">
+                                <p className="text-xs text-gray-400 mb-2">Current products:</p>
+                                <div className="space-y-2">
+                                  {kolProducts.map(p => (
+                                    <div key={p.kolEntryId} className="flex items-center justify-between bg-gray-900 p-2 rounded">
+                                      <div className="flex items-center gap-2">
+                                        {p.image ? (
+                                          <img src={p.image} alt={p.name} className="w-10 h-10 object-cover rounded" />
+                                        ) : (
+                                          <div className="w-10 h-10 bg-gray-800 rounded flex items-center justify-center text-gray-500">
+                                            📦
+                                          </div>
+                                        )}
+                                        <div>
+                                          <div className="text-xs text-green-300">{p.name}</div>
+                                          <div className="text-xs text-purple-400">
+                                            ${p.productCost || p.price} × {p.productQuantity} = ${(p.productCost || p.price) * p.productQuantity}
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <button
+                                        onClick={async () => {
+                                          try {
+                                            await onDelete(p.kolEntryId)
+                                            // Close and reopen modal to refresh data
+                                            setShowProductModal(null)
+                                            setTimeout(() => {
+                                              setShowProductModal(kol.id)
+                                            }, 100)
+                                          } catch (error) {
+                                            console.error('Error removing product:', error)
+                                            alert('Failed to remove product')
+                                          }
+                                        }}
+                                        className="text-red-400 hover:text-red-300 text-xs px-2 py-1 border border-red-500 rounded"
+                                      >
+                                        Remove
+                                      </button>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            
+                            {products.length === 0 ? (
+                              <div className="text-center py-8">
+                                <p className="text-xs text-gray-500">No products available in database</p>
+                              </div>
+                            ) : (
+                              <>
+                                <p className="text-xs text-gray-400 mb-3">Add products:</p>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                  {/* Show all products - allow adding same product multiple times */}
+                                  {products.map(p => (
+                                    <button
+                                      key={p.id}
+                                      onClick={async (e) => {
+                                        e.preventDefault()
+                                        
+                                        // Ask for quantity
+                                        const quantityStr = prompt(`How many ${p.name} do you want to add?`, '1')
+                                        if (!quantityStr) return
+                                        
+                                        const quantity = parseInt(quantityStr)
+                                        if (isNaN(quantity) || quantity < 1) {
+                                          alert('Please enter a valid quantity')
+                                          return
+                                        }
+                                        
+                                        // Create a new KOL entry with this product
+                                        try {
+                                          const res = await fetch(`/api/campaigns/${campaignId}/kols`, {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({
+                                              handle: kol.handle,
+                                              name: kol.name,
+                                              pfp: kol.pfp,
+                                              tier: kol.tier,
+                                              stage: kol.stage,
+                                              device: kol.device,
+                                              budget: kol.budget,
+                                              payment: kol.payment,
+                                              platform: kol.platform || ['x'],
+                                              contact: kol.contact || '',
+                                              links: kol.links || [],
+                                              views: kol.views || 0,
+                                              productId: p.id,
+                                              productCost: p.price,
+                                              productQuantity: quantity
+                                            })
+                                          })
+                                          if (res.ok) {
+                                            // Close modal and trigger parent refresh
+                                            setShowProductModal(null)
+                                            // Call the parent's fetch function if available
+                                            if ((window as any).refreshCampaignData) {
+                                              (window as any).refreshCampaignData()
+                                            } else {
+                                              // Fallback to reload if no refresh function
+                                              window.location.reload()
+                                            }
+                                          } else {
+                                            const error = await res.json()
+                                            alert(error.error || 'Failed to add product')
+                                          }
+                                        } catch (error) {
+                                          console.error('Error adding product:', error)
+                                          alert('Failed to add product')
+                                        }
+                                      }}
+                                      disabled={updatingProduct === kol.id}
+                                      className={`border border-gray-600 p-2 rounded hover:border-green-400 transition-colors ${updatingProduct === kol.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    >
+                                      {p.image ? (
+                                        <img src={p.image} alt={p.name} className="w-16 h-16 object-cover rounded mx-auto mb-1" />
+                                      ) : (
+                                        <div className="w-16 h-16 bg-gray-800 rounded mx-auto mb-1 flex items-center justify-center text-gray-500">
+                                          📦
+                                        </div>
+                                      )}
+                                      <div className="text-xs text-green-300 truncate">{p.name}</div>
+                                      <div className="text-xs text-purple-400">${p.price}</div>
+                                    </button>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+                            
+                            <div className="flex justify-end items-center mt-4 gap-2">
+                              <button
+                                onClick={() => setShowProductModal(null)}
+                                className="px-3 py-1 bg-gray-800 text-gray-300 text-xs rounded hover:bg-gray-700"
+                              >
+                                Close
+                              </button>
+                              <button
+                                onClick={() => {
+                                  // Refresh products list
+                                  setLoadingProducts(true)
+                                  ProductServiceClient.getActiveProducts()
+                                    .then(setProducts)
+                                    .catch(console.error)
+                                    .finally(() => setLoadingProducts(false))
+                                }}
+                                className="px-3 py-1 bg-blue-900/50 border border-blue-500 text-blue-300 text-xs rounded hover:bg-blue-800/50"
+                              >
+                                🔄 Refresh List
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    }
+                    
+                    return (
+                      <div 
+                        className={`cursor-pointer ${canEdit && !loadingProducts ? 'hover:bg-green-900/20' : ''} p-1 rounded ${loadingProducts ? 'cursor-not-allowed opacity-50' : ''}`}
+                        onClick={() => canEdit && !loadingProducts && setShowProductModal(kol.id)}
+                      >
+                        {kolProducts.length > 0 ? (
+                          <div className="space-y-1">
+                            {/* Group products by ID to show quantities */}
+                            {(() => {
+                              const productGroups = kolProducts.reduce((acc, p) => {
+                                if (!acc[p.id]) {
+                                  acc[p.id] = { ...p, totalQuantity: 0, entries: [] }
+                                }
+                                acc[p.id].totalQuantity += p.productQuantity
+                                acc[p.id].entries.push(p)
+                                return acc
+                              }, {} as Record<string, any>)
+                              
+                              return Object.values(productGroups).map((group: any, idx) => (
+                                <div key={group.id} className="flex items-center gap-1">
+                                  {group.image ? (
+                                    <img src={group.image} alt={group.name} className="w-6 h-6 object-cover rounded" />
+                                  ) : (
+                                    <div className="w-6 h-6 bg-gray-800 rounded flex items-center justify-center text-gray-500 text-xs">
+                                      📦
+                                    </div>
+                                  )}
+                                  <div>
+                                    <div className="text-xs text-purple-400">
+                                      ${group.price} {group.totalQuantity > 1 && `× ${group.totalQuantity}`}
+                                    </div>
+                                    <div className="text-xs text-gray-500 truncate max-w-[60px]" title={group.name}>
+                                      {group.name}
+                                    </div>
+                                  </div>
+                                </div>
+                              ))
+                            })()}
+                          </div>
+                        ) : (
+                          <div className="text-xs text-gray-500 hover:text-green-400">
+                            {canEdit ? '+ Add' : '-'}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })()}
+                </td>
+                
+                <td className="p-2">
                   {editingId === kol.id && editingField === 'payment' ? (
                     <select
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
                       onBlur={() => saveEdit(kol.id, 'payment')}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') saveEdit(kol.id, 'payment')
+                        if (e.key === 'Escape') cancelEdit()
+                      }}
                       className="bg-black border border-green-300 text-xs p-1"
                       autoFocus
                     >
@@ -275,12 +720,13 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
                       ))}
                     </select>
                   ) : (
-                    <span 
-                      className={`text-xs cursor-pointer ${getPaymentColor(kol.payment)}`}
+                    <button 
+                      className={`px-2 py-1 rounded text-xs ${getPaymentColor(kol.payment || 'pending')} bg-gray-800 hover:bg-gray-700 transition-all ${canEdit ? 'cursor-pointer' : 'cursor-default'}`}
                       onClick={() => canEdit && startEdit(kol.id, 'payment', kol.payment)}
+                      disabled={!canEdit}
                     >
-                      {kol.payment}
-                    </span>
+                      {kol.payment || 'pending'}
+                    </button>
                   )}
                 </td>
                 
@@ -291,16 +737,95 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
                       onBlur={() => saveEdit(kol.id, 'views')}
-                      onKeyDown={(e) => e.key === 'Enter' && saveEdit(kol.id, 'views')}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') saveEdit(kol.id, 'views')
+                        if (e.key === 'Escape') cancelEdit()
+                      }}
                       className="bg-black border border-green-300 text-xs p-1 w-20"
                       autoFocus
                     />
                   ) : (
                     <span 
-                      className="text-xs cursor-pointer"
+                      className="text-xs cursor-pointer flex items-center gap-1"
                       onClick={() => canEdit && startEdit(kol.id, 'views', kol.views)}
                     >
-                      {kol.views.toLocaleString()}
+                      <span className="opacity-50">👁️</span>
+                      {(kol.views || 0).toLocaleString()}
+                    </span>
+                  )}
+                </td>
+                
+                <td className="p-2">
+                  {editingId === kol.id && editingField === 'likes' ? (
+                    <input
+                      type="number"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onBlur={() => saveEdit(kol.id, 'likes')}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') saveEdit(kol.id, 'likes')
+                        if (e.key === 'Escape') cancelEdit()
+                      }}
+                      className="bg-black border border-green-300 text-xs p-1 w-20"
+                      autoFocus
+                    />
+                  ) : (
+                    <span 
+                      className="text-xs cursor-pointer flex items-center gap-1"
+                      onClick={() => canEdit && startEdit(kol.id, 'likes', kol.likes || 0)}
+                    >
+                      <span className="opacity-50">❤️</span>
+                      {(kol.likes || 0).toLocaleString()}
+                    </span>
+                  )}
+                </td>
+                
+                <td className="p-2">
+                  {editingId === kol.id && editingField === 'retweets' ? (
+                    <input
+                      type="number"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onBlur={() => saveEdit(kol.id, 'retweets')}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') saveEdit(kol.id, 'retweets')
+                        if (e.key === 'Escape') cancelEdit()
+                      }}
+                      className="bg-black border border-green-300 text-xs p-1 w-20"
+                      autoFocus
+                    />
+                  ) : (
+                    <span 
+                      className="text-xs cursor-pointer flex items-center gap-1"
+                      onClick={() => canEdit && startEdit(kol.id, 'retweets', kol.retweets || 0)}
+                    >
+                      <span className="opacity-50">🔁</span>
+                      {(kol.retweets || 0).toLocaleString()}
+                    </span>
+                  )}
+                </td>
+                
+                <td className="p-2">
+                  {editingId === kol.id && editingField === 'comments' ? (
+                    <input
+                      type="number"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onBlur={() => saveEdit(kol.id, 'comments')}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') saveEdit(kol.id, 'comments')
+                        if (e.key === 'Escape') cancelEdit()
+                      }}
+                      className="bg-black border border-green-300 text-xs p-1 w-20"
+                      autoFocus
+                    />
+                  ) : (
+                    <span 
+                      className="text-xs cursor-pointer flex items-center gap-1"
+                      onClick={() => canEdit && startEdit(kol.id, 'comments', kol.comments || 0)}
+                    >
+                      <span className="opacity-50">💬</span>
+                      {(kol.comments || 0).toLocaleString()}
                     </span>
                   )}
                 </td>
@@ -312,7 +837,10 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
                       onBlur={() => saveEdit(kol.id, 'contact')}
-                      onKeyDown={(e) => e.key === 'Enter' && saveEdit(kol.id, 'contact')}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') saveEdit(kol.id, 'contact')
+                        if (e.key === 'Escape') cancelEdit()
+                      }}
                       className="bg-black border border-green-300 text-xs p-1 w-32"
                       placeholder="Email, Telegram, etc"
                       autoFocus
@@ -356,7 +884,10 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
                       onBlur={() => saveEdit(kol.id, 'links')}
-                      onKeyDown={(e) => e.key === 'Enter' && saveEdit(kol.id, 'links')}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') saveEdit(kol.id, 'links')
+                        if (e.key === 'Escape') cancelEdit()
+                      }}
                       className="bg-black border border-green-300 text-xs p-1 w-32"
                       placeholder="Comma separated"
                       autoFocus
@@ -366,9 +897,9 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
                       className="text-xs cursor-pointer"
                       onClick={() => canEdit && startEdit(kol.id, 'links', kol.links)}
                     >
-                      {kol.links.length > 0 ? (
+                      {(kol.links || []).length > 0 ? (
                         <div className="space-y-1">
-                          {kol.links.map((link, i) => (
+                          {(kol.links || []).map((link, i) => (
                             <a 
                               key={i} 
                               href={link} 
@@ -377,7 +908,7 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
                               className="block text-blue-400 hover:underline truncate max-w-xs"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              {link}
+                              {shortenUrl(link)}
                             </a>
                           ))}
                         </div>
@@ -395,7 +926,10 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
                       onBlur={() => saveEdit(kol.id, 'platform')}
-                      onKeyDown={(e) => e.key === 'Enter' && saveEdit(kol.id, 'platform')}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') saveEdit(kol.id, 'platform')
+                        if (e.key === 'Escape') cancelEdit()
+                      }}
                       className="bg-black border border-green-300 text-xs p-1 w-24"
                       placeholder="Comma separated"
                       autoFocus
@@ -405,8 +939,8 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
                       className="flex gap-1 cursor-pointer"
                       onClick={() => canEdit && startEdit(kol.id, 'platform', kol.platform)}
                     >
-                      {kol.platform.length > 0 ? (
-                        kol.platform.map(p => (
+                      {(kol.platform || []).length > 0 ? (
+                        (kol.platform || []).map(p => (
                           <span key={p} className="text-lg" title={p}>
                             {getPlatformIcon(p)}
                           </span>
@@ -421,7 +955,23 @@ export default function KOLTable({ kols, onUpdate, onDelete, canEdit }: KOLTable
                 {canEdit && (
                   <td className="p-2">
                     <button
-                      onClick={() => onDelete(kol.id)}
+                      onClick={async () => {
+                        if (!confirm(`Are you sure you want to remove ${kol.name} completely from this campaign?`)) return
+                        
+                        // Delete all entries for this KOL
+                        try {
+                          for (const entry of kolProductEntries) {
+                            await onDelete(entry.kolEntryId)
+                          }
+                          // Also delete the main entry if it has no product
+                          if (!kol.productId) {
+                            await onDelete(kol.id)
+                          }
+                        } catch (error) {
+                          console.error('Error removing KOL:', error)
+                          alert('Failed to remove KOL')
+                        }
+                      }}
                       className="text-red-500 hover:text-red-400 text-xs"
                     >
                       Remove
