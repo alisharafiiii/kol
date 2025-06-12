@@ -2,44 +2,38 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
-import { useSession } from 'next-auth/react'
+import { useSession, signIn } from 'next-auth/react'
 import { MessageSquare, Users, TrendingUp, AlertCircle } from 'lucide-react'
 import { Line, Doughnut, Bar } from 'react-chartjs-2'
 import Image from 'next/image'
+import { format, parseISO, startOfDay, endOfDay, subDays } from 'date-fns'
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend,
-  ArcElement,
-  BarElement,
   Filler
 } from 'chart.js'
+import type { DiscordProject } from '@/lib/types/discord'
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend,
-  ArcElement,
-  BarElement,
   Filler
 )
-
-interface DiscordProject {
-  id: string
-  name: string
-  serverId: string
-  serverName: string
-  trackedChannels: string[]
-}
 
 interface DiscordAnalytics {
   metrics: {
@@ -60,76 +54,216 @@ interface DiscordAnalytics {
 // This page requires authentication and proper role
 export default function DiscordSharePage() {
   const params = useParams()
-  const id = decodeURIComponent(params.id as string)
-  const searchParams = useSearchParams()
-  const router = useRouter()
   const { data: session, status } = useSession()
+  const [project, setProject] = useState<DiscordProject | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [hasAccess, setHasAccess] = useState(false)
+  const [analytics, setAnalytics] = useState<DiscordAnalytics | null>(null)
+  const [scoutProject, setScoutProject] = useState<any>(null)
+  const searchParams = useSearchParams()
   const timeframe = searchParams.get('timeframe') || 'weekly'
   
-  const [project, setProject] = useState<DiscordProject | null>(null)
-  const [analytics, setAnalytics] = useState<DiscordAnalytics | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [scoutProject, setScoutProject] = useState<any>(null)
-  const [roleError, setRoleError] = useState(false)
+  // Convert URL-safe format back to normal format
+  // Handle both %3A (URL-encoded colon) and -- (double dash) formats
+  const rawId = params.id as string
+  const projectId = rawId
+    .replace(/%3A/g, ':')  // Convert URL-encoded colons
+    .replace(/--/g, ':')   // Convert double dashes
+  
+  console.log('Discord Share: Raw ID:', rawId)
+  console.log('Discord Share: Parsed project ID:', projectId)
 
-  // Check authentication and role
+  // Check user access
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/api/auth/signin?callbackUrl=' + encodeURIComponent(window.location.href))
-    } else if (status === 'authenticated' && session) {
-      // Check user role
-      const userRole = (session as any)?.role || (session.user as any)?.role
-      const allowedRoles = ['admin', 'core', 'team', 'viewer']
+    const checkAccess = async () => {
+      if (status === 'loading') return
       
-      if (!allowedRoles.includes(userRole)) {
-        setRoleError(true)
+      console.log('Discord Share: Auth status:', status)
+      
+      if (status === 'unauthenticated') {
+        setLoading(false)
+        return
+      }
+      
+      if (!session?.user?.name) {
+        setError('Please sign in to view this page')
+        setLoading(false)
+        return
+      }
+      
+      try {
+        // Get user profile to check role (same as brief page)
+        const profileRes = await fetch(`/api/user/profile?handle=${session.user.name}`)
+        if (profileRes.ok) {
+          const profileData = await profileRes.json()
+          const profile = profileData.user
+          
+          console.log('Discord Share: Profile data:', profile)
+          
+          // Check if user has appropriate role
+          const allowedRoles = ['admin', 'core', 'team', 'viewer']
+          if (profile.role && allowedRoles.includes(profile.role)) {
+            console.log('Access granted: User role:', profile.role)
+            setHasAccess(true)
+          } else {
+            // Hardcoded check for alinabu and sharafi_eth
+            const handle = session.user.name?.toLowerCase()
+            if (handle === 'alinabu' || handle === 'sharafi_eth') {
+              console.log('Access granted: Hardcoded admin -', handle)
+              setHasAccess(true)
+            } else {
+              console.log('Access denied: User role:', profile.role)
+              setError('Access denied. You need appropriate permissions to view Discord analytics.')
+              setLoading(false)
+            }
+          }
+        } else {
+          // If profile API fails, check hardcoded admins
+          const handle = session.user.name?.toLowerCase()
+          if (handle === 'alinabu' || handle === 'sharafi_eth') {
+            console.log('Access granted: Hardcoded admin (API failed) -', handle)
+            setHasAccess(true)
+          } else {
+            setError('Profile not found. Please contact an administrator.')
+            setLoading(false)
+          }
+        }
+      } catch (err) {
+        console.error('Error checking access:', err)
+        // On error, still check hardcoded admins
+        const handle = session.user.name?.toLowerCase()
+        if (handle === 'alinabu' || handle === 'sharafi_eth') {
+          console.log('Access granted: Hardcoded admin (error occurred) -', handle)
+          setHasAccess(true)
+        } else {
+          setError('Error checking access permissions')
+          setLoading(false)
+        }
+      }
+    }
+    
+    checkAccess()
+  }, [session, status])
+
+  // Fetch project data and analytics
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!hasAccess || !projectId) return
+      
+      try {
+        // Fetch project data
+        const projectRes = await fetch(`/api/discord/projects/${encodeURIComponent(projectId)}`)
+        if (!projectRes.ok) {
+          if (projectRes.status === 404) {
+            setError('Discord project not found')
+          } else {
+            setError('Failed to load Discord project')
+          }
+          setLoading(false)
+          return
+        } else {
+          const projectData = await projectRes.json()
+          setProject(projectData)
+          
+          // Fetch Scout project if linked
+          if (projectData.scoutProjectId) {
+            try {
+              const scoutRes = await fetch(`/api/projects/${projectData.scoutProjectId}`)
+              if (scoutRes.ok) {
+                const scoutData = await scoutRes.json()
+                setScoutProject(scoutData)
+              }
+            } catch (error) {
+              console.log('Could not fetch Scout project data')
+            }
+          }
+          
+          // Fetch analytics
+          const analyticsRes = await fetch(`/api/discord/projects/${encodeURIComponent(projectId)}/analytics?timeframe=${timeframe}`)
+          if (analyticsRes.ok) {
+            const analyticsData = await analyticsRes.json()
+            setAnalytics(analyticsData)
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching data:', err)
+        setError('Error loading Discord project')
+      } finally {
         setLoading(false)
       }
     }
-  }, [status, session, router])
 
-  useEffect(() => {
-    if (id && status === 'authenticated' && !roleError) {
-      fetchData()
-    }
-  }, [id, timeframe, status, roleError])
+    fetchData()
+  }, [projectId, hasAccess, timeframe])
 
-  const fetchData = async () => {
-    try {
-      // Fetch project data from public API
-      const projectRes = await fetch(`/api/public/discord/${id}`)
-      if (!projectRes.ok) {
-        throw new Error('Project not found')
-      }
-      const projectData = await projectRes.json()
-      setProject(projectData)
-
-      // Fetch Scout project if linked
-      if (projectData.scoutProjectId) {
-        try {
-          const scoutRes = await fetch(`/api/projects/${projectData.scoutProjectId}`)
-          if (scoutRes.ok) {
-            const scoutData = await scoutRes.json()
-            setScoutProject(scoutData)
+  // Show login screen for unauthenticated users
+  if (status === 'unauthenticated') {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center p-4">
+        <style jsx global>{`
+          @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono&display=swap');
+          body {
+            font-family: 'IBM Plex Sans', sans-serif;
           }
-        } catch (error) {
-          console.log('Could not fetch Scout project data')
-        }
-      }
+        `}</style>
+        
+        <div className="bg-black border border-green-500 rounded-lg p-8 max-w-md w-full text-center">
+          <div className="w-24 h-24 mx-auto mb-6 bg-green-900/20 rounded-full flex items-center justify-center">
+            <span className="text-4xl text-green-300">💬</span>
+          </div>
+          <h1 className="text-2xl font-bold text-green-300 mb-4">Discord Analytics Access</h1>
+          <p className="text-green-400 mb-6">Please sign in to view Discord analytics</p>
+          
+          <button
+            onClick={() => signIn('twitter')}
+            className="w-full px-6 py-3 bg-green-900 text-green-100 rounded hover:bg-green-800 transition-colors flex items-center justify-center gap-3"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+            </svg>
+            Sign in with X
+          </button>
+        </div>
+      </div>
+    )
+  }
+  
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-green-300">Loading...</div>
+      </div>
+    )
+  }
+  
+  // Show error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center p-4">
+        <div className="bg-black border border-red-500 rounded-lg p-8 max-w-md w-full text-center">
+          <h1 className="text-xl font-bold text-red-400 mb-4">Access Error</h1>
+          <p className="text-red-300">{error}</p>
+          {status === 'authenticated' && (
+            <button
+              onClick={() => window.location.href = '/'}
+              className="mt-6 px-4 py-2 border border-green-500 text-green-300 rounded hover:bg-green-900/30"
+            >
+              Go to Dashboard
+            </button>
+          )}
+        </div>
+      </div>
+    )
+  }
 
-      // Fetch analytics from public API
-      const analyticsRes = await fetch(`/api/public/discord/${id}/analytics?timeframe=${timeframe}`)
-      if (analyticsRes.ok) {
-        const analyticsData = await analyticsRes.json()
-        setAnalytics(analyticsData)
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error)
-      setError(error instanceof Error ? error.message : 'Failed to load data')
-    } finally {
-      setLoading(false)
-    }
+  if (!project) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-red-400">Discord project not found</div>
+      </div>
+    )
   }
 
   // Chart configurations
@@ -164,41 +298,6 @@ export default function DiscordSharePage() {
       data: analytics?.metrics.channelActivity.map(c => c.messageCount) || [],
       backgroundColor: '#10b981'
     }]
-  }
-
-  if (loading || status === 'loading') {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-black">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading analytics...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (roleError) {
-    return (
-      <div className="container mx-auto p-6 min-h-screen bg-black">
-        <div className="text-center">
-          <AlertCircle className="w-16 h-16 mx-auto text-red-400 mb-4" />
-          <h1 className="text-2xl font-bold text-red-400 mb-2">Access Denied</h1>
-          <p className="text-gray-400">You don't have permission to view Discord analytics.</p>
-          <p className="text-sm text-gray-500 mt-2">Only admin, core, team, and viewer roles can access this page.</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (error || !project) {
-    return (
-      <div className="container mx-auto p-6 min-h-screen bg-black">
-        <div className="text-center">
-          <AlertCircle className="w-16 h-16 mx-auto text-red-400 mb-4" />
-          <p className="text-red-400">{error || 'Project not found'}</p>
-        </div>
-      </div>
-    )
   }
 
   const timeframeLabel = timeframe === 'daily' ? 'Last 24 Hours' : 

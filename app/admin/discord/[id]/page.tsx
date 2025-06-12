@@ -38,7 +38,8 @@ export default function DiscordProjectPage() {
   const { data: session } = useSession()
   const router = useRouter()
   const params = useParams()
-  const projectId = params.id as string
+  // Convert URL-safe format back to original format (replace -- with :)
+  const projectId = (params.id as string).replace(/--/g, ':')
 
   const [project, setProject] = useState<DiscordProject | null>(null)
   const [analytics, setAnalytics] = useState<DiscordAnalytics | null>(null)
@@ -219,7 +220,9 @@ export default function DiscordProjectPage() {
     try {
       // Generate shareable link client-side
       const baseUrl = window.location.origin
-      const shareUrl = `${baseUrl}/discord/share/${projectId}?timeframe=${timeframe}`
+      // Convert project ID to URL-safe format (replace : with --)
+      const urlSafeId = projectId.replace(/:/g, '--')
+      const shareUrl = `${baseUrl}/discord/share/${urlSafeId}?timeframe=${timeframe}`
       setShareableLink(shareUrl)
     } catch (error) {
       console.error('Error generating share link:', error)

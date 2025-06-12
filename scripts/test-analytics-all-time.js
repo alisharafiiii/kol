@@ -122,8 +122,9 @@ async function testAnalytics() {
     
     // Test the API endpoint
     console.log('\n🔗 Test these URLs in your browser (requires login):');
-    console.log(`- Admin Panel: http://localhost:3000/admin/discord/${projectId} (admin/core only)`);
-    console.log(`- Share Page: http://localhost:3000/discord/share/${projectId} (admin/core/team/viewer)`);
+    const urlSafeId = projectId.replace(/:/g, '--');
+    console.log(`- Admin Panel: http://localhost:3000/admin/discord/${urlSafeId} (admin/core only)`);
+    console.log(`- Share Page: http://localhost:3000/discord/share/${urlSafeId} (admin/core/team/viewer)`);
     console.log(`- API Test: http://localhost:3000/api/public/discord/${projectId}/analytics?timeframe=weekly`);
     
   } catch (error) {

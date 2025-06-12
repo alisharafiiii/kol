@@ -183,7 +183,7 @@ export default function DiscordAdminPage() {
               <div
                 key={project.id}
                 className="bg-gray-900 border border-gray-700 rounded-lg p-6 hover:border-green-500 transition-colors cursor-pointer"
-                onClick={() => router.push(`/admin/discord/${project.id}`)}
+                onClick={() => router.push(`/admin/discord/${project.id.replace(/:/g, '--')}`)}
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">

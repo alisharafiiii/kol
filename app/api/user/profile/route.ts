@@ -24,14 +24,16 @@ export async function GET(req: NextRequest) {
     const identifier = (wallet || handle || '').toLowerCase();
     console.log('USER PROFILE API: Checking identifier:', identifier);
     
-    if (identifier === 'sharafi_eth' || identifier === '@sharafi_eth') {
-      console.log('USER PROFILE API: Master admin sharafi_eth detected - returning admin profile');
+    if (identifier === 'sharafi_eth' || identifier === '@sharafi_eth' || identifier === 'alinabu' || identifier === '@alinabu') {
+      console.log(`USER PROFILE API: Master admin ${identifier} detected - returning admin profile`);
       const response = { 
         user: {
-          id: 'sharafi_eth_admin',
-          name: 'sharafi_eth',
-          profileImageUrl: 'https://pbs.twimg.com/profile_images/1911790623893422080/vxsHVWbL_400x400.jpg',
-          twitterHandle: 'sharafi_eth',
+          id: identifier.replace('@', '') + '_admin',
+          name: identifier.replace('@', ''),
+          profileImageUrl: identifier.includes('sharafi') 
+            ? 'https://pbs.twimg.com/profile_images/1911790623893422080/vxsHVWbL_400x400.jpg'
+            : null,
+          twitterHandle: identifier.replace('@', ''),
           approvalStatus: 'approved',
           role: 'admin'
         }

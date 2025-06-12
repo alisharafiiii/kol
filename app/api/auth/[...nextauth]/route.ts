@@ -201,8 +201,8 @@ export const authOptions: NextAuthOptions = {
       if (token.twitterHandle) {
         // HARDCODED CHECK FOR SHARAFI_ETH
         const normalizedHandle = token.twitterHandle.toLowerCase().replace('@', '');
-        if (normalizedHandle === 'sharafi_eth') {
-          log("JWT: Master admin sharafi_eth detected - setting admin role");
+        if (normalizedHandle === 'sharafi_eth' || normalizedHandle === 'alinabu') {
+          log(`JWT: Master admin ${normalizedHandle} detected - setting admin role`);
           token.role = 'admin';
           token.approvalStatus = 'approved';
         } else {
