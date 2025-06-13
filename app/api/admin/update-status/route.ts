@@ -41,16 +41,19 @@ export async function POST(req: NextRequest) {
     console.log(`[ADMIN UPDATE-STATUS] Updating user ${userId} to status ${status}`)
     
     try {
+      // Handle userId that might already include 'user:' prefix
+      const redisKey = userId.startsWith('user:') ? userId : `user:${userId}`
+      
       // Get the user profile
-      const profile = await redis.json.get(`user:${userId}`)
+      const profile = await redis.json.get(redisKey)
       if (!profile) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 })
       }
       
-      // Update the approval status
-      await redis.json.set(`user:${userId}`, '$.approvalStatus', status)
+      // Update the approval status - wrap in JSON.stringify for Upstash
+      await redis.json.set(redisKey, '$.approvalStatus', JSON.stringify(status))
       
-      console.log(`[ADMIN UPDATE-STATUS] Successfully updated user ${userId} status to ${status}`)
+      console.log(`[ADMIN UPDATE-STATUS] Successfully updated ${redisKey} status to ${status}`)
       
       return NextResponse.json({ 
         success: true, 

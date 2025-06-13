@@ -36,8 +36,12 @@ export async function DELETE(req: NextRequest) {
     console.log(`[ADMIN DELETE-USER] Attempting to delete user: ${userId}`);
     
     try {
+      // Handle userId that might already include 'user:' prefix
+      const redisKey = userId.startsWith('user:') ? userId : `user:${userId}`;
+      const cleanUserId = userId.startsWith('user:') ? userId.replace('user:', '') : userId;
+      
       // Get user data – if we can't find by ID, attempt by handle set
-      let user = await redis.json.get(`user:${userId}`) as any;
+      let user = await redis.json.get(redisKey) as any;
       if (!user) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 });
       }
@@ -48,7 +52,7 @@ export async function DELETE(req: NextRequest) {
         const hNorm = user.twitterHandle.replace('@','').toLowerCase();
         duplicateIds = await redis.smembers(`idx:username:${hNorm}`);
       }
-      if (!duplicateIds.includes(userId)) duplicateIds.push(userId);
+      if (!duplicateIds.includes(cleanUserId)) duplicateIds.push(cleanUserId);
       
       // Helper to cleanup indexes for a single profile
       const cleanupForProfile = async (uId: string, profile: any) => {
