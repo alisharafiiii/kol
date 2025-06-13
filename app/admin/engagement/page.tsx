@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { Trophy, Users, Twitter, RefreshCw, Settings, Activity } from 'lucide-react'
+import { Trophy, Users, Twitter, RefreshCw, Settings, Activity, Plus, Trash2 } from 'lucide-react'
 
 interface Tweet {
   id: string
@@ -195,7 +195,194 @@ export default function EngagementAdminPage() {
         <div className="text-green-300">Loading engagement data...</div>
       </div>
     )
+}
+
+function TierScenarios() {
+  const [scenarios, setScenarios] = useState<any>({})
+  const [editingTier, setEditingTier] = useState<number | null>(null)
+  const [editForm, setEditForm] = useState<any>({})
+
+  useEffect(() => {
+    fetchScenarios()
+  }, [])
+
+  const fetchScenarios = async () => {
+    try {
+      const response = await fetch('/api/engagement/scenarios')
+      if (response.ok) {
+        const data = await response.json()
+        setScenarios(data)
+      }
+    } catch (error) {
+      console.error('Error fetching scenarios:', error)
+    }
   }
+
+  const handleEdit = (tier: number) => {
+    setEditingTier(tier)
+    setEditForm(scenarios[`tier${tier}`])
+  }
+
+  const handleSave = async () => {
+    if (!editingTier) return
+
+    try {
+      const response = await fetch('/api/engagement/scenarios', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tier: editingTier,
+          scenarios: editForm
+        })
+      })
+
+      if (response.ok) {
+        await fetchScenarios()
+        setEditingTier(null)
+      }
+    } catch (error) {
+      console.error('Error saving scenarios:', error)
+    }
+  }
+
+  const handleCategoryChange = (index: number, value: string) => {
+    const newCategories = [...editForm.categories]
+    newCategories[index] = value
+    setEditForm({ ...editForm, categories: newCategories })
+  }
+
+  const addCategory = () => {
+    setEditForm({ 
+      ...editForm, 
+      categories: [...editForm.categories, 'New Category'] 
+    })
+  }
+
+  const removeCategory = (index: number) => {
+    const newCategories = editForm.categories.filter((_: any, i: number) => i !== index)
+    setEditForm({ ...editForm, categories: newCategories })
+  }
+
+  return (
+    <div className="space-y-4">
+      {[1, 2, 3].map(tier => {
+        const tierScenarios = scenarios[`tier${tier}`] || {}
+        const isEditing = editingTier === tier
+
+        return (
+          <div key={tier} className="border border-gray-700 rounded-lg p-4 bg-black">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-white">Tier {tier}</h3>
+              {!isEditing ? (
+                <button
+                  onClick={() => handleEdit(tier)}
+                  className="px-3 py-1 bg-gray-800 text-green-300 rounded hover:bg-gray-700"
+                >
+                  Edit
+                </button>
+              ) : (
+                <div className="space-x-2">
+                  <button
+                    onClick={handleSave}
+                    className="px-3 py-1 bg-green-900 text-green-100 rounded hover:bg-green-800"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => setEditingTier(null)}
+                    className="px-3 py-1 bg-gray-800 text-gray-300 rounded hover:bg-gray-700"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {!isEditing ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="font-medium text-gray-400">Daily Tweet Limit:</span>{' '}
+                  <span className="text-white">{tierScenarios.dailyTweetLimit || 'N/A'}</span>
+                </div>
+                <div>
+                  <span className="font-medium text-gray-400">Min Followers:</span>{' '}
+                  <span className="text-white">{tierScenarios.minFollowers || 'N/A'}</span>
+                </div>
+                <div>
+                  <span className="font-medium text-gray-400">Bonus Multiplier:</span>{' '}
+                  <span className="text-white">{tierScenarios.bonusMultiplier || 'N/A'}x</span>
+                </div>
+                <div className="sm:col-span-2">
+                  <span className="font-medium text-gray-400">Categories:</span>{' '}
+                  <span className="text-white">{tierScenarios.categories?.join(', ') || 'N/A'}</span>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Daily Tweet Limit</label>
+                  <input
+                    type="number"
+                    value={editForm.dailyTweetLimit || ''}
+                    onChange={(e) => setEditForm({ ...editForm, dailyTweetLimit: parseInt(e.target.value) })}
+                    className="w-full p-2 bg-black border border-gray-600 rounded text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Minimum Followers</label>
+                  <input
+                    type="number"
+                    value={editForm.minFollowers || ''}
+                    onChange={(e) => setEditForm({ ...editForm, minFollowers: parseInt(e.target.value) })}
+                    className="w-full p-2 bg-black border border-gray-600 rounded text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Bonus Multiplier</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={editForm.bonusMultiplier || ''}
+                    onChange={(e) => setEditForm({ ...editForm, bonusMultiplier: parseFloat(e.target.value) })}
+                    className="w-full p-2 bg-black border border-gray-600 rounded text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Categories</label>
+                  <div className="space-y-2">
+                    {editForm.categories?.map((category: string, index: number) => (
+                      <div key={index} className="flex gap-2">
+                        <input
+                          type="text"
+                          value={category}
+                          onChange={(e) => handleCategoryChange(index, e.target.value)}
+                          className="flex-1 p-2 bg-black border border-gray-600 rounded text-white"
+                        />
+                        <button
+                          onClick={() => removeCategory(index)}
+                          className="px-3 py-2 bg-red-900 text-red-100 rounded hover:bg-red-800"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      onClick={addCategory}
+                      className="px-3 py-2 bg-gray-800 text-gray-100 rounded hover:bg-gray-700 flex items-center gap-2"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Add Category
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
   
   return (
     <div className="min-h-screen bg-black p-4 sm:p-8">
@@ -246,12 +433,12 @@ export default function EngagementAdminPage() {
         </div>
         
         {/* Tabs */}
-        <div className="flex gap-4 mb-6 border-b border-gray-700">
-          {['overview', 'tweets', 'leaderboard', 'rules', 'batch'].map(tab => (
+        <div className="flex gap-4 mb-6 border-b border-gray-700 overflow-x-auto">
+          {['overview', 'tweets', 'leaderboard', 'rules', 'scenarios', 'batch'].map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-2 px-1 capitalize ${
+              className={`pb-2 px-1 capitalize whitespace-nowrap ${
                 activeTab === tab
                   ? 'text-green-300 border-b-2 border-green-300'
                   : 'text-gray-400 hover:text-gray-300'
@@ -427,6 +614,16 @@ export default function EngagementAdminPage() {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        )}
+        
+        {activeTab === 'scenarios' && (
+          <div className="space-y-6">
+            <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+              <h2 className="text-xl font-semibold text-green-300 mb-4">Tier Scenarios</h2>
+              <p className="text-gray-400 mb-6">Configure daily limits, categories, and bonus multipliers for each tier.</p>
+              <TierScenarios />
             </div>
           </div>
         )}

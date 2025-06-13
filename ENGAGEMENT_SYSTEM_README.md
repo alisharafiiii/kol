@@ -2,7 +2,21 @@
 
 ## Overview
 
-This system tracks Twitter engagement for Discord users using a points-based reward system. Users connect their Twitter accounts and submit tweets for tracking. The system automatically checks for likes, retweets, and replies from other connected users and awards points based on tier-based rules.
+This system tracks Twitter engagement for Discord users using a points-based reward system. Users must be approved in the KOL management system before they can connect their Twitter accounts. The system automatically checks for likes, retweets, and replies from other connected users and awards points based on tier-based rules with configurable bonus multipliers.
+
+## Key Features
+
+### User Access Control
+- **Approved Users Only**: Users must be approved in the KOL management system before they can use the bot
+- **Automatic Role Assignment**: When connecting Twitter, users automatically receive the 'kol' role unless they have higher roles (admin, core, team)
+- **Role Hierarchy**: admin > core > team > kol > user
+
+### Tier-Based Scenarios
+Each tier has configurable presets that admins can customize:
+- **Daily Tweet Limits**: Control how many tweets users can submit per day
+- **Categories**: Define allowed tweet categories per tier
+- **Minimum Followers**: Set follower requirements (for future use)
+- **Bonus Multipliers**: Apply point multipliers to reward higher tiers
 
 ## Architecture
 
@@ -49,31 +63,38 @@ The system consists of two parts:
 ## Bot Commands
 
 ### User Commands
-- `/connect` - Connect your Twitter account
-- `/submit <url> [category]` - Submit a tweet for tracking
+- `/connect` - Connect your Twitter account (requires approved status)
+- `/submit <url> [category]` - Submit a tweet for tracking (respects daily limits)
 - `/stats` - View your engagement stats
 - `/leaderboard` - View the top engagers
 
 ### Admin Commands
 - `/tier <user> <level>` - Set a user's tier (1-3)
+- `/scenarios <tier> [options]` - Configure tier scenarios (daily limit, categories, bonus)
 
 ## Point System
 
 ### Default Tiers and Points
 
-| Tier | Level | Like | Retweet | Reply |
-|------|-------|------|---------|-------|
-| 1    | Basic | 1    | 2       | 3     |
-| 2    | Active| 2    | 4       | 6     |
-| 3    | Power | 3    | 6       | 9     |
+| Tier | Level | Like | Retweet | Reply | Bonus Multiplier | Daily Limit |
+|------|-------|------|---------|-------|-----------------|-------------|
+| 1    | Basic | 1    | 2       | 3     | 1.0x            | 3 tweets    |
+| 2    | Active| 2    | 4       | 6     | 1.5x            | 5 tweets    |
+| 3    | Power | 3    | 6       | 9     | 2.0x            | 10 tweets   |
+
+### Tier Scenarios (Configurable)
+Each tier has configurable scenarios:
+- **Daily Tweet Limit**: Maximum tweets per day
+- **Categories**: Allowed tweet categories (e.g., General, DeFi, NFT, Gaming)
+- **Bonus Multiplier**: Points multiplication factor
+- **Minimum Followers**: Required follower count (future feature)
 
 ### How Points Work
-1. User submits a tweet
+1. User submits a tweet (must be approved user)
 2. Batch processor checks who engaged with it
-3. Points awarded based on:
-   - Type of engagement (like/RT/reply)
-   - Tier of the engaging user
-4. Points accumulate in user's total
+3. Base points calculated from tier rules
+4. Bonus multiplier applied: `final_points = base_points × bonus_multiplier`
+5. Points accumulate in user's total
 
 ## Setup Instructions
 
@@ -131,7 +152,14 @@ Create a channel named `engagement-tracker` in your Discord server for tweet sub
 ### Rules Tab
 - Edit points for each tier/interaction
 - Setup default rules
-- Custom multipliers (future)
+- Base point configuration
+
+### Scenarios Tab
+- Configure tier-specific settings
+- Set daily tweet limits
+- Manage allowed categories
+- Adjust bonus multipliers
+- Set minimum follower requirements
 
 ### Batch Jobs Tab
 - View job history
@@ -144,8 +172,11 @@ Create a channel named `engagement-tracker` in your Discord server for tweet sub
 ### Redis Keys Structure
 
 **Connections:**
-- `engagement:connection:{discordId}` - User's Twitter connection
+- `engagement:connection:{discordId}` - User's Twitter connection (includes role info)
 - `engagement:twitter:{handle}` - Reverse lookup
+
+**Scenarios:**
+- `engagement:scenarios:tier{1-3}` - Tier-specific configuration
 
 **Tweets:**
 - `engagement:tweet:{id}` - Tweet data

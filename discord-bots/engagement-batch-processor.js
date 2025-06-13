@@ -40,11 +40,21 @@ async function processBatch() {
   await redis.zadd('engagement:batches', Date.now(), batchId)
   
   try {
-    // Get tweets from last 24 hours
-    const cutoff = Date.now() - (24 * 60 * 60 * 1000)
-    const tweetIds = await redis.zrangebyscore('engagement:tweets:recent', cutoff, '+inf')
+    // Get recent tweets (stored as a list)
+    const allTweetIds = await redis.lrange('engagement:tweets:recent', 0, -1)
     
-    console.log(`📊 Found ${tweetIds.length} tweets to process`)
+    // Filter tweets from last 24 hours
+    const cutoff = Date.now() - (24 * 60 * 60 * 1000)
+    const tweetIds = []
+    
+    for (const tweetId of allTweetIds) {
+      const tweet = await redis.json.get(`engagement:tweet:${tweetId}`)
+      if (tweet && new Date(tweet.submittedAt).getTime() > cutoff) {
+        tweetIds.push(tweetId)
+      }
+    }
+    
+    console.log(`📊 Found ${tweetIds.length} tweets from last 24 hours to process`)
     
     let tweetsProcessed = 0
     let engagementsFound = 0
@@ -88,7 +98,12 @@ async function processBatch() {
             const userConnection = await redis.json.get(`engagement:connection:${connection}`)
             if (userConnection) {
               const pointRule = await redis.json.get(`engagement:rules:${userConnection.tier}-like`)
-              const points = pointRule?.points || 1
+              const basePoints = pointRule?.points || 1
+              
+              // Get tier scenarios for bonus multiplier
+              const scenarios = await redis.json.get(`engagement:scenarios:tier${userConnection.tier}`)
+              const bonusMultiplier = scenarios?.bonusMultiplier || 1.0
+              const points = Math.round(basePoints * bonusMultiplier)
               
               // Check if already logged
               const existingLog = await redis.get(`engagement:interaction:${tweet.tweetId}:${connection}:like`)
@@ -102,7 +117,8 @@ async function processBatch() {
                   interactionType: 'like',
                   points,
                   timestamp: new Date(),
-                  batchId
+                  batchId,
+                  bonusMultiplier
                 }
                 
                 await redis.json.set(`engagement:log:${logId}`, '$', log)
@@ -114,7 +130,7 @@ async function processBatch() {
                 await redis.json.numincrby(`engagement:connection:${connection}`, '$.totalPoints', points)
                 
                 engagementsFound++
-                console.log(`✅ Awarded ${points} points to ${liker.username} for liking`)
+                console.log(`✅ Awarded ${points} points to ${liker.username} for liking (x${bonusMultiplier} bonus)`)
               }
             }
           }
@@ -132,7 +148,12 @@ async function processBatch() {
             const userConnection = await redis.json.get(`engagement:connection:${connection}`)
             if (userConnection) {
               const pointRule = await redis.json.get(`engagement:rules:${userConnection.tier}-retweet`)
-              const points = pointRule?.points || 2
+              const basePoints = pointRule?.points || 2
+              
+              // Get tier scenarios for bonus multiplier
+              const scenarios = await redis.json.get(`engagement:scenarios:tier${userConnection.tier}`)
+              const bonusMultiplier = scenarios?.bonusMultiplier || 1.0
+              const points = Math.round(basePoints * bonusMultiplier)
               
               const existingLog = await redis.get(`engagement:interaction:${tweet.tweetId}:${connection}:retweet`)
               if (!existingLog) {
@@ -144,7 +165,8 @@ async function processBatch() {
                   interactionType: 'retweet',
                   points,
                   timestamp: new Date(),
-                  batchId
+                  batchId,
+                  bonusMultiplier
                 }
                 
                 await redis.json.set(`engagement:log:${logId}`, '$', log)
@@ -155,7 +177,7 @@ async function processBatch() {
                 await redis.json.numincrby(`engagement:connection:${connection}`, '$.totalPoints', points)
                 
                 engagementsFound++
-                console.log(`✅ Awarded ${points} points to ${retweeter.username} for retweeting`)
+                console.log(`✅ Awarded ${points} points to ${retweeter.username} for retweeting (x${bonusMultiplier} bonus)`)
               }
             }
           }
