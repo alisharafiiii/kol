@@ -106,6 +106,41 @@ export class ProfileService {
     try {
       let profileIds: string[] = []
       
+      // If we have a search term, search all profiles
+      if (filters.searchTerm) {
+        // Get all profile keys
+        const keys = await redis.keys(`${this.PREFIX}*`)
+        
+        // Get all profiles and filter by search term
+        const profiles = await Promise.all(
+          keys.map(async (key: string) => {
+            const profile = await redis.json.get(key)
+            return profile ? this.deserializeProfile(profile) : null
+          })
+        )
+        
+        // Filter nulls and apply search
+        const searchLower = filters.searchTerm.toLowerCase()
+        return profiles.filter((profile): profile is UnifiedProfile => {
+          if (!profile) return false
+          
+          // Apply other filters
+          if (filters.role && profile.role !== filters.role) return false
+          if (filters.approvalStatus && profile.approvalStatus !== filters.approvalStatus) return false
+          if (filters.tier && profile.currentTier !== filters.tier) return false
+          if (filters.country && profile.country !== filters.country) return false
+          if (filters.isKOL !== undefined && profile.isKOL !== filters.isKOL) return false
+          
+          // Apply search term
+          return (
+            profile.name?.toLowerCase().includes(searchLower) ||
+            profile.twitterHandle?.toLowerCase().includes(searchLower) ||
+            profile.email?.toLowerCase().includes(searchLower) ||
+            false
+          )
+        })
+      }
+      
       // Start with all profiles if no specific filters
       if (!filters.role && !filters.approvalStatus && !filters.tier) {
         const keys = await redis.keys(`${this.PREFIX}*`)
@@ -152,16 +187,6 @@ export class ProfileService {
         
         if (filters.country && profile.country !== filters.country) {
           return false
-        }
-        
-        if (filters.searchTerm) {
-          const searchLower = filters.searchTerm.toLowerCase()
-          return (
-            profile.name.toLowerCase().includes(searchLower) ||
-            profile.twitterHandle.toLowerCase().includes(searchLower) ||
-            profile.email?.toLowerCase().includes(searchLower) ||
-            false
-          )
         }
         
         return true

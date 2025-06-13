@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { redis } from '@/lib/redis';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 export async function GET(req: NextRequest) {
   try {
@@ -47,6 +49,23 @@ export async function PUT(req: NextRequest) {
     const handle = searchParams.get('handle');
     const updates = await req.json();
     
+    console.log('[FULL-PROFILE PUT] Request:', { handle, updates });
+    
+    // Check if user is admin
+    const session: any = await getServerSession(authOptions as any);
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+    
+    // Check admin permissions
+    const userRole = session?.user?.role || session?.role;
+    const twitterHandle = session?.twitterHandle || session?.user?.twitterHandle || session?.user?.name;
+    const normalizedSessionHandle = twitterHandle?.toLowerCase().replace('@', '');
+    
+    if (normalizedSessionHandle !== 'sharafi_eth' && userRole !== 'admin' && userRole !== 'core') {
+      return NextResponse.json({ error: 'Admin or Core access required' }, { status: 403 });
+    }
+    
     if (!handle) {
       return NextResponse.json({ error: 'Handle is required' }, { status: 400 });
     }
@@ -56,6 +75,8 @@ export async function PUT(req: NextRequest) {
     // Get user IDs by handle
     const userIds = await redis.smembers(`idx:username:${normalizedHandle}`);
     
+    console.log('[FULL-PROFILE PUT] Found user IDs:', userIds);
+    
     if (!userIds || userIds.length === 0) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -63,6 +84,8 @@ export async function PUT(req: NextRequest) {
     // Update the profile
     const userId = userIds[0];
     const existingProfile = await redis.json.get(`user:${userId}`);
+    
+    console.log('[FULL-PROFILE PUT] Existing profile:', existingProfile);
     
     if (!existingProfile) {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
@@ -75,18 +98,28 @@ export async function PUT(req: NextRequest) {
       updatedAt: new Date().toISOString()
     };
     
-    // Save updated profile
+    console.log('[FULL-PROFILE PUT] Updated profile to save:', updatedProfile);
+    
+    // Save updated profile - make sure it's serialized properly
     await redis.json.set(`user:${userId}`, '$', JSON.parse(JSON.stringify(updatedProfile)));
+    
+    console.log('[FULL-PROFILE PUT] Profile saved successfully');
     
     // Update role index if role changed
     if (updates.role && updates.role !== (existingProfile as any).role) {
+      console.log('[FULL-PROFILE PUT] Updating role indexes');
       // Remove from old role index
       if ((existingProfile as any).role) {
         await redis.srem(`idx:role:${(existingProfile as any).role}`, userId);
       }
       // Add to new role index
       await redis.sadd(`idx:role:${updates.role}`, userId);
+      console.log('[FULL-PROFILE PUT] Role indexes updated');
     }
+    
+    // Verify the save by reading it back
+    const verifyProfile = await redis.json.get(`user:${userId}`);
+    console.log('[FULL-PROFILE PUT] Verification - saved profile:', verifyProfile);
     
     return NextResponse.json(updatedProfile);
     

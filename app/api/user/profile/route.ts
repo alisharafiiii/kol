@@ -7,6 +7,12 @@ import type { UnifiedProfile } from '@/lib/types/profile';
 export async function GET(req: NextRequest) {
   console.log('=== USER PROFILE API: Request received ===');
   
+  // Log request details for debugging mobile issues
+  const userAgent = req.headers.get('user-agent') || 'Unknown'
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(userAgent)
+  console.log('USER PROFILE API: User-Agent:', userAgent)
+  console.log('USER PROFILE API: Is Mobile:', isMobile)
+  
   try {
     // Get the identifier from the query parameter - could be wallet or handle
     const { searchParams } = new URL(req.url);
@@ -112,6 +118,9 @@ export async function GET(req: NextRequest) {
           }
           user = chosen;
           console.log('USER PROFILE API: User found in Redis:', user ? 'Yes' : 'No');
+          if (user) {
+            console.log('USER PROFILE API: User role:', user.role);
+          }
         }
       }
       

@@ -280,7 +280,7 @@ export class DiscordService {
   // Analytics
   static async getAnalytics(
     projectId: string,
-    timeframe: 'daily' | 'weekly' | 'monthly' | 'custom',
+    timeframe: 'daily' | 'weekly' | 'monthly' | 'allTime' | 'custom',
     startDate?: string,
     endDate?: string
   ): Promise<DiscordAnalytics> {
@@ -300,6 +300,10 @@ export class DiscordService {
       case 'monthly':
         start = new Date(end);
         start.setMonth(start.getMonth() - 1);
+        break;
+      case 'allTime':
+        // For all time, set start date to a very early date
+        start = new Date('2020-01-01');
         break;
       default:
         start = startDate ? new Date(startDate) : new Date(end.setMonth(end.getMonth() - 1));
@@ -396,5 +400,319 @@ export class DiscordService {
         dailyTrend
       }
     };
+  }
+
+  // Get analytics for a specific project
+  static async getProjectAnalytics(
+    projectId: string, 
+    timeframe: 'daily' | 'weekly' | 'monthly' | 'allTime' | 'custom' = 'weekly',
+    startDate?: Date,
+    endDate?: Date
+  ): Promise<DiscordAnalytics> {
+    const now = new Date()
+    const start = startDate || new Date()
+    
+    switch (timeframe) {
+      case 'daily':
+        start.setHours(start.getHours() - 24)
+        break
+      case 'weekly':
+        start.setDate(start.getDate() - 7)
+        break
+      case 'monthly':
+        start.setDate(start.getDate() - 30)
+        break
+      case 'allTime':
+        start.setFullYear(2020) // Set to a date before any messages
+        break
+    }
+    
+    const end = endDate || now
+    
+    // Get all messages for the project in timeframe
+    const messageKeys = await redis.keys(`message:discord:${projectId}:*`)
+    const messages: DiscordMessage[] = []
+    const uniqueUsers = new Set<string>()
+    const channelStats: Record<string, { count: number; name: string }> = {}
+    const hourlyActivity = new Array(24).fill(0)
+    const dailyData: Record<string, { messages: number; sentiment: number; sentimentCount: number }> = {}
+    const userStats: Record<string, { messages: number; sentiment: number; sentimentCount: number }> = {}
+    
+    // Process messages
+    for (const key of messageKeys) {
+      const message = await redis.json.get(key) as DiscordMessage
+      if (!message) continue
+      
+      const msgDate = new Date(message.timestamp)
+      if (msgDate < start || msgDate > end) continue
+      
+      messages.push(message)
+      uniqueUsers.add(message.userId)
+      
+      // Update channel stats
+      if (!channelStats[message.channelId]) {
+        channelStats[message.channelId] = { count: 0, name: message.channelName }
+      }
+      channelStats[message.channelId].count++
+      
+      // Update hourly activity
+      const hour = msgDate.getHours()
+      hourlyActivity[hour]++
+      
+      // Update daily data
+      const dateKey = msgDate.toISOString().slice(0, 10)
+      if (!dailyData[dateKey]) {
+        dailyData[dateKey] = { messages: 0, sentiment: 0, sentimentCount: 0 }
+      }
+      dailyData[dateKey].messages++
+      
+      // Update user stats
+      if (!userStats[message.userId]) {
+        userStats[message.userId] = { messages: 0, sentiment: 0, sentimentCount: 0 }
+      }
+      userStats[message.userId].messages++
+      
+      // Process sentiment if available
+      if (message.sentiment?.score) {
+        const sentimentValue = message.sentiment.score === 'positive' ? 1 : 
+                              message.sentiment.score === 'negative' ? -1 : 0
+        
+        dailyData[dateKey].sentimentCount++
+        dailyData[dateKey].sentiment += sentimentValue
+        
+        userStats[message.userId].sentimentCount++
+        userStats[message.userId].sentiment += sentimentValue
+      }
+    }
+    
+    // Calculate sentiment breakdown
+    const sentimentBreakdown = { positive: 0, neutral: 0, negative: 0 }
+    for (const message of messages) {
+      if (message.sentiment?.score) {
+        sentimentBreakdown[message.sentiment.score]++
+      }
+    }
+    
+    // Calculate top users
+    const topUsers = Object.entries(userStats)
+      .map(([userId, stats]) => ({
+        userId,
+        username: messages.find(m => m.userId === userId)?.username || 'Unknown',
+        messageCount: stats.messages,
+        avgSentiment: stats.sentimentCount > 0 ? stats.sentiment / stats.sentimentCount : 0
+      }))
+      .sort((a, b) => b.messageCount - a.messageCount)
+      .slice(0, 20)
+    
+    // Convert channel stats to array
+    const channelActivity = Object.entries(channelStats)
+      .map(([channelId, stats]) => ({
+        channelId,
+        channelName: stats.name,
+        messageCount: stats.count
+      }))
+      .sort((a, b) => b.messageCount - a.messageCount)
+    
+    // Convert daily data to trend array
+    const dailyTrend = Object.entries(dailyData)
+      .map(([date, data]) => ({
+        date,
+        messages: data.messages,
+        sentiment: data.sentimentCount > 0 ? data.sentiment / data.sentimentCount : 0
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date))
+    
+    return {
+      projectId,
+      timeframe,
+      startDate: start.toISOString(),
+      endDate: end.toISOString(),
+      metrics: {
+        totalMessages: messages.length,
+        uniqueUsers: uniqueUsers.size,
+        averageMessagesPerUser: uniqueUsers.size > 0 ? messages.length / uniqueUsers.size : 0,
+        sentimentBreakdown,
+        topUsers,
+        channelActivity,
+        hourlyActivity,
+        dailyTrend
+      }
+    }
+  }
+
+  // Get user activity across all projects
+  static async getUserActivity(userId: string): Promise<{
+    projects: Array<{
+      projectId: string
+      projectName: string
+      messageCount: number
+      firstSeen: string
+      lastSeen: string
+      avgSentiment: number
+    }>
+    totalMessages: number
+    totalProjects: number
+  }> {
+    const projects = await this.getAllProjects()
+    const userActivity = []
+    let totalMessages = 0
+    
+    for (const project of projects) {
+      const messageKeys = await redis.keys(`message:discord:${project.id}:*`)
+      let projectMessages = 0
+      let firstSeen: Date | null = null
+      let lastSeen: Date | null = null
+      let sentimentSum = 0
+      let sentimentCount = 0
+      
+      for (const key of messageKeys) {
+        const message = await redis.json.get(key) as DiscordMessage
+        if (!message || message.userId !== userId) continue
+        
+        projectMessages++
+        totalMessages++
+        
+        const msgDate = new Date(message.timestamp)
+        if (!firstSeen || msgDate < firstSeen) firstSeen = msgDate
+        if (!lastSeen || msgDate > lastSeen) lastSeen = msgDate
+        
+        if (message.sentiment?.score) {
+          sentimentCount++
+          sentimentSum += message.sentiment.score === 'positive' ? 1 :
+                         message.sentiment.score === 'negative' ? -1 : 0
+        }
+      }
+      
+      if (projectMessages > 0) {
+        userActivity.push({
+          projectId: project.id,
+          projectName: project.name,
+          messageCount: projectMessages,
+          firstSeen: firstSeen!.toISOString(),
+          lastSeen: lastSeen!.toISOString(),
+          avgSentiment: sentimentCount > 0 ? sentimentSum / sentimentCount : 0
+        })
+      }
+    }
+    
+    return {
+      projects: userActivity,
+      totalMessages,
+      totalProjects: userActivity.length
+    }
+  }
+
+  // Get trending topics/keywords
+  static async getTrendingTopics(
+    projectId: string,
+    timeframe: 'daily' | 'weekly' = 'daily',
+    limit: number = 10
+  ): Promise<Array<{ word: string; count: number; sentiment: number }>> {
+    const start = new Date()
+    if (timeframe === 'daily') {
+      start.setHours(start.getHours() - 24)
+    } else {
+      start.setDate(start.getDate() - 7)
+    }
+    
+    const messageKeys = await redis.keys(`message:discord:${projectId}:*`)
+    const wordCounts: Record<string, { count: number; sentiment: number; sentimentCount: number }> = {}
+    
+    // Common words to exclude
+    const stopWords = new Set(['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'from', 'is', 'are', 'was', 'were', 'been', 'be', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'can', 'this', 'that', 'these', 'those', 'i', 'you', 'he', 'she', 'it', 'we', 'they', 'them', 'their', 'what', 'which', 'who', 'when', 'where', 'why', 'how', 'all', 'each', 'every', 'some', 'any', 'few', 'more', 'most', 'other', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'up', 'down', 'out', 'off', 'over', 'under', 'again', 'further', 'then', 'once'])
+    
+    for (const key of messageKeys) {
+      const message = await redis.json.get(key) as DiscordMessage
+      if (!message) continue
+      
+      const msgDate = new Date(message.timestamp)
+      if (msgDate < start) continue
+      
+      // Extract words (basic tokenization)
+      const words = message.content.toLowerCase()
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .split(/\s+/)
+        .filter(word => word.length > 3 && !stopWords.has(word))
+      
+      const sentimentValue = message.sentiment?.score === 'positive' ? 1 :
+                            message.sentiment?.score === 'negative' ? -1 : 0
+      
+      for (const word of words) {
+        if (!wordCounts[word]) {
+          wordCounts[word] = { count: 0, sentiment: 0, sentimentCount: 0 }
+        }
+        wordCounts[word].count++
+        if (message.sentiment?.score) {
+          wordCounts[word].sentimentCount++
+          wordCounts[word].sentiment += sentimentValue
+        }
+      }
+    }
+    
+    // Convert to array and sort by count
+    return Object.entries(wordCounts)
+      .map(([word, stats]) => ({
+        word,
+        count: stats.count,
+        sentiment: stats.sentimentCount > 0 ? stats.sentiment / stats.sentimentCount : 0
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, limit)
+  }
+
+  // Get message engagement metrics (for future use with reactions/replies)
+  static async getEngagementMetrics(projectId: string): Promise<{
+    avgRepliesPerMessage: number
+    topRepliedMessages: Array<{
+      messageId: string
+      content: string
+      replyCount: number
+      author: string
+    }>
+    conversationThreads: number
+  }> {
+    const messageKeys = await redis.keys(`message:discord:${projectId}:*`)
+    const messages: DiscordMessage[] = []
+    const replyCount: Record<string, number> = {}
+    let totalReplies = 0
+    
+    for (const key of messageKeys) {
+      const message = await redis.json.get(key) as DiscordMessage
+      if (!message) continue
+      messages.push(message)
+      
+      if (message.replyToId) {
+        totalReplies++
+        replyCount[message.replyToId] = (replyCount[message.replyToId] || 0) + 1
+      }
+    }
+    
+    // Get top replied messages
+    const topRepliedIds = Object.entries(replyCount)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 5)
+      .map(([id]) => id)
+    
+    const topRepliedMessages = []
+    for (const msgId of topRepliedIds) {
+      const message = messages.find(m => m.id === `message:discord:${msgId}`)
+      if (message) {
+        topRepliedMessages.push({
+          messageId: msgId,
+          content: message.content.slice(0, 100) + (message.content.length > 100 ? '...' : ''),
+          replyCount: replyCount[msgId],
+          author: message.username
+        })
+      }
+    }
+    
+    // Count unique conversation threads (messages with replies)
+    const conversationThreads = Object.keys(replyCount).length
+    
+    return {
+      avgRepliesPerMessage: messages.length > 0 ? totalReplies / messages.length : 0,
+      topRepliedMessages,
+      conversationThreads
+    }
   }
 } 

@@ -3,8 +3,68 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { Plus, Settings, Bot, TrendingUp, MessageSquare, Users } from 'lucide-react'
+import { Plus, Settings, Bot, TrendingUp, MessageSquare, Users, Calendar, Brain, Activity, BarChart3, PieChart, Hash, Clock } from 'lucide-react'
+import { Line, Doughnut, Bar } from 'react-chartjs-2'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+} from 'chart.js'
 import type { DiscordProject } from '@/lib/types/discord'
+
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+)
+
+interface AggregatedStats {
+  totalProjects: number
+  totalMessages: number
+  totalUsers: number
+  totalChannels: number
+  avgSentiment: number
+  sentimentBreakdown: {
+    positive: number
+    neutral: number
+    negative: number
+  }
+  projectActivity: Array<{
+    projectId: string
+    name: string
+    messages: number
+    users: number
+  }>
+  weeklyTrend: Array<{
+    date: string
+    messages: number
+    sentiment: number
+  }>
+  hourlyActivity: number[]
+  topProjects: Array<{
+    id: string
+    name: string
+    messageCount: number
+    userCount: number
+    sentiment: number
+  }>
+}
 
 export default function DiscordAdminPage() {
   const { data: session, status } = useSession()
@@ -15,6 +75,9 @@ export default function DiscordAdminPage() {
   const [geminiKey, setGeminiKey] = useState('')
   const [updatingKey, setUpdatingKey] = useState(false)
   const [scoutProjects, setScoutProjects] = useState<any[]>([])
+  const [aggregatedStats, setAggregatedStats] = useState<AggregatedStats | null>(null)
+  const [statsLoading, setStatsLoading] = useState(true)
+  const [selectedTimeframe, setSelectedTimeframe] = useState<'daily' | 'weekly' | 'monthly'>('weekly')
 
   // Check admin access
   useEffect(() => {
@@ -37,15 +100,31 @@ export default function DiscordAdminPage() {
     }
   }, [session, status, router])
 
-  // Fetch Discord projects
+  // Fetch data
   useEffect(() => {
     // Only fetch if authenticated
     if (status === 'authenticated') {
       fetchProjects()
       fetchGeminiKey()
       fetchScoutProjects()
+      fetchAggregatedStats()
     }
-  }, [status])
+  }, [status, selectedTimeframe])
+
+  const fetchAggregatedStats = async () => {
+    setStatsLoading(true)
+    try {
+      const res = await fetch(`/api/discord/aggregated-stats?timeframe=${selectedTimeframe}`)
+      if (res.ok) {
+        const data = await res.json()
+        setAggregatedStats(data)
+      }
+    } catch (error) {
+      console.error('Error fetching aggregated stats:', error)
+    } finally {
+      setStatsLoading(false)
+    }
+  }
 
   const fetchScoutProjects = async () => {
     try {
@@ -107,6 +186,63 @@ export default function DiscordAdminPage() {
     return project.stats || { totalMessages: 0, totalUsers: 0 }
   }
 
+  // Chart configurations
+  const sentimentChartData = {
+    labels: ['Positive', 'Neutral', 'Negative'],
+    datasets: [{
+      data: [
+        aggregatedStats?.sentimentBreakdown.positive || 0,
+        aggregatedStats?.sentimentBreakdown.neutral || 0,
+        aggregatedStats?.sentimentBreakdown.negative || 0
+      ],
+      backgroundColor: ['#10b981', '#6b7280', '#ef4444'],
+      borderWidth: 0
+    }]
+  }
+
+  const weeklyTrendData = {
+    labels: aggregatedStats?.weeklyTrend.map(d => new Date(d.date).toLocaleDateString()) || [],
+    datasets: [{
+      label: 'Messages',
+      data: aggregatedStats?.weeklyTrend.map(d => d.messages) || [],
+      borderColor: '#10b981',
+      backgroundColor: 'rgba(16, 185, 129, 0.1)',
+      fill: true,
+      yAxisID: 'y',
+    }, {
+      label: 'Avg Sentiment',
+      data: aggregatedStats?.weeklyTrend.map(d => d.sentiment) || [],
+      borderColor: '#8b5cf6',
+      backgroundColor: 'rgba(139, 92, 246, 0.1)',
+      fill: false,
+      yAxisID: 'y1',
+    }]
+  }
+
+  const hourlyActivityData = {
+    labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
+    datasets: [{
+      label: 'Messages by Hour',
+      data: aggregatedStats?.hourlyActivity || [],
+      backgroundColor: '#3b82f6',
+      borderColor: '#3b82f6',
+      borderWidth: 1
+    }]
+  }
+
+  const projectComparisonData = {
+    labels: aggregatedStats?.topProjects.map(p => p.name) || [],
+    datasets: [{
+      label: 'Messages',
+      data: aggregatedStats?.topProjects.map(p => p.messageCount) || [],
+      backgroundColor: '#10b981',
+    }, {
+      label: 'Active Users',
+      data: aggregatedStats?.topProjects.map(p => p.userCount) || [],
+      backgroundColor: '#3b82f6',
+    }]
+  }
+
   // Show loading while session is loading
   if (status === 'loading' || loading) {
     return (
@@ -119,8 +255,177 @@ export default function DiscordAdminPage() {
   return (
     <div className="container mx-auto p-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-green-400 mb-2">Discord Analytics</h1>
-        <p className="text-gray-400">Manage Discord servers and view sentiment analytics</p>
+        <h1 className="text-3xl font-bold text-green-400 mb-2">Discord Analytics Hub</h1>
+        <p className="text-gray-400">Comprehensive insights across all Discord servers</p>
+      </div>
+
+      {/* Overall Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <Bot className="w-8 h-8 text-blue-400" />
+            <span className="text-2xl font-bold text-white">{aggregatedStats?.totalProjects || 0}</span>
+          </div>
+          <p className="text-gray-400">Active Servers</p>
+          <p className="text-xs text-gray-500 mt-1">Discord communities tracked</p>
+        </div>
+
+        <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <MessageSquare className="w-8 h-8 text-green-400" />
+            <span className="text-2xl font-bold text-white">{(aggregatedStats?.totalMessages || 0).toLocaleString()}</span>
+          </div>
+          <p className="text-gray-400">Total Messages</p>
+          <p className="text-xs text-gray-500 mt-1">Across all servers</p>
+        </div>
+
+        <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <Users className="w-8 h-8 text-purple-400" />
+            <span className="text-2xl font-bold text-white">{(aggregatedStats?.totalUsers || 0).toLocaleString()}</span>
+          </div>
+          <p className="text-gray-400">Active Users</p>
+          <p className="text-xs text-gray-500 mt-1">Unique participants</p>
+        </div>
+
+        <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <Brain className="w-8 h-8 text-yellow-400" />
+            <span className="text-2xl font-bold text-white">
+              {aggregatedStats?.avgSentiment ? `${(aggregatedStats.avgSentiment * 100).toFixed(1)}%` : 'N/A'}
+            </span>
+          </div>
+          <p className="text-gray-400">Avg Sentiment</p>
+          <p className="text-xs text-gray-500 mt-1">Overall positivity score</p>
+        </div>
+      </div>
+
+      {/* Analytics Charts Section */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold text-green-300">Network Analytics</h2>
+          <select
+            value={selectedTimeframe}
+            onChange={(e) => setSelectedTimeframe(e.target.value as any)}
+            className="px-3 py-1 bg-black border border-gray-600 rounded text-white text-sm"
+          >
+            <option value="daily">Last 24 Hours</option>
+            <option value="weekly">Last 7 Days</option>
+            <option value="monthly">Last 30 Days</option>
+          </select>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Weekly Trend Chart */}
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+            <h3 className="text-lg font-medium text-white mb-4">Activity & Sentiment Trend</h3>
+            {!statsLoading && aggregatedStats ? (
+              <Line
+                data={weeklyTrendData}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    legend: { position: 'bottom' as const },
+                    title: { display: false }
+                  },
+                  scales: {
+                    y: {
+                      type: 'linear' as const,
+                      display: true,
+                      position: 'left' as const,
+                      title: { display: true, text: 'Messages' }
+                    },
+                    y1: {
+                      type: 'linear' as const,
+                      display: true,
+                      position: 'right' as const,
+                      title: { display: true, text: 'Sentiment Score' },
+                      grid: { drawOnChartArea: false },
+                      min: -1,
+                      max: 1
+                    }
+                  }
+                }}
+              />
+            ) : (
+              <div className="h-64 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+              </div>
+            )}
+          </div>
+
+          {/* Sentiment Breakdown */}
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+            <h3 className="text-lg font-medium text-white mb-4">Overall Sentiment Distribution</h3>
+            {!statsLoading && aggregatedStats ? (
+              <div className="flex items-center justify-center">
+                <div className="w-64 h-64">
+                  <Doughnut
+                    data={sentimentChartData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: true,
+                      plugins: {
+                        legend: { position: 'bottom' as const }
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="h-64 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+              </div>
+            )}
+          </div>
+
+          {/* Hourly Activity Pattern */}
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+            <h3 className="text-lg font-medium text-white mb-4">24-Hour Activity Pattern</h3>
+            {!statsLoading && aggregatedStats ? (
+              <Bar
+                data={hourlyActivityData}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    legend: { display: false },
+                    title: { display: false }
+                  },
+                  scales: {
+                    y: { beginAtZero: true }
+                  }
+                }}
+              />
+            ) : (
+              <div className="h-64 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+              </div>
+            )}
+          </div>
+
+          {/* Project Comparison */}
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+            <h3 className="text-lg font-medium text-white mb-4">Top Projects Comparison</h3>
+            {!statsLoading && aggregatedStats ? (
+              <Bar
+                data={projectComparisonData}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    legend: { position: 'bottom' as const }
+                  },
+                  scales: {
+                    y: { beginAtZero: true }
+                  }
+                }}
+              />
+            ) : (
+              <div className="h-64 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Gemini API Key Section */}
@@ -253,6 +558,7 @@ export default function DiscordAdminPage() {
           onCreated={() => {
             setShowCreateModal(false)
             fetchProjects()
+            fetchAggregatedStats()
           }}
         />
       )}

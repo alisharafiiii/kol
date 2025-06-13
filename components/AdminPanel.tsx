@@ -380,6 +380,7 @@ function ProfileModal({
                 >
                   <option value="user">User</option>
                   <option value="viewer">Viewer</option>
+                  <option value="team">Team</option>
                   <option value="scout">Scout</option>
                   <option value="intern">Intern</option>
                   <option value="core">Core</option>
@@ -1041,6 +1042,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
+        console.log('[DEBUG] Fetching users from API...')
         // Fetch data from the backend API instead of using mock data
         const response = await fetch('/api/admin/get-users');
         
@@ -1077,10 +1079,15 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
               // Add collaboration URLs
               bestCollabUrls: user.bestCollabUrls,
               // Add audience types
-              audienceTypes: user.audienceTypes
+              audienceTypes: user.audienceTypes,
+              // Add role
+              role: user.role,
+              // Add twitter handle
+              twitterHandle: user.twitterHandle
             }))
           : generateMockUsers();
         
+        console.log('[DEBUG] Fetched users:', usersData.length)
         setUsers(usersData);
         
         // Calculate status totals
@@ -1552,12 +1559,26 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
     try {
       // Find the user's twitter handle
       const user = users.find(u => u.id === userId)
-      if (!user || !user.twitterHandle) {
-        alert('User not found or missing Twitter handle')
+      if (!user) {
+        alert('User not found')
         return
       }
       
-      const response = await fetch(`/api/user/full-profile?handle=${encodeURIComponent(user.twitterHandle)}`, {
+      console.log('[DEBUG] Changing role for user:', { userId, newRole, user })
+      
+      // Check for twitter handle in both possible fields
+      const twitterHandle = user.twitterHandle || user.handle
+      if (!twitterHandle) {
+        alert('User does not have a Twitter handle')
+        return
+      }
+      
+      // Clean the handle (remove @ if present)
+      const cleanHandle = twitterHandle.replace('@', '')
+      
+      console.log('[DEBUG] Making API call to:', `/api/user/full-profile?handle=${cleanHandle}`)
+      
+      const response = await fetch(`/api/user/full-profile?handle=${encodeURIComponent(cleanHandle)}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -1565,8 +1586,11 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
         body: JSON.stringify({ role: newRole }),
       })
 
+      const responseData = await response.json()
+      console.log('[DEBUG] API Response:', { status: response.status, data: responseData })
+
       if (!response.ok) {
-        throw new Error('Failed to update role')
+        throw new Error(responseData.error || 'Failed to update role')
       }
 
       // Update local state
@@ -1579,7 +1603,11 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
         setSelectedUser(prev => prev ? { ...prev, role: newRole } : null)
       }
       
-      alert('Role updated successfully')
+      // Show success message with note about session
+      alert(`Role updated successfully!\n\nNote: The user (${user.name || user.handle}) may need to sign out and sign back in for the role change to take full effect.`)
+      
+      // Don't reload the page - the UI is already updated
+      console.log('[DEBUG] Role change completed')
     } catch (error) {
       console.error('Error updating role:', error)
       alert(`Failed to update role: ${error instanceof Error ? error.message : 'Unknown error'}`)
@@ -1589,7 +1617,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   /* =====================
      Roles management state
   ====================== */
-  const roleOptions = ['admin', 'core', 'scout', 'user', 'viewer'] as const
+  const roleOptions = ['admin', 'core', 'team', 'scout', 'intern', 'user', 'viewer'] as const
   type RoleOption = typeof roleOptions[number]
 
   const [rolesList, setRolesList] = useState<Array<{ wallet: string; role: RoleOption }>>([])
@@ -1742,33 +1770,33 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
         </div>
         
         {/* Tabs */}
-        <div className="flex border-b border-green-300 mb-6">
+        <div className="flex border-b border-green-300 mb-6 admin-nav gap-2 overflow-x-auto">
           <button 
-            className={`px-4 py-2 ${activeTab === 'dashboard' ? 'bg-green-800' : ''}`}
+            className={`px-4 py-2 whitespace-nowrap ${activeTab === 'dashboard' ? 'bg-green-800' : ''}`}
             onClick={() => setActiveTab('dashboard')}
           >
             Dashboard
           </button>
           <button 
-            className={`px-4 py-2 ${activeTab === 'search' ? 'bg-green-800' : ''}`}
+            className={`px-4 py-2 whitespace-nowrap ${activeTab === 'search' ? 'bg-green-800' : ''}`}
             onClick={() => setActiveTab('search')}
           >
             Search
           </button>
           <button 
-            className={`px-4 py-2 ${activeTab === 'leaderboard' ? 'bg-green-800' : ''}`}
+            className={`px-4 py-2 whitespace-nowrap ${activeTab === 'leaderboard' ? 'bg-green-800' : ''}`}
             onClick={() => setActiveTab('leaderboard')}
           >
             Leaderboard
           </button>
           <button 
-            className={`px-4 py-2 ${activeTab === 'products' ? 'bg-green-800' : ''}`}
+            className={`px-4 py-2 whitespace-nowrap ${activeTab === 'products' ? 'bg-green-800' : ''}`}
             onClick={() => setActiveTab('products')}
           >
             Products
           </button>
           <button 
-            className={`px-4 py-2 ${activeTab === 'discord' ? 'bg-green-800' : ''}`}
+            className={`px-4 py-2 whitespace-nowrap ${activeTab === 'discord' ? 'bg-green-800' : ''}`}
             onClick={() => setActiveTab('discord')}
           >
             Discord
@@ -2428,7 +2456,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                         
                         {/* Country */}
                         {user.country && (
-                          <div className="text-xs flex items-center">
+                          <div className="text-xs flex items-center hidden-mobile">
                             <span className="opacity-70 mr-1">🌍</span>
                             <span>{typeof user.country === 'string' 
                               ? user.country 
@@ -2440,7 +2468,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                         
                         {/* Joined Date */}
                         {user.createdAt && (
-                          <div className="text-xs flex items-center">
+                          <div className="text-xs flex items-center hidden sm:flex">
                             <span className="opacity-70 mr-1">📅</span>
                             <span>Joined {new Date(user.createdAt).toLocaleDateString()}</span>
                           </div>
@@ -2456,7 +2484,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                         
                         {/* Monthly budget */}
                         {(user.priceMonthly || user.monthlySupportBudget) && (
-                          <div className="text-xs flex items-center">
+                          <div className="text-xs flex items-center hidden sm:flex">
                             <span className="opacity-70 mr-1">💰</span>
                             <span>${user.priceMonthly || user.monthlySupportBudget}/month</span>
                           </div>
@@ -2464,7 +2492,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                         
                         {/* Wallet count */}
                         {user.walletCount !== undefined && (
-                          <div className="text-xs flex items-center">
+                          <div className="text-xs flex items-center hidden md:flex">
                             <span className="opacity-70 mr-1">🔑</span>
                             <span>{user.walletCount} wallet{user.walletCount !== 1 ? 's' : ''}</span>
                           </div>
@@ -2475,7 +2503,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         {/* Active Chains */}
                         {user.chains && user.chains.length > 0 && (
-                          <div className="flex flex-wrap gap-1">
+                          <div className="flex flex-wrap gap-1 hidden sm:flex">
                             {Array.isArray(user.chains) 
                               ? user.chains.slice(0, 3).map(chain => (
                                 <span key={chain} className="px-1.5 py-0.5 bg-green-900/30 text-xs rounded">
@@ -2509,7 +2537,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                         
                         {/* Social Platforms */}
                         {user.socialAccounts && Object.keys(user.socialAccounts).length > 0 && (
-                          <div className="flex gap-1">
+                          <div className="flex gap-1 hidden-mobile">
                             {Object.entries(user.socialAccounts).slice(0, 4).map(([platform]) => {
                               let icon = '🌐';
                               if (platform.toLowerCase().includes('twitter')) icon = '𝕏';

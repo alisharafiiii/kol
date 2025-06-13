@@ -4,6 +4,13 @@ const { Client, GatewayIntentBits, Partials } = require('discord.js');
 const { Redis } = require('@upstash/redis');
 require('dotenv').config({ path: '.env.local' });
 
+// Bot configuration - moved to top to be available throughout the file
+const token = process.env.DISCORD_BOT_TOKEN;
+if (!token) {
+  console.error('❌ DISCORD_BOT_TOKEN environment variable is required');
+  process.exit(1);
+}
+
 // Parse REDIS_URL if available
 let upstashUrl;
 let upstashToken;
@@ -306,6 +313,10 @@ client.on('messageCreate', async (message) => {
       replyToId: message.reference?.messageId
     };
     
+    // DEBUG: Log the projectId being sent
+    console.log(`   🔍 DEBUG: Sending projectId: ${serverData.projectId}`);
+    console.log(`   🔍 DEBUG: Full serverData:`, serverData);
+    
     // Call API endpoint
     const response = await fetch('http://localhost:3000/api/discord/messages', {
       method: 'POST',
@@ -332,13 +343,6 @@ client.on('messageCreate', async (message) => {
 client.on('error', (error) => {
   console.error('❌ Discord client error:', error);
 });
-
-// Bot configuration
-const token = process.env.DISCORD_BOT_TOKEN;
-if (!token) {
-  console.error('❌ DISCORD_BOT_TOKEN environment variable is required');
-  process.exit(1);
-}
 
 console.log('🔑 Attempting to login...');
 

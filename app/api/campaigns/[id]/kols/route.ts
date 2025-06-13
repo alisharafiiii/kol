@@ -115,7 +115,7 @@ export async function POST(
     }
     
     // Use the campaign library's function which properly updates the embedded KOL array
-    const { addKOLToCampaign, getCampaign } = await import('@/lib/campaign')
+    const { addKOLToCampaign, updateKOLInCampaign, getCampaign } = await import('@/lib/campaign')
     const userHandle = auth.user?.twitterHandle || auth.user?.name || 'unknown'
     const userRole = auth.role || 'user'
     const isAdmin = ['admin', 'core'].includes(userRole)
@@ -127,44 +127,90 @@ export async function POST(
       authObj: auth
     })
     
-    // For admins, bypass the permission check by updating the campaign directly
-    if (isAdmin) {
-      const campaign = await getCampaign(campaignId)
-      if (!campaign) {
-        return NextResponse.json(
-          { error: 'Campaign not found' },
-          { status: 404 }
-        )
-      }
+    // Get the campaign first to check for existing KOL
+    const campaign = await getCampaign(campaignId)
+    if (!campaign) {
+      return NextResponse.json(
+        { error: 'Campaign not found' },
+        { status: 404 }
+      )
+    }
+    
+    // Check if KOL with the same handle already exists
+    const existingKOL = campaign.kols.find(k => k.handle.toLowerCase() === kolData.handle.toLowerCase())
+    
+    if (existingKOL) {
+      console.log('[DEBUG] Found existing KOL with handle:', kolData.handle, 'ID:', existingKOL.id)
       
-      const { nanoid } = await import('nanoid')
-      const newKOL = {
+      // Update existing KOL instead of creating a new one
+      const updates = {
         ...kolData,
-        id: nanoid(),
-        lastUpdated: new Date(),
+        // Preserve existing fields that might not be in the update
+        id: existingKOL.id,
+        lastUpdated: new Date()
       }
       
-      campaign.kols.push(newKOL)
-      campaign.updatedAt = new Date().toISOString()
-      
-      const { redis } = await import('@/lib/redis')
-      await redis.json.set(campaignId, '$', campaign as any)
-      
-      return NextResponse.json(newKOL)
+      // For admins, bypass the permission check
+      if (isAdmin) {
+        const kolIndex = campaign.kols.findIndex(k => k.id === existingKOL.id)
+        if (kolIndex !== -1) {
+          campaign.kols[kolIndex] = { ...existingKOL, ...updates }
+          campaign.updatedAt = new Date().toISOString()
+          
+          const { redis } = await import('@/lib/redis')
+          await redis.json.set(campaignId, '$', campaign as any)
+          
+          return NextResponse.json(campaign.kols[kolIndex])
+        }
+      } else {
+        // For non-admins, use the regular function with permission checks
+        const updatedCampaign = await updateKOLInCampaign(campaignId, existingKOL.id, updates, userHandle)
+        
+        if (!updatedCampaign) {
+          return NextResponse.json(
+            { error: 'Failed to update existing KOL' },
+            { status: 500 }
+          )
+        }
+        
+        const updatedKOL = updatedCampaign.kols.find(k => k.id === existingKOL.id)
+        return NextResponse.json(updatedKOL)
+      }
     } else {
-      // For non-admins, use the regular function with permission checks
-      const updatedCampaign = await addKOLToCampaign(campaignId, kolData, userHandle)
+      // No existing KOL found, create a new one
+      console.log('[DEBUG] Creating new KOL with handle:', kolData.handle)
       
-      if (!updatedCampaign) {
-        return NextResponse.json(
-          { error: 'Campaign not found' },
-          { status: 404 }
-        )
+      // For admins, bypass the permission check by updating the campaign directly
+      if (isAdmin) {
+        const { nanoid } = await import('nanoid')
+        const newKOL = {
+          ...kolData,
+          id: nanoid(),
+          lastUpdated: new Date(),
+        }
+        
+        campaign.kols.push(newKOL)
+        campaign.updatedAt = new Date().toISOString()
+        
+        const { redis } = await import('@/lib/redis')
+        await redis.json.set(campaignId, '$', campaign as any)
+        
+        return NextResponse.json(newKOL)
+      } else {
+        // For non-admins, use the regular function with permission checks
+        const updatedCampaign = await addKOLToCampaign(campaignId, kolData, userHandle)
+        
+        if (!updatedCampaign) {
+          return NextResponse.json(
+            { error: 'Campaign not found' },
+            { status: 404 }
+          )
+        }
+        
+        // Return the newly added KOL from the campaign
+        const newKOL = updatedCampaign.kols[updatedCampaign.kols.length - 1]
+        return NextResponse.json(newKOL)
       }
-      
-      // Return the newly added KOL from the campaign
-      const newKOL = updatedCampaign.kols[updatedCampaign.kols.length - 1]
-      return NextResponse.json(newKOL)
     }
   } catch (error) {
     console.error('Error adding KOL to campaign:', error)

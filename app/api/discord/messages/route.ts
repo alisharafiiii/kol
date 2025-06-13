@@ -7,13 +7,21 @@ export async function POST(request: NextRequest) {
     const authHeader = request.headers.get('authorization')
     const botToken = process.env.DISCORD_BOT_TOKEN
     
+    console.log('🔐 Discord Messages API - Auth check:')
+    console.log('   Bot token configured:', !!botToken)
+    console.log('   Auth header received:', authHeader?.substring(0, 20) + '...')
+    console.log('   Expected header:', botToken ? `Bot ${botToken.substring(0, 20)}...` : 'Not configured')
+    
     if (!botToken) {
       return NextResponse.json({ error: 'Discord bot token not configured' }, { status: 500 })
     }
     
     if (!authHeader || authHeader !== `Bot ${botToken}`) {
+      console.log('   ❌ Auth failed - headers don\'t match')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    console.log('   ✅ Auth successful')
 
     const data = await request.json()
     

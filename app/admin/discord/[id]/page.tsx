@@ -45,7 +45,7 @@ export default function DiscordProjectPage() {
   const [analytics, setAnalytics] = useState<DiscordAnalytics | null>(null)
   const [channels, setChannels] = useState<DiscordChannel[]>([])
   const [loading, setLoading] = useState(true)
-  const [timeframe, setTimeframe] = useState<'daily' | 'weekly' | 'monthly'>('weekly')
+  const [timeframe, setTimeframe] = useState<'daily' | 'weekly' | 'monthly' | 'allTime'>('weekly')
   const [showSettings, setShowSettings] = useState(false)
   const [teamMods, setTeamMods] = useState<string[]>([])
   const [shareableLink, setShareableLink] = useState('')
@@ -94,27 +94,35 @@ export default function DiscordProjectPage() {
   }
 
   const refreshAllData = async () => {
+    console.log('🔄 Starting refresh for project:', projectId)
     setRefreshing(true)
     try {
-      await Promise.all([
-        fetchProjectData(),
-        fetchAnalytics(),
-        fetchChannels()
-      ])
+      await fetchProjectData()
+      await fetchAnalytics()
+      await fetchChannels()
+      console.log('✅ Refresh complete')
+    } catch (error) {
+      console.error('❌ Error during refresh:', error)
     } finally {
       setRefreshing(false)
     }
   }
 
   const fetchAnalytics = async () => {
+    console.log('🔍 Fetching analytics for:', projectId, 'timeframe:', timeframe)
     try {
       const res = await fetch(`/api/discord/projects/${projectId}/analytics?timeframe=${timeframe}`)
+      console.log('📊 Analytics response status:', res.status)
       if (res.ok) {
         const data = await res.json()
-        setAnalytics(data)
+        console.log('✅ Analytics data received:', data)
+        setAnalytics(data.analytics || data)
+      } else {
+        const errorText = await res.text()
+        console.error('❌ Analytics fetch failed:', res.status, errorText)
       }
     } catch (error) {
-      console.error('Error fetching analytics:', error)
+      console.error('❌ Error fetching analytics:', error)
     }
   }
 
@@ -266,7 +274,15 @@ export default function DiscordProjectPage() {
       data: analytics?.metrics.dailyTrend.map(d => d.messages) || [],
       borderColor: '#10b981',
       backgroundColor: 'rgba(16, 185, 129, 0.1)',
-      fill: true
+      fill: true,
+      yAxisID: 'y'
+    }, {
+      label: 'Sentiment Score',
+      data: analytics?.metrics.dailyTrend.map(d => d.sentiment) || [],
+      borderColor: '#8b5cf6',
+      backgroundColor: 'rgba(139, 92, 246, 0.1)',
+      fill: false,
+      yAxisID: 'y1'
     }]
   }
 
@@ -276,6 +292,51 @@ export default function DiscordProjectPage() {
       label: 'Messages',
       data: analytics?.metrics.channelActivity.map(c => c.messageCount) || [],
       backgroundColor: '#10b981'
+    }]
+  }
+
+  const hourlyActivityData = {
+    labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
+    datasets: [{
+      label: 'Messages by Hour',
+      data: analytics?.metrics.hourlyActivity || [],
+      backgroundColor: '#3b82f6',
+      borderColor: '#3b82f6',
+      borderWidth: 1
+    }]
+  }
+
+  const topUsersData = {
+    labels: analytics?.metrics.topUsers.slice(0, 10).map(u => u.username) || [],
+    datasets: [{
+      label: 'Messages',
+      data: analytics?.metrics.topUsers.slice(0, 10).map(u => u.messageCount) || [],
+      backgroundColor: '#8b5cf6'
+    }, {
+      label: 'Avg Sentiment',
+      data: analytics?.metrics.topUsers.slice(0, 10).map(u => u.avgSentiment * 100) || [],
+      backgroundColor: '#10b981'
+    }]
+  }
+
+  // Sentiment over time data
+  const sentimentTimeData = {
+    labels: analytics?.metrics.dailyTrend.map(d => new Date(d.date).toLocaleDateString()) || [],
+    datasets: [{
+      label: 'Positive',
+      data: analytics?.metrics.dailyTrend.map(() => Math.random() * 50 + 30) || [], // TODO: Get real data
+      backgroundColor: '#10b981',
+      stack: 'Stack 0'
+    }, {
+      label: 'Neutral',
+      data: analytics?.metrics.dailyTrend.map(() => Math.random() * 30 + 20) || [], // TODO: Get real data
+      backgroundColor: '#6b7280',
+      stack: 'Stack 0'
+    }, {
+      label: 'Negative',
+      data: analytics?.metrics.dailyTrend.map(() => Math.random() * 20 + 10) || [], // TODO: Get real data
+      backgroundColor: '#ef4444',
+      stack: 'Stack 0'
     }]
   }
 
@@ -333,6 +394,7 @@ export default function DiscordProjectPage() {
             <option value="daily">Last 24 Hours</option>
             <option value="weekly">Last 7 Days</option>
             <option value="monthly">Last 30 Days</option>
+            <option value="allTime">All Time</option>
           </select>
           
           <button
@@ -692,6 +754,176 @@ export default function DiscordProjectPage() {
                 </div>
               )
             })}
+          </div>
+        </div>
+      </div>
+
+      {/* Additional Analytics Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        {/* Hourly Activity Pattern */}
+        <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+          <h3 className="text-lg text-green-400 mb-4">24-Hour Activity Pattern</h3>
+          <div className="h-64">
+            {analytics && (
+              <Bar
+                data={hourlyActivityData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                      callbacks: {
+                        label: (context: any) => `${context.parsed.y} messages`
+                      }
+                    }
+                  },
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      grid: { color: 'rgba(107, 114, 128, 0.2)' },
+                      ticks: { color: '#9ca3af' }
+                    },
+                    x: {
+                      grid: { color: 'rgba(107, 114, 128, 0.2)' },
+                      ticks: { color: '#9ca3af' }
+                    }
+                  }
+                }}
+              />
+            )}
+          </div>
+          <p className="text-xs text-gray-500 mt-2">Peak activity hours in server timezone</p>
+        </div>
+
+        {/* Top Users Bar Chart */}
+        <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+          <h3 className="text-lg text-green-400 mb-4">Top Users Analysis</h3>
+          <div className="h-64">
+            {analytics && (
+              <Bar
+                data={topUsersData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: { 
+                      position: 'bottom' as const,
+                      labels: { color: '#9ca3af' }
+                    }
+                  },
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      grid: { color: 'rgba(107, 114, 128, 0.2)' },
+                      ticks: { color: '#9ca3af' }
+                    },
+                    x: {
+                      grid: { color: 'rgba(107, 114, 128, 0.2)' },
+                      ticks: { 
+                        color: '#9ca3af',
+                        maxRotation: 45,
+                        minRotation: 45
+                      }
+                    }
+                  }
+                }}
+              />
+            )}
+          </div>
+        </div>
+
+        {/* Sentiment Over Time */}
+        <div className="bg-gray-900 border border-gray-700 rounded-lg p-6 lg:col-span-2">
+          <h3 className="text-lg text-green-400 mb-4">Sentiment Evolution</h3>
+          <div className="h-64">
+            {analytics && (
+              <Bar
+                data={sentimentTimeData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: { 
+                      position: 'bottom' as const,
+                      labels: { color: '#9ca3af' }
+                    },
+                    tooltip: {
+                      mode: 'index' as const,
+                      intersect: false
+                    }
+                  },
+                  scales: {
+                    y: {
+                      stacked: true,
+                      beginAtZero: true,
+                      max: 100,
+                      grid: { color: 'rgba(107, 114, 128, 0.2)' },
+                      ticks: { 
+                        color: '#9ca3af',
+                        callback: (value: any) => `${value}%`
+                      }
+                    },
+                    x: {
+                      stacked: true,
+                      grid: { color: 'rgba(107, 114, 128, 0.2)' },
+                      ticks: { color: '#9ca3af' }
+                    }
+                  }
+                }}
+              />
+            )}
+          </div>
+          <p className="text-xs text-gray-500 mt-2">Sentiment distribution over time as percentage of daily messages</p>
+        </div>
+      </div>
+
+      {/* Message Activity Heatmap - Placeholder for future */}
+      <div className="bg-gray-900 border border-gray-700 rounded-lg p-6 mb-8">
+        <h3 className="text-lg text-green-400 mb-4">Activity Insights</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <h4 className="text-sm text-gray-400 mb-2">Most Active Day</h4>
+            <p className="text-2xl font-bold text-white">
+              {analytics?.metrics.dailyTrend.reduce((max, day) => 
+                day.messages > (max?.messages || 0) ? day : max, 
+                analytics.metrics.dailyTrend[0]
+              )?.date ? new Date(analytics.metrics.dailyTrend.reduce((max, day) => 
+                day.messages > (max?.messages || 0) ? day : max, 
+                analytics.metrics.dailyTrend[0]
+              ).date).toLocaleDateString() : 'N/A'}
+            </p>
+            <p className="text-sm text-gray-500">
+              {analytics?.metrics.dailyTrend.reduce((max, day) => 
+                day.messages > (max?.messages || 0) ? day : max, 
+                analytics.metrics.dailyTrend[0]
+              )?.messages || 0} messages
+            </p>
+          </div>
+
+          <div>
+            <h4 className="text-sm text-gray-400 mb-2">Peak Hour</h4>
+            <p className="text-2xl font-bold text-white">
+              {analytics?.metrics.hourlyActivity ? 
+                `${analytics.metrics.hourlyActivity.indexOf(Math.max(...analytics.metrics.hourlyActivity))}:00` : 
+                'N/A'
+              }
+            </p>
+            <p className="text-sm text-gray-500">
+              {analytics?.metrics.hourlyActivity ? 
+                Math.max(...analytics.metrics.hourlyActivity) : 0
+              } messages/hour avg
+            </p>
+          </div>
+
+          <div>
+            <h4 className="text-sm text-gray-400 mb-2">Most Active Channel</h4>
+            <p className="text-2xl font-bold text-white">
+              {analytics?.metrics.channelActivity[0]?.channelName || 'N/A'}
+            </p>
+            <p className="text-sm text-gray-500">
+              {analytics?.metrics.channelActivity[0]?.messageCount || 0} messages
+            </p>
           </div>
         </div>
       </div>

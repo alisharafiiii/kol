@@ -54,13 +54,14 @@ interface DiscordAnalytics {
 // This page requires authentication and proper role
 export default function DiscordSharePage() {
   const params = useParams()
+  const router = useRouter()
   const { data: session, status } = useSession()
   const [project, setProject] = useState<DiscordProject | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [hasAccess, setHasAccess] = useState(false)
   const [analytics, setAnalytics] = useState<DiscordAnalytics | null>(null)
   const [scoutProject, setScoutProject] = useState<any>(null)
+  const [checkingAccess, setCheckingAccess] = useState(true)
   const searchParams = useSearchParams()
   const timeframe = searchParams.get('timeframe') || 'weekly'
   
@@ -73,103 +74,128 @@ export default function DiscordSharePage() {
   
   console.log('Discord Share: Raw ID:', rawId)
   console.log('Discord Share: Parsed project ID:', projectId)
+  console.log('Discord Share: Session status:', status)
+  console.log('Discord Share: Session data:', session)
 
-  // Check user access
+  // Check authentication and access in one effect
   useEffect(() => {
-    const checkAccess = async () => {
-      if (status === 'loading') return
+    const checkAccessAndFetchData = async () => {
+      // Skip if we're still checking access
+      if (checkingAccess && status === 'loading') {
+        console.log('Discord Share: Waiting for session status...')
+        return
+      }
       
-      console.log('Discord Share: Auth status:', status)
-      
+      // If not authenticated and we've finished checking, show login screen
       if (status === 'unauthenticated') {
+        console.log('Discord Share: User not authenticated')
+        setCheckingAccess(false)
         setLoading(false)
         return
       }
       
-      if (!session?.user?.name) {
-        setError('Please sign in to view this page')
-        setLoading(false)
-        return
-      }
-      
-      try {
-        // Get user profile to check role (same as brief page)
-        const profileRes = await fetch(`/api/user/profile?handle=${session.user.name}`)
-        if (profileRes.ok) {
-          const profileData = await profileRes.json()
-          const profile = profileData.user
-          
-          console.log('Discord Share: Profile data:', profile)
-          
-          // Check if user has appropriate role
-          const allowedRoles = ['admin', 'core', 'team', 'viewer']
-          if (profile.role && allowedRoles.includes(profile.role)) {
-            console.log('Access granted: User role:', profile.role)
-            setHasAccess(true)
-          } else {
-            // Hardcoded check for alinabu and sharafi_eth
-            const handle = session.user.name?.toLowerCase()
-            if (handle === 'alinabu' || handle === 'sharafi_eth') {
-              console.log('Access granted: Hardcoded admin -', handle)
-              setHasAccess(true)
-            } else {
-              console.log('Access denied: User role:', profile.role)
-              setError('Access denied. You need appropriate permissions to view Discord analytics.')
-              setLoading(false)
-            }
-          }
-        } else {
-          // If profile API fails, check hardcoded admins
-          const handle = session.user.name?.toLowerCase()
-          if (handle === 'alinabu' || handle === 'sharafi_eth') {
-            console.log('Access granted: Hardcoded admin (API failed) -', handle)
-            setHasAccess(true)
-          } else {
-            setError('Profile not found. Please contact an administrator.')
-            setLoading(false)
-          }
-        }
-      } catch (err) {
-        console.error('Error checking access:', err)
-        // On error, still check hardcoded admins
-        const handle = session.user.name?.toLowerCase()
-        if (handle === 'alinabu' || handle === 'sharafi_eth') {
-          console.log('Access granted: Hardcoded admin (error occurred) -', handle)
-          setHasAccess(true)
-        } else {
-          setError('Error checking access permissions')
-          setLoading(false)
-        }
-      }
-    }
-    
-    checkAccess()
-  }, [session, status])
-
-  // Fetch project data and analytics
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!hasAccess || !projectId) return
-      
-      try {
-        // Fetch project data
-        const projectRes = await fetch(`/api/discord/projects/${encodeURIComponent(projectId)}`)
-        if (!projectRes.ok) {
-          if (projectRes.status === 404) {
-            setError('Discord project not found')
-          } else {
-            setError('Failed to load Discord project')
-          }
+      // If authenticated, check access
+      if (status === 'authenticated') {
+        if (!session?.user?.name) {
+          console.error('Discord Share: Authenticated but no user name')
+          setError('Authentication error. Please try signing in again.')
+          setCheckingAccess(false)
           setLoading(false)
           return
-        } else {
+        }
+        
+        console.log('Discord Share: User authenticated as:', session.user.name)
+        
+        try {
+          // Get user profile to check role
+          const profileRes = await fetch(`/api/user/profile?handle=${session.user.name}`, {
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            cache: 'no-store'
+          })
+          
+          if (!profileRes.ok) {
+            console.error('Discord Share: Failed to fetch profile:', profileRes.status)
+            if (profileRes.status === 401) {
+              // Session invalid, redirect to sign in
+              window.location.href = `/api/auth/signin?callbackUrl=${encodeURIComponent(window.location.href)}`
+              return
+            }
+            setError('Failed to fetch user profile')
+            setCheckingAccess(false)
+            setLoading(false)
+            return
+          }
+          
+          const profileData = await profileRes.json()
+          const profile = profileData.user
+          console.log('Discord Share: User profile:', profile)
+          
+          // Check access based on role
+          const allowedRoles = ['admin', 'core', 'viewer']
+          const userRole = profile.role || 'user'
+          const handle = (profile.twitterHandle || session.user.name || '').toLowerCase().replace('@', '')
+          
+          // Special handling for hardcoded admins
+          if (handle === 'alinabu' || handle === 'sharafi_eth') {
+            console.log('Discord Share: Hardcoded admin detected:', handle)
+            // Continue with access granted
+          } else if (!allowedRoles.includes(userRole)) {
+            console.log('Discord Share: Access denied. User role:', userRole)
+            setError(`Access denied. You need appropriate permissions to view Discord analytics.\n\nYour current role: ${userRole}\nRequired roles: ${allowedRoles.join(', ')}`)
+            setCheckingAccess(false)
+            setLoading(false)
+            return
+          }
+          
+          console.log('Discord Share: Access granted. Role:', userRole || 'admin (hardcoded)')
+          setCheckingAccess(false)
+          
+          // Fetch project data
+          const projectRes = await fetch(`/api/discord/projects/${encodeURIComponent(projectId)}`, {
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          })
+          
+          console.log('Discord Share: Project fetch status:', projectRes.status)
+          
+          if (!projectRes.ok) {
+            const errorText = await projectRes.text()
+            console.error('Discord Share: Project fetch error:', errorText)
+            
+            if (projectRes.status === 404) {
+              setError('Discord project not found')
+            } else if (projectRes.status === 403) {
+              setError('Access denied to project data. Please ensure you are properly authenticated.')
+            } else if (projectRes.status === 401) {
+              // Session might have expired, redirect to login
+              console.log('Discord Share: Session expired, redirecting to login')
+              window.location.href = `/api/auth/signin?callbackUrl=${encodeURIComponent(window.location.href)}`
+              return
+            } else {
+              setError(`Failed to load Discord project (${projectRes.status})`)
+            }
+            setLoading(false)
+            return
+          }
+          
           const projectData = await projectRes.json()
           setProject(projectData)
+          console.log('Discord Share: Project loaded:', projectData.name)
           
           // Fetch Scout project if linked
           if (projectData.scoutProjectId) {
             try {
-              const scoutRes = await fetch(`/api/projects/${projectData.scoutProjectId}`)
+              const scoutRes = await fetch(`/api/projects/${projectData.scoutProjectId}`, {
+                credentials: 'include',
+                headers: {
+                  'Content-Type': 'application/json',
+                }
+              })
               if (scoutRes.ok) {
                 const scoutData = await scoutRes.json()
                 setScoutProject(scoutData)
@@ -180,22 +206,49 @@ export default function DiscordSharePage() {
           }
           
           // Fetch analytics
-          const analyticsRes = await fetch(`/api/discord/projects/${encodeURIComponent(projectId)}/analytics?timeframe=${timeframe}`)
-          if (analyticsRes.ok) {
+          const analyticsRes = await fetch(`/api/discord/projects/${encodeURIComponent(projectId)}/analytics?timeframe=${timeframe}`, {
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          })
+          
+          if (!analyticsRes.ok) {
+            console.error('Discord Share: Failed to fetch analytics:', analyticsRes.status)
+            if (analyticsRes.status === 403) {
+              setError('Access denied to analytics data.')
+            }
+          } else {
             const analyticsData = await analyticsRes.json()
-            setAnalytics(analyticsData)
+            console.log('Discord Share: Analytics loaded')
+            setAnalytics(analyticsData.analytics || analyticsData)
           }
+          
+          setLoading(false)
+          
+        } catch (err) {
+          console.error('Discord Share: Error during access check:', err)
+          setError('Error checking access permissions')
+          setCheckingAccess(false)
+          setLoading(false)
         }
-      } catch (err) {
-        console.error('Error fetching data:', err)
-        setError('Error loading Discord project')
-      } finally {
-        setLoading(false)
       }
     }
+    
+    checkAccessAndFetchData()
+  }, [session, status, projectId, timeframe])
 
-    fetchData()
-  }, [projectId, hasAccess, timeframe])
+  // Show loading while checking session or access
+  if (status === 'loading' || checkingAccess) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
+          <p className="text-green-300">Checking access...</p>
+        </div>
+      </div>
+    )
+  }
 
   // Show login screen for unauthenticated users
   if (status === 'unauthenticated') {
@@ -216,7 +269,12 @@ export default function DiscordSharePage() {
           <p className="text-green-400 mb-6">Please sign in to view Discord analytics</p>
           
           <button
-            onClick={() => signIn('twitter')}
+            onClick={() => {
+              console.log('Discord Share: Initiating sign in...')
+              signIn('twitter', {
+                callbackUrl: window.location.href
+              })
+            }}
             className="w-full px-6 py-3 bg-green-900 text-green-100 rounded hover:bg-green-800 transition-colors flex items-center justify-center gap-3"
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -224,16 +282,16 @@ export default function DiscordSharePage() {
             </svg>
             Sign in with X
           </button>
+          
+          <div className="mt-4 text-xs text-gray-500">
+            <p>Having trouble? Try:</p>
+            <ul className="mt-2 space-y-1 text-left">
+              <li>• Clear your browser cookies</li>
+              <li>• Use a different browser</li>
+              <li>• Disable ad blockers</li>
+            </ul>
+          </div>
         </div>
-      </div>
-    )
-  }
-  
-  // Show loading state
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-green-300">Loading...</div>
       </div>
     )
   }
@@ -244,16 +302,36 @@ export default function DiscordSharePage() {
       <div className="min-h-screen bg-black flex items-center justify-center p-4">
         <div className="bg-black border border-red-500 rounded-lg p-8 max-w-md w-full text-center">
           <h1 className="text-xl font-bold text-red-400 mb-4">Access Error</h1>
-          <p className="text-red-300">{error}</p>
-          {status === 'authenticated' && (
+          <p className="text-red-300 whitespace-pre-wrap">{error}</p>
+          
+          <div className="mt-6 space-y-3">
             <button
               onClick={() => window.location.href = '/'}
-              className="mt-6 px-4 py-2 border border-green-500 text-green-300 rounded hover:bg-green-900/30"
+              className="w-full px-4 py-2 border border-green-500 text-green-300 rounded hover:bg-green-900/30"
             >
               Go to Dashboard
             </button>
-          )}
+            
+            <button
+              onClick={() => {
+                // Sign out and sign in again
+                window.location.href = '/api/auth/signout?callbackUrl=' + encodeURIComponent('/api/auth/signin')
+              }}
+              className="w-full px-4 py-2 border border-gray-500 text-gray-300 rounded hover:bg-gray-900/30"
+            >
+              Sign Out & Try Again
+            </button>
+          </div>
         </div>
+      </div>
+    )
+  }
+  
+  // Show loading state while fetching data
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-green-300">Loading analytics...</div>
       </div>
     )
   }
@@ -271,9 +349,9 @@ export default function DiscordSharePage() {
     labels: ['Positive', 'Neutral', 'Negative'],
     datasets: [{
       data: [
-        analytics?.metrics.sentimentBreakdown.positive || 0,
-        analytics?.metrics.sentimentBreakdown.neutral || 0,
-        analytics?.metrics.sentimentBreakdown.negative || 0
+        analytics?.metrics?.sentimentBreakdown?.positive || 0,
+        analytics?.metrics?.sentimentBreakdown?.neutral || 0,
+        analytics?.metrics?.sentimentBreakdown?.negative || 0
       ],
       backgroundColor: ['#10b981', '#6b7280', '#ef4444'],
       borderWidth: 0
@@ -281,10 +359,10 @@ export default function DiscordSharePage() {
   }
 
   const activityChartData = {
-    labels: analytics?.metrics.dailyTrend.map(d => new Date(d.date).toLocaleDateString()) || [],
+    labels: analytics?.metrics?.dailyTrend?.map(d => new Date(d.date).toLocaleDateString()) || [],
     datasets: [{
       label: 'Messages',
-      data: analytics?.metrics.dailyTrend.map(d => d.messages) || [],
+      data: analytics?.metrics?.dailyTrend?.map(d => d.messages) || [],
       borderColor: '#10b981',
       backgroundColor: 'rgba(16, 185, 129, 0.1)',
       fill: true
@@ -292,23 +370,25 @@ export default function DiscordSharePage() {
   }
 
   const channelChartData = {
-    labels: analytics?.metrics.channelActivity.map(c => c.channelName) || [],
+    labels: analytics?.metrics?.channelActivity?.map(c => c.channelName) || [],
     datasets: [{
       label: 'Messages',
-      data: analytics?.metrics.channelActivity.map(c => c.messageCount) || [],
+      data: analytics?.metrics?.channelActivity?.map(c => c.messageCount) || [],
       backgroundColor: '#10b981'
     }]
   }
 
   const timeframeLabel = timeframe === 'daily' ? 'Last 24 Hours' : 
-                        timeframe === 'weekly' ? 'Last 7 Days' : 'Last 30 Days'
+                        timeframe === 'weekly' ? 'Last 7 Days' : 
+                        timeframe === 'monthly' ? 'Last 30 Days' :
+                        timeframe === 'allTime' ? 'All Time' : 'Last 7 Days'
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <div className="container mx-auto p-6">
+      <div className="container mx-auto px-4 sm:px-6 py-6">
         {/* Viewer Info Bar - Only show if authenticated */}
         {session && (
-          <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-800">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-gray-800">
             <div className="flex items-center gap-3">
               {scoutProject?.profileImageUrl && (
                 <Image
@@ -347,43 +427,43 @@ export default function DiscordSharePage() {
 
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-green-400 mb-2">Discord Analytics Report</h1>
-          <p className="text-gray-400">{project.name} • {timeframeLabel}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-green-400 mb-2">Discord Analytics Report</h1>
+          <p className="text-gray-400 text-sm sm:text-base">{project.name} • {timeframeLabel}</p>
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 sm:p-6">
             <div className="flex items-center gap-3 text-blue-400 mb-2">
               <MessageSquare className="w-5 h-5" />
               <span className="text-sm">Total Messages</span>
             </div>
-            <p className="text-3xl font-bold text-white">{analytics?.metrics.totalMessages.toLocaleString() || 0}</p>
+            <p className="text-3xl font-bold text-white">{analytics?.metrics?.totalMessages?.toLocaleString() || 0}</p>
           </div>
           
-          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 sm:p-6">
             <div className="flex items-center gap-3 text-green-400 mb-2">
               <Users className="w-5 h-5" />
               <span className="text-sm">Active Users</span>
             </div>
-            <p className="text-3xl font-bold text-white">{analytics?.metrics.uniqueUsers.toLocaleString() || 0}</p>
+            <p className="text-3xl font-bold text-white">{analytics?.metrics?.uniqueUsers?.toLocaleString() || 0}</p>
           </div>
           
-          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 sm:p-6">
             <div className="flex items-center gap-3 text-purple-400 mb-2">
               <TrendingUp className="w-5 h-5" />
               <span className="text-sm">Avg Messages/User</span>
             </div>
-            <p className="text-3xl font-bold text-white">{analytics?.metrics.averageMessagesPerUser.toFixed(1) || 0}</p>
+            <p className="text-3xl font-bold text-white">{analytics?.metrics?.averageMessagesPerUser?.toFixed(1) || 0}</p>
           </div>
           
-          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 sm:p-6">
             <div className="flex items-center gap-3 text-orange-400 mb-2">
               <TrendingUp className="w-5 h-5" />
               <span className="text-sm">Sentiment Score</span>
             </div>
             <p className="text-3xl font-bold text-white">
-              {analytics ? (
+              {analytics?.metrics?.sentimentBreakdown && analytics?.metrics?.totalMessages ? (
                 ((analytics.metrics.sentimentBreakdown.positive - analytics.metrics.sentimentBreakdown.negative) / 
                  analytics.metrics.totalMessages * 100).toFixed(1)
               ) : 0}%
@@ -392,9 +472,9 @@ export default function DiscordSharePage() {
         </div>
 
         {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8 mb-8">
           {/* Activity Trend */}
-          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 sm:p-6">
             <h3 className="text-lg text-green-400 mb-4">Activity Trend</h3>
             <div className="h-64">
               {analytics && (
@@ -424,7 +504,7 @@ export default function DiscordSharePage() {
           </div>
 
           {/* Sentiment Distribution */}
-          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 sm:p-6">
             <h3 className="text-lg text-green-400 mb-4">Sentiment Distribution</h3>
             <div className="h-64">
               {analytics && (
@@ -446,7 +526,7 @@ export default function DiscordSharePage() {
           </div>
 
           {/* Channel Activity */}
-          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 sm:p-6">
             <h3 className="text-lg text-green-400 mb-4">Channel Activity</h3>
             <div className="h-64">
               {analytics && (
@@ -476,10 +556,10 @@ export default function DiscordSharePage() {
           </div>
 
           {/* Top Contributors */}
-          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 sm:p-6">
             <h3 className="text-lg text-green-400 mb-4">Top Contributors</h3>
             <div className="space-y-3">
-              {analytics?.metrics.topUsers.slice(0, 10).map((user, index) => {
+              {analytics?.metrics?.topUsers?.slice(0, 10).map((user, index) => {
                 const sentimentColor = user.avgSentiment > 0.3 ? 'text-green-400' : 
                                      user.avgSentiment < -0.3 ? 'text-red-400' : 'text-gray-400'
                 return (

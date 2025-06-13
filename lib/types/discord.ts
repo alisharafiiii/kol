@@ -79,7 +79,7 @@ export interface UserProjectStats {
 
 export interface DiscordAnalytics {
   projectId: string
-  timeframe: 'daily' | 'weekly' | 'monthly' | 'custom'
+  timeframe: 'daily' | 'weekly' | 'monthly' | 'allTime' | 'custom'
   startDate: string
   endDate: string
   metrics: {
