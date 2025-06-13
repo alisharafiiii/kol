@@ -38,14 +38,18 @@ export default function BriefPage() {
       
       try {
         // Get user profile
-        const profileRes = await fetch(`/api/user/profile?handle=${session.user.name}`)
+        const profileRes = await fetch(`/api/user/profile?handle=${session.user.name}`, {
+          credentials: 'include'
+        })
         if (profileRes.ok) {
           const profileData = await profileRes.json()
           const profile = profileData.user
           setUserProfile(profile)
           
           // Get campaign to check KOL list
-          const campaignRes = await fetch(`/api/campaigns/${campaignId}`)
+          const campaignRes = await fetch(`/api/campaigns/${campaignId}`, {
+            credentials: 'include'
+          })
           if (campaignRes.ok) {
             const campaignData = await campaignRes.json()
             
@@ -61,10 +65,10 @@ export default function BriefPage() {
               kols: campaignData.kols?.map((k: any) => k.handle)
             })
             
-            // Check if user has admin/core/team role
-            const adminRoles = ['admin', 'core', 'team']
-            if (profile.role && adminRoles.includes(profile.role)) {
-              console.log('Access granted: Admin/Core/Team role')
+            // Check if user has admin/core/viewer role first
+            const allowedRoles = ['admin', 'core', 'viewer']
+            if (profile.role && allowedRoles.includes(profile.role)) {
+              console.log('Access granted: Admin/Core/Viewer role')
               setHasAccess(true)
               return
             }
@@ -82,7 +86,13 @@ export default function BriefPage() {
               return
             }
             
-            // Check if user is added as KOL in this campaign
+            // Check if user has 'kol' role OR is added as KOL in this campaign
+            if (profile.role === 'kol') {
+              console.log('Access granted: KOL role')
+              setHasAccess(true)
+              return
+            }
+            
             const isKOLInCampaign = campaignData.kols?.some((kol: any) => {
               const kolHandle = kol.handle?.replace('@', '')
               return kolHandle === userHandle || kolHandle === `@${userHandle}`
@@ -94,15 +104,8 @@ export default function BriefPage() {
               return
             }
             
-            // Check if user has viewer role (special access)
-            if (profile.role === 'viewer') {
-              console.log('Access granted: Viewer role')
-              setHasAccess(true)
-              return
-            }
-            
             console.log('Access denied: No matching criteria')
-            setError('Access denied. You need to be added as a KOL to this campaign to view the brief.')
+            setError('Access denied. You need appropriate permissions to view this campaign brief.')
             setLoading(false)
             return
           }
@@ -127,7 +130,9 @@ export default function BriefPage() {
       if (!hasAccess) return
       
       try {
-        const res = await fetch(`/api/campaigns/${campaignId}`)
+        const res = await fetch(`/api/campaigns/${campaignId}`, {
+          credentials: 'include'
+        })
         if (res.ok) {
           const data = await res.json()
           setCampaign(data)
@@ -138,11 +143,25 @@ export default function BriefPage() {
             const projectPromises = data.projects.map(async (projectId: string) => {
               try {
                 console.log('Fetching project:', projectId)
-                const projectRes = await fetch(`/api/projects/${projectId}`)
+                const projectRes = await fetch(`/api/projects/${projectId}`, {
+                  credentials: 'include'
+                })
                 console.log(`Project ${projectId} response status:`, projectRes.status)
                 if (projectRes.ok) {
                   const projectData = await projectRes.json()
                   console.log(`Project ${projectId} data:`, projectData)
+                  try {
+                    const scoutRes = await fetch(`/api/projects/${projectData.scoutProjectId}`, {
+                      credentials: 'include'
+                    })
+                    if (scoutRes.ok) {
+                      // Project fetch successful
+                    } else {
+                      console.error(`Failed to fetch scout project ${projectData.scoutProjectId}:`, scoutRes.status)
+                    }
+                  } catch (err) {
+                    console.error(`Failed to fetch scout project ${projectData.scoutProjectId}:`, err)
+                  }
                   return projectData
                 } else {
                   const errorText = await projectRes.text()
@@ -270,7 +289,29 @@ export default function BriefPage() {
           <p className="text-green-400 mb-6">Please sign in to view this campaign brief</p>
           
           <button
-            onClick={() => signIn('twitter')}
+            onClick={() => {
+              // Use redirect: false to prevent loops on mobile
+              signIn('twitter', {
+                redirect: false,
+                callbackUrl: window.location.href
+              }).then((result) => {
+                if (result?.ok) {
+                  window.location.reload()
+                } else if (result?.error) {
+                  console.error('Sign in error:', result.error)
+                  if (result.error === 'OAuthCallback' || result.error === 'Callback') {
+                    // On mobile, OAuth callbacks sometimes fail - try direct redirect
+                    setTimeout(() => {
+                      window.location.href = '/api/auth/signin/twitter'
+                    }, 1000)
+                  }
+                }
+              }).catch((err) => {
+                console.error('Sign in failed:', err)
+                // Fallback to direct redirect
+                window.location.href = '/api/auth/signin/twitter'
+              })
+            }}
             className="w-full px-6 py-3 bg-green-900 text-green-100 rounded hover:bg-green-800 transition-colors flex items-center justify-center gap-3"
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -304,6 +345,31 @@ export default function BriefPage() {
               className="mt-6 px-4 py-2 border border-green-500 text-green-300 rounded hover:bg-green-900/30"
             >
               Go to Dashboard
+            </button>
+          )}
+          {status !== 'authenticated' && status !== 'loading' && (
+            <button
+              onClick={() => {
+                signIn('twitter', {
+                  redirect: false,
+                  callbackUrl: window.location.href
+                }).then((result) => {
+                  if (result?.ok) {
+                    window.location.reload()
+                  } else if (result?.error) {
+                    if (result.error === 'OAuthCallback' || result.error === 'Callback') {
+                      setTimeout(() => {
+                        window.location.href = '/api/auth/signin/twitter'
+                      }, 1000)
+                    }
+                  }
+                }).catch((err) => {
+                  window.location.href = '/api/auth/signin/twitter'
+                })
+              }}
+              className="mt-6 px-4 py-2 border border-green-500 text-green-300 rounded hover:bg-green-900/30"
+            >
+              Sign In
             </button>
           )}
         </div>

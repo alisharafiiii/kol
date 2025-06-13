@@ -119,3 +119,114 @@ button, input, select, textarea { font-size: 0.8em; }
     text-wrap: balance;
   }
 }
+
+/* Mobile Responsive Styles */
+
+/* Discord Share Page and Admin Panel Mobile Fixes */
+@media (max-width: 640px) {
+  /* Reduce padding on mobile */
+  .container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* Stats cards smaller padding */
+  .bg-gray-900.rounded-lg {
+    padding: 1rem !important;
+  }
+
+  /* Smaller chart heights on mobile */
+  .h-64 {
+    height: 12rem !important;
+  }
+
+  /* Responsive text sizing */
+  h1 {
+    font-size: 1.25rem !important;
+    line-height: 1.75rem !important;
+  }
+  
+  h2 {
+    font-size: 1.125rem !important;
+    line-height: 1.5rem !important;
+  }
+  
+  h3 {
+    font-size: 1rem !important;
+    line-height: 1.5rem !important;
+  }
+
+  /* Stack flex items on mobile */
+  .flex.justify-between {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Improve table readability */
+  table {
+    font-size: 0.75rem !important;
+  }
+  
+  td, th {
+    padding: 0.5rem !important;
+  }
+
+  /* Top contributors scrollable */
+  .space-y-3 {
+    max-height: 16rem;
+    overflow-y: auto;
+  }
+}
+
+/* Admin Panel specific mobile styles */
+@media (max-width: 768px) {
+  /* Navigation tabs responsive */
+  .admin-nav {
+    gap: 0.5rem !important;
+    flex-wrap: wrap !important;
+  }
+
+  /* Admin nav items smaller */
+  .admin-nav button,
+  .admin-nav a {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* Hide less important table columns */
+  .hidden-mobile {
+    display: none !important;
+  }
+
+  /* Responsive grids */
+  .grid {
+    gap: 1rem !important;
+  }
+
+  /* Modal sizing */
+  .fixed.inset-0 > div {
+    margin: 1rem !important;
+    max-width: calc(100vw - 2rem) !important;
+  }
+}
+
+/* Ensure charts are responsive */
+@media (max-width: 480px) {
+  canvas {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+  
+  /* Even smaller text on very small screens */
+  .text-3xl {
+    font-size: 1.5rem !important;
+  }
+  
+  .text-2xl {
+    font-size: 1.25rem !important;
+  }
+  
+  .text-xl {
+    font-size: 1rem !important;
+  }
+}

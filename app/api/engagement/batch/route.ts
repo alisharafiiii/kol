@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { EngagementService } from '@/lib/services/engagement-service'
 import { checkAuth } from '@/lib/auth-utils'
-import { processBatch } from '@/scripts/engagement-batch-processor'
 
 export async function GET(request: NextRequest) {
   try {
@@ -39,18 +38,20 @@ export async function POST(request: NextRequest) {
       }, { status: 409 })
     }
     
-    // Start batch processing in the background
-    processBatch().catch(error => {
-      console.error('Batch processing failed:', error)
-    })
+    // Create a new batch job record
+    const job = await EngagementService.createBatchJob()
     
-    // Return immediately
+    // Note: The actual processing should be done by a separate process
+    // This endpoint just creates the job record
+    // The batch processor script should be run separately (e.g., via cron or PM2)
+    
     return NextResponse.json({ 
       success: true, 
-      message: 'Batch processing started' 
+      message: 'Batch job created. Run the batch processor script to process it.',
+      job
     })
   } catch (error) {
-    console.error('Error starting batch job:', error)
-    return NextResponse.json({ error: 'Failed to start batch job' }, { status: 500 })
+    console.error('Error creating batch job:', error)
+    return NextResponse.json({ error: 'Failed to create batch job' }, { status: 500 })
   }
 } 

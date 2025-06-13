@@ -117,16 +117,17 @@ export default function EngagementAdminPage() {
       })
       
       if (res.ok) {
-        alert('Batch processing started')
+        const data = await res.json()
+        alert(`Batch job created successfully! ${data.message}`)
         // Refresh batch jobs after a delay
         setTimeout(() => fetchData(), 2000)
       } else {
         const data = await res.json()
-        alert(data.error || 'Failed to start batch processing')
+        alert(data.error || 'Failed to create batch job')
       }
     } catch (error) {
-      console.error('Error starting batch job:', error)
-      alert('Failed to start batch processing')
+      console.error('Error creating batch job:', error)
+      alert('Failed to create batch job')
     } finally {
       setRefreshing(false)
     }
@@ -273,7 +274,7 @@ export default function EngagementAdminPage() {
                   className="px-4 py-2 bg-green-900 text-green-100 rounded hover:bg-green-800 disabled:opacity-50 flex items-center gap-2"
                 >
                   <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-                  Run Batch Processing
+                  Create Batch Job
                 </button>
                 <button
                   onClick={setupDefaultRules}
@@ -282,6 +283,17 @@ export default function EngagementAdminPage() {
                   <Settings className="w-4 h-4" />
                   Setup Default Rules
                 </button>
+              </div>
+              <div className="mt-4 p-3 bg-black border border-yellow-500 rounded text-sm">
+                <p className="text-yellow-300 font-semibold mb-1">ℹ️ Note: Batch Processing</p>
+                <p className="text-gray-300">
+                  The batch processor runs separately from the web app. To process engagement data:
+                </p>
+                <ol className="list-decimal list-inside mt-2 text-gray-400 space-y-1">
+                  <li>Run <code className="bg-gray-800 px-1 rounded">npm install discord.js twitter-api-v2 node-cron</code></li>
+                  <li>Start the cron job: <code className="bg-gray-800 px-1 rounded">node scripts/engagement-cron.js</code></li>
+                  <li>Or run once: <code className="bg-gray-800 px-1 rounded">node scripts/engagement-batch-processor.js</code></li>
+                </ol>
               </div>
             </div>
             

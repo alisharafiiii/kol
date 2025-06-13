@@ -145,7 +145,6 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
 
   const handleKOLDelete = async (kolId: string) => {
     if (!campaign || !canEdit) return
-    if (!confirm('Are you sure you want to remove this KOL?')) return
 
     try {
       const res = await fetch(`/api/campaigns/${campaign.id}/kols`, {
@@ -165,8 +164,13 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
   const handleKOLAdd = async (kol: Omit<KOL, 'id' | 'lastUpdated'>) => {
     if (!campaign) return
 
-    // Just refresh the campaign data - AddKOLModal already handled the POST request
-    await fetchCampaign()
+    try {
+      // Just refresh the campaign data - AddKOLModal already handled the POST request
+      await fetchCampaign()
+    } catch (error) {
+      console.error('Error refreshing campaign after KOL add:', error)
+      // Don't throw - the KOL was already added successfully
+    }
     setShowAddKOL(false)
   }
 
@@ -430,7 +434,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
                   ${campaign.kols.reduce((sum, kol) => {
                     const budgetNum = typeof kol.budget === 'number' 
                       ? kol.budget 
-                      : parseFloat(kol.budget.replace(/[^0-9.-]+/g, '')) || 0
+                      : parseFloat(kol.budget?.replace(/[^0-9.-]+/g, '') || '0') || 0
                     return sum + budgetNum
                   }, 0).toLocaleString()}
                 </p>

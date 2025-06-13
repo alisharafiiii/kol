@@ -6,6 +6,21 @@ This system tracks Twitter engagement for Discord users using a points-based rew
 
 ## Architecture
 
+The system consists of two parts:
+
+### 1. Web Application (Next.js)
+- **Admin Panel** (`app/admin/engagement/`)
+- **API Routes** (`app/api/engagement/`)
+- **Service Layer** (`lib/services/engagement-service.ts`)
+- **Type Definitions** (`lib/types/engagement.ts`)
+
+### 2. Discord Bot & Batch Processor (Node.js - Runs Separately)
+- **Discord Bot** (`engagement-bot.js`) - Handles Discord interactions
+- **Batch Processor** (`scripts/engagement-batch-processor.js`) - Processes Twitter engagements
+- **Cron Job** (`scripts/engagement-cron.js`) - Schedules batch processing
+
+> **Important**: The Discord bot and batch processor run as separate Node.js processes outside of the Next.js application. They communicate with the same Redis database but are not bundled with the web app.
+
 ### Components
 
 1. **Discord Bot** (`engagement-bot.js`)

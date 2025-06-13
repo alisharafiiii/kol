@@ -78,3 +78,2693 @@
       📁 Updated metadata for #🧲〉share-your-stuff
       📁 Updated metadata for #⁉️-test-test-⁉️
 ✅ Loaded tracking config for 1 active servers
+🧪 starting Enhanced Discord analytics bot...
+✅ Redis configuration loaded from environment
+🔑 Attempting to login...
+❌ Failed to login: An invalid token was provided.
+🧪 starting Enhanced Discord analytics bot...
+✅ Redis configuration loaded from environment
+🔑 Attempting to login...
+🤖 logged in as nabulines_bot#8452
+   Servers: 1
+   Redis: ✅ Connected
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 1 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 1 active servers
+📨 Logging message from alinabu in #🧲〉share-your-stuff
+   ❌ Error saving message: API error: 401 Unauthorized
+📨 Logging message from alinabu in #🧲〉share-your-stuff
+   ❌ Error saving message: API error: 401 Unauthorized
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 1 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 1 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 1 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 1 active servers
+📨 Logging message from alinabu in #🧲〉share-your-stuff
+   ❌ Error saving message: API error: 401 Unauthorized
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 1 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 1 active servers
+📨 Logging message from alinabu in #🧲〉share-your-stuff
+   ❌ Error saving message: API error: 401 Unauthorized
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 1 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 1 active servers
+📨 Logging message from alinabu in #🧲〉share-your-stuff
+   ❌ Error saving message: API error: 401 Unauthorized
+🧪 starting Enhanced Discord analytics bot...
+✅ Redis configuration loaded from environment
+🔑 Attempting to login...
+🤖 logged in as nabulines_bot#8452
+   Servers: 2
+   Redis: ✅ Connected
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 1 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 1 active servers
+📨 Logging message from alinabu in #🧲〉share-your-stuff
+   🔍 DEBUG: Sending projectId: project:discord:GEpk5t8yZkQzaWYDHDZHS
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:GEpk5t8yZkQzaWYDHDZHS',
+  channels: Set(2) { '980162754365235300', '1382583759907459123' },
+  scoutProjectId: undefined
+}
+   ❌ Error saving message: API error: 401 Unauthorized
+📨 Logging message from alinabu in #🧲〉share-your-stuff
+   🔍 DEBUG: Sending projectId: project:discord:GEpk5t8yZkQzaWYDHDZHS
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:GEpk5t8yZkQzaWYDHDZHS',
+  channels: Set(2) { '980162754365235300', '1382583759907459123' },
+  scoutProjectId: undefined
+}
+   ❌ Error saving message: API error: 401 Unauthorized
+🧪 starting Enhanced Discord analytics bot...
+✅ Redis configuration loaded from environment
+🔑 Attempting to login...
+🤖 logged in as nabulines_bot#8452
+   Servers: 2
+   Redis: ✅ Connected
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 1 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 1 active servers
+📨 Logging message from alinabu in #⁉️-test-test-⁉️
+   🔍 DEBUG: Sending projectId: project:discord:GEpk5t8yZkQzaWYDHDZHS
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:GEpk5t8yZkQzaWYDHDZHS',
+  channels: Set(2) { '980162754365235300', '1382583759907459123' },
+  scoutProjectId: undefined
+}
+   ❌ Error saving message: API error: 401 Unauthorized
+📨 Logging message from alinabu in #⁉️-test-test-⁉️
+   🔍 DEBUG: Sending projectId: project:discord:GEpk5t8yZkQzaWYDHDZHS
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:GEpk5t8yZkQzaWYDHDZHS',
+  channels: Set(2) { '980162754365235300', '1382583759907459123' },
+  scoutProjectId: undefined
+}
+   ❌ Error saving message: API error: 401 Unauthorized
+🧪 starting Enhanced Discord analytics bot...
+✅ Redis configuration loaded from environment
+🔑 Attempting to login...
+🤖 logged in as nabulines_bot#8452
+   Servers: 2
+   Redis: ✅ Connected
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📨 Logging message from alinabu in #⁉️-test-test-⁉️
+   🔍 DEBUG: Sending projectId: project:discord:GEpk5t8yZkQzaWYDHDZHS
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:GEpk5t8yZkQzaWYDHDZHS',
+  channels: Set(2) { '980162754365235300', '1382583759907459123' },
+  scoutProjectId: undefined
+}
+   ❌ Error saving message: API error: 404 Not Found
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+🧪 starting Enhanced Discord analytics bot...
+✅ Redis configuration loaded from environment
+🔑 Attempting to login...
+🤖 logged in as nabulines_bot#8452
+   Servers: 2
+   Redis: ✅ Connected
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📨 Logging message from elnazasri in #nabulines-test
+   🔍 DEBUG: Sending projectId: project:discord:jo9Eju5jcr_DVmG0Q_MTC
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:jo9Eju5jcr_DVmG0Q_MTC',
+  channels: Set(1) { '1382629151152017448' },
+  scoutProjectId: undefined
+}
+   ✅ Message saved with sentiment: neutral
+   📁 Channel name stored: nabulines-test
+📨 Logging message from elnazasri in #nabulines-test
+   🔍 DEBUG: Sending projectId: project:discord:jo9Eju5jcr_DVmG0Q_MTC
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:jo9Eju5jcr_DVmG0Q_MTC',
+  channels: Set(1) { '1382629151152017448' },
+  scoutProjectId: undefined
+}
+   ✅ Message saved with sentiment: neutral
+   📁 Channel name stored: nabulines-test
+📨 Logging message from elnazasri in #nabulines-test
+   🔍 DEBUG: Sending projectId: project:discord:jo9Eju5jcr_DVmG0Q_MTC
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:jo9Eju5jcr_DVmG0Q_MTC',
+  channels: Set(1) { '1382629151152017448' },
+  scoutProjectId: undefined
+}
+   ✅ Message saved with sentiment: neutral
+   📁 Channel name stored: nabulines-test
+📨 Logging message from elnazasri in #nabulines-test
+   🔍 DEBUG: Sending projectId: project:discord:jo9Eju5jcr_DVmG0Q_MTC
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:jo9Eju5jcr_DVmG0Q_MTC',
+  channels: Set(1) { '1382629151152017448' },
+  scoutProjectId: undefined
+}
+   ❌ Error saving message: fetch failed
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📨 Logging message from alinabu in #⁉️-test-test-⁉️
+   🔍 DEBUG: Sending projectId: project:discord:GEpk5t8yZkQzaWYDHDZHS
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:GEpk5t8yZkQzaWYDHDZHS',
+  channels: Set(2) { '980162754365235300', '1382583759907459123' },
+  scoutProjectId: undefined
+}
+   ❌ Error saving message: fetch failed
+📨 Logging message from alinabu in #⁉️-test-test-⁉️
+   🔍 DEBUG: Sending projectId: project:discord:GEpk5t8yZkQzaWYDHDZHS
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:GEpk5t8yZkQzaWYDHDZHS',
+  channels: Set(2) { '980162754365235300', '1382583759907459123' },
+  scoutProjectId: undefined
+}
+   ❌ Error saving message: fetch failed
+🧪 starting Enhanced Discord analytics bot...
+✅ Redis configuration loaded from environment
+🔑 Attempting to login...
+🤖 logged in as nabulines_bot#8452
+   Servers: 2
+   Redis: ✅ Connected
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+🧪 starting Enhanced Discord analytics bot...
+✅ Redis configuration loaded from environment
+🔑 Attempting to login...
+🤖 logged in as nabulines_bot#8452
+   Servers: 2
+   Redis: ✅ Connected
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+🧪 starting Enhanced Discord analytics bot...
+✅ Redis configuration loaded from environment
+🔑 Attempting to login...
+🤖 logged in as nabulines_bot#8452
+   Servers: 2
+   Redis: ✅ Connected
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📨 Logging message from alinabu in #⁉️-test-test-⁉️
+   🔍 DEBUG: Sending projectId: project:discord:GEpk5t8yZkQzaWYDHDZHS
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:GEpk5t8yZkQzaWYDHDZHS',
+  channels: Set(2) { '980162754365235300', '1382583759907459123' },
+  scoutProjectId: undefined
+}
+   ✅ Message saved with sentiment: neutral
+   📁 Channel name stored: ⁉️-test-test-⁉️
+📨 Logging message from alinabu in #⁉️-test-test-⁉️
+   🔍 DEBUG: Sending projectId: project:discord:GEpk5t8yZkQzaWYDHDZHS
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:GEpk5t8yZkQzaWYDHDZHS',
+  channels: Set(2) { '980162754365235300', '1382583759907459123' },
+  scoutProjectId: undefined
+}
+   ✅ Message saved with sentiment: positive
+   📁 Channel name stored: ⁉️-test-test-⁉️
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📨 Logging message from alinabu in #⁉️-test-test-⁉️
+   🔍 DEBUG: Sending projectId: project:discord:GEpk5t8yZkQzaWYDHDZHS
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:GEpk5t8yZkQzaWYDHDZHS',
+  channels: Set(2) { '980162754365235300', '1382583759907459123' },
+  scoutProjectId: undefined
+}
+📨 Logging message from alinabu in #⁉️-test-test-⁉️
+   🔍 DEBUG: Sending projectId: project:discord:GEpk5t8yZkQzaWYDHDZHS
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:GEpk5t8yZkQzaWYDHDZHS',
+  channels: Set(2) { '980162754365235300', '1382583759907459123' },
+  scoutProjectId: undefined
+}
+   ✅ Message saved with sentiment: negative
+   📁 Channel name stored: ⁉️-test-test-⁉️
+📨 Logging message from alinabu in #⁉️-test-test-⁉️
+   🔍 DEBUG: Sending projectId: project:discord:GEpk5t8yZkQzaWYDHDZHS
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:GEpk5t8yZkQzaWYDHDZHS',
+  channels: Set(2) { '980162754365235300', '1382583759907459123' },
+  scoutProjectId: undefined
+}
+   ✅ Message saved with sentiment: negative
+   📁 Channel name stored: ⁉️-test-test-⁉️
+   ✅ Message saved with sentiment: negative
+   📁 Channel name stored: ⁉️-test-test-⁉️
+📨 Logging message from alinabu in #⁉️-test-test-⁉️
+   🔍 DEBUG: Sending projectId: project:discord:GEpk5t8yZkQzaWYDHDZHS
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:GEpk5t8yZkQzaWYDHDZHS',
+  channels: Set(2) { '980162754365235300', '1382583759907459123' },
+  scoutProjectId: undefined
+}
+   ✅ Message saved with sentiment: negative
+   📁 Channel name stored: ⁉️-test-test-⁉️
+📨 Logging message from alinabu in #⁉️-test-test-⁉️
+   🔍 DEBUG: Sending projectId: project:discord:GEpk5t8yZkQzaWYDHDZHS
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:GEpk5t8yZkQzaWYDHDZHS',
+  channels: Set(2) { '980162754365235300', '1382583759907459123' },
+  scoutProjectId: undefined
+}
+   ✅ Message saved with sentiment: negative
+   📁 Channel name stored: ⁉️-test-test-⁉️
+📨 Logging message from alinabu in #⁉️-test-test-⁉️
+   🔍 DEBUG: Sending projectId: project:discord:GEpk5t8yZkQzaWYDHDZHS
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:GEpk5t8yZkQzaWYDHDZHS',
+  channels: Set(2) { '980162754365235300', '1382583759907459123' },
+  scoutProjectId: undefined
+}
+📨 Logging message from alinabu in #⁉️-test-test-⁉️
+   🔍 DEBUG: Sending projectId: project:discord:GEpk5t8yZkQzaWYDHDZHS
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:GEpk5t8yZkQzaWYDHDZHS',
+  channels: Set(2) { '980162754365235300', '1382583759907459123' },
+  scoutProjectId: undefined
+}
+   ✅ Message saved with sentiment: negative
+   📁 Channel name stored: ⁉️-test-test-⁉️
+📨 Logging message from alinabu in #⁉️-test-test-⁉️
+   ✅ Message saved with sentiment: negative
+   📁 Channel name stored: ⁉️-test-test-⁉️
+   🔍 DEBUG: Sending projectId: project:discord:GEpk5t8yZkQzaWYDHDZHS
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:GEpk5t8yZkQzaWYDHDZHS',
+  channels: Set(2) { '980162754365235300', '1382583759907459123' },
+  scoutProjectId: undefined
+}
+   ✅ Message saved with sentiment: negative
+   📁 Channel name stored: ⁉️-test-test-⁉️
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📨 Logging message from nervyesi1 in #nabulines-test
+   🔍 DEBUG: Sending projectId: project:discord:jo9Eju5jcr_DVmG0Q_MTC
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:jo9Eju5jcr_DVmG0Q_MTC',
+  channels: Set(1) { '1382629151152017448' },
+  scoutProjectId: undefined
+}
+   ✅ Message saved with sentiment: negative
+   📁 Channel name stored: nabulines-test
+📨 Logging message from nervyesi1 in #nabulines-test
+   🔍 DEBUG: Sending projectId: project:discord:jo9Eju5jcr_DVmG0Q_MTC
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:jo9Eju5jcr_DVmG0Q_MTC',
+  channels: Set(1) { '1382629151152017448' },
+  scoutProjectId: undefined
+}
+   ✅ Message saved with sentiment: neutral
+   📁 Channel name stored: nabulines-test
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📨 Logging message from alishnft_ in #nabulines-test
+   🔍 DEBUG: Sending projectId: project:discord:jo9Eju5jcr_DVmG0Q_MTC
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:jo9Eju5jcr_DVmG0Q_MTC',
+  channels: Set(1) { '1382629151152017448' },
+  scoutProjectId: undefined
+}
+   ✅ Message saved with sentiment: neutral
+   📁 Channel name stored: nabulines-test
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📨 Logging message from rezgar_sh in #nabulines-test
+   🔍 DEBUG: Sending projectId: project:discord:jo9Eju5jcr_DVmG0Q_MTC
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:jo9Eju5jcr_DVmG0Q_MTC',
+  channels: Set(1) { '1382629151152017448' },
+  scoutProjectId: undefined
+}
+   ✅ Message saved with sentiment: positive
+   📁 Channel name stored: nabulines-test
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📨 Logging message from nervyesi1 in #nabulines-test
+   🔍 DEBUG: Sending projectId: project:discord:jo9Eju5jcr_DVmG0Q_MTC
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:jo9Eju5jcr_DVmG0Q_MTC',
+  channels: Set(1) { '1382629151152017448' },
+  scoutProjectId: undefined
+}
+   ✅ Message saved with sentiment: neutral
+   📁 Channel name stored: nabulines-test
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📨 Logging message from alinabu in #⁉️-test-test-⁉️
+   🔍 DEBUG: Sending projectId: project:discord:GEpk5t8yZkQzaWYDHDZHS
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:GEpk5t8yZkQzaWYDHDZHS',
+  channels: Set(2) { '980162754365235300', '1382583759907459123' },
+  scoutProjectId: undefined
+}
+   ✅ Message saved with sentiment: neutral
+   📁 Channel name stored: ⁉️-test-test-⁉️
+📨 Logging message from alinabu in #⁉️-test-test-⁉️
+   🔍 DEBUG: Sending projectId: project:discord:GEpk5t8yZkQzaWYDHDZHS
+   🔍 DEBUG: Full serverData: {
+  projectId: 'project:discord:GEpk5t8yZkQzaWYDHDZHS',
+  channels: Set(2) { '980162754365235300', '1382583759907459123' },
+  scoutProjectId: undefined
+}
+   ✅ Message saved with sentiment: neutral
+   📁 Channel name stored: ⁉️-test-test-⁉️
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers
+📋 Loading Scout project data...
+✅ Loaded 0 Scout projects
+📋 Loading tracked channels...
+   Found 2 Discord projects
+   ✅ Server 980159046176870450 (Ledger): tracking 2 channels
+      📁 Updated metadata for #🧲〉share-your-stuff
+      📁 Updated metadata for #⁉️-test-test-⁉️
+   ✅ Server 1199707792706117642 (Ametaverse): tracking 1 channels
+      📁 Updated metadata for #nabulines-test
+✅ Loaded tracking config for 2 active servers

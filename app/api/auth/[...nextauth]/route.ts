@@ -240,6 +240,22 @@ export const authOptions: NextAuthOptions = {
     signOut: "/",
   },
   secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+        domain: undefined // Let the browser handle domain
+      },
+    },
+  },
   events: {
     async signIn(message: any) {
       log("=== SIGN IN EVENT ===", message);
