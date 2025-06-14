@@ -70,9 +70,13 @@ export default function KOLProfileModal({ kolHandle, kolName, isOpen, onClose }:
   const [addingNote, setAddingNote] = useState(false)
   const [showCopySuccess, setShowCopySuccess] = useState(false)
   const [selectedCampaignForNote, setSelectedCampaignForNote] = useState<string>('')
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedProfile, setEditedProfile] = useState<any>(null)
+  const [savingProfile, setSavingProfile] = useState(false)
   
   const userRole = (session as any)?.role || (session as any)?.user?.role || 'user'
   const canAddNotes = ['admin', 'core'].includes(userRole)
+  const canEditProfile = ['admin', 'core', 'team'].includes(userRole)
   
   useEffect(() => {
     if (isOpen) {
@@ -145,20 +149,23 @@ export default function KOLProfileModal({ kolHandle, kolName, isOpen, onClose }:
       let parsedPhone = profileData?.user?.phone || profileData?.user?.phoneNumber || profileData?.user?.shippingInfo?.phone || profileData?.user?.contacts?.phone
       
       // Parse contact field which can contain multiple values
+      // Only use this as fallback if we don't already have the data from the API
       if (kolData?.contact) {
         const contacts = kolData.contact.split(',').map((c: string) => c.trim())
         contacts.forEach((contact: string) => {
           if (contact.includes('@') && contact.includes('.')) {
-            // It's an email
+            // It's an email - only use if we don't have one
             parsedEmail = parsedEmail || contact
           } else if (contact.startsWith('@')) {
-            // It's a telegram handle
+            // It's a telegram handle - only use if we don't have one
             parsedTelegram = parsedTelegram || contact
           } else if (contact.includes('t.me')) {
-            // It's a telegram link
-            parsedTelegram = parsedTelegram || `@${contact.split('/').pop()}`
+            // It's a telegram link - only use if we don't have one
+            if (!parsedTelegram) {
+              parsedTelegram = `@${contact.split('/').pop()}`
+            }
           } else if (/^\+?[\d\s\-()]+$/.test(contact)) {
-            // It's a phone number
+            // It's a phone number - only use if we don't have one
             parsedPhone = parsedPhone || contact
           }
         })
@@ -223,7 +230,7 @@ export default function KOLProfileModal({ kolHandle, kolName, isOpen, onClose }:
       
       setProfile({
         handle: kolHandle,
-        name: kolName,
+        name: profileData?.user?.name || kolName,
         pfp: kolData?.pfp || profileData?.user?.profileImageUrl,
         role: profileData?.user?.role || 'kol',
         tier: kolData?.tier,
@@ -438,12 +445,35 @@ export default function KOLProfileModal({ kolHandle, kolName, isOpen, onClose }:
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-green-300">KOL Profile</h2>
-          <button
-            onClick={onClose}
-            className="text-green-300 hover:text-green-100 transition-colors text-2xl"
-          >
-            ✕
-          </button>
+          <div className="flex items-center gap-2">
+            {canEditProfile && !isEditing && !loading && (
+              <button
+                onClick={() => {
+                  setIsEditing(true)
+                  setEditedProfile({
+                    name: profile?.name || '',
+                    email: profile?.email || '',
+                    phone: profile?.phone || '',
+                    telegram: profile?.telegram || '',
+                    addressLine1: profile?.shippingAddress?.addressLine1 || '',
+                    addressLine2: profile?.shippingAddress?.addressLine2 || '',
+                    city: profile?.shippingAddress?.city || '',
+                    postalCode: profile?.shippingAddress?.postalCode || '',
+                    country: profile?.shippingAddress?.country || ''
+                  })
+                }}
+                className="px-3 py-1 border border-green-300 text-green-300 hover:bg-green-900 hover:text-green-100 transition-colors text-sm"
+              >
+                Edit Profile
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="text-green-300 hover:text-green-100 transition-colors text-2xl"
+            >
+              ✕
+            </button>
+          </div>
         </div>
         
         {loading ? (
@@ -568,84 +598,258 @@ export default function KOLProfileModal({ kolHandle, kolName, isOpen, onClose }:
             <div>
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-sm font-bold uppercase">Contact Information</h4>
-                <button
-                  onClick={copyAllContactInfo}
-                  className={`text-xs px-3 py-1 border transition-all duration-200 rounded ${
-                    showCopySuccess 
-                      ? 'border-green-400 bg-green-900 text-green-100' 
-                      : 'border-green-500 hover:bg-green-900/30'
-                  }`}
-                  id="copy-contact-btn"
-                >
-                  {showCopySuccess ? '✓ Copied!' : '📋 Copy All'}
-                </button>
+                {!isEditing && (
+                  <button
+                    onClick={copyAllContactInfo}
+                    className={`text-xs px-3 py-1 border transition-all duration-200 rounded ${
+                      showCopySuccess 
+                        ? 'border-green-400 bg-green-900 text-green-100' 
+                        : 'border-green-500 hover:bg-green-900/30'
+                    }`}
+                    id="copy-contact-btn"
+                  >
+                    {showCopySuccess ? '✓ Copied!' : '📋 Copy All'}
+                  </button>
+                )}
               </div>
-              <div className="bg-green-900/20 p-4 rounded border border-green-800 space-y-2">
-                {/* Name */}
-                <div className="flex">
-                  <span className="text-green-500 w-24">Name:</span>
-                  <span className="flex-1">{profile.name}</span>
+              
+              {isEditing ? (
+                <div className="bg-green-900/20 p-4 rounded border border-green-800 space-y-3">
+                  {/* Edit Form */}
+                  <div>
+                    <label className="text-green-500 text-xs">Name</label>
+                    <input
+                      type="text"
+                      value={editedProfile.name}
+                      onChange={(e) => setEditedProfile({...editedProfile, name: e.target.value})}
+                      className="w-full px-2 py-1 bg-black border border-green-600 text-green-300 text-sm focus:outline-none focus:border-green-400"
+                      placeholder="Display name"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="text-green-500 text-xs">Email</label>
+                    <input
+                      type="email"
+                      value={editedProfile.email}
+                      onChange={(e) => setEditedProfile({...editedProfile, email: e.target.value})}
+                      className="w-full px-2 py-1 bg-black border border-green-600 text-green-300 text-sm focus:outline-none focus:border-green-400"
+                      placeholder="email@example.com"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="text-green-500 text-xs">Phone</label>
+                    <input
+                      type="tel"
+                      value={editedProfile.phone}
+                      onChange={(e) => setEditedProfile({...editedProfile, phone: e.target.value})}
+                      className="w-full px-2 py-1 bg-black border border-green-600 text-green-300 text-sm focus:outline-none focus:border-green-400"
+                      placeholder="+1234567890"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="text-green-500 text-xs">Telegram</label>
+                    <input
+                      type="text"
+                      value={editedProfile.telegram}
+                      onChange={(e) => setEditedProfile({...editedProfile, telegram: e.target.value})}
+                      className="w-full px-2 py-1 bg-black border border-green-600 text-green-300 text-sm focus:outline-none focus:border-green-400"
+                      placeholder="@username"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-green-500 text-xs">Shipping Address</label>
+                    <input
+                      type="text"
+                      value={editedProfile.addressLine1}
+                      onChange={(e) => setEditedProfile({...editedProfile, addressLine1: e.target.value})}
+                      className="w-full px-2 py-1 bg-black border border-green-600 text-green-300 text-sm focus:outline-none focus:border-green-400"
+                      placeholder="Address Line 1"
+                    />
+                    <input
+                      type="text"
+                      value={editedProfile.addressLine2}
+                      onChange={(e) => setEditedProfile({...editedProfile, addressLine2: e.target.value})}
+                      className="w-full px-2 py-1 bg-black border border-green-600 text-green-300 text-sm focus:outline-none focus:border-green-400"
+                      placeholder="Address Line 2 (optional)"
+                    />
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="text"
+                        value={editedProfile.city}
+                        onChange={(e) => setEditedProfile({...editedProfile, city: e.target.value})}
+                        className="w-full px-2 py-1 bg-black border border-green-600 text-green-300 text-sm focus:outline-none focus:border-green-400"
+                        placeholder="City"
+                      />
+                      <input
+                        type="text"
+                        value={editedProfile.postalCode}
+                        onChange={(e) => setEditedProfile({...editedProfile, postalCode: e.target.value})}
+                        className="w-full px-2 py-1 bg-black border border-green-600 text-green-300 text-sm focus:outline-none focus:border-green-400"
+                        placeholder="Postal Code"
+                      />
+                    </div>
+                    <input
+                      type="text"
+                      value={editedProfile.country}
+                      onChange={(e) => setEditedProfile({...editedProfile, country: e.target.value})}
+                      className="w-full px-2 py-1 bg-black border border-green-600 text-green-300 text-sm focus:outline-none focus:border-green-400"
+                      placeholder="Country"
+                    />
+                  </div>
+                  
+                  {/* Action Buttons */}
+                  <div className="flex justify-end gap-2 pt-2">
+                    <button
+                      onClick={() => {
+                        setIsEditing(false)
+                        setEditedProfile(null)
+                      }}
+                      className="px-3 py-1 border border-gray-600 text-gray-300 hover:bg-gray-900 text-sm transition-colors"
+                      disabled={savingProfile}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={async () => {
+                        setSavingProfile(true)
+                        try {
+                          const cleanHandle = profile!.handle.replace('@', '')
+                          const res = await fetch(`/api/user/profile`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              handle: cleanHandle,
+                              name: editedProfile.name,
+                              email: editedProfile.email,
+                              phone: editedProfile.phone,
+                              telegram: editedProfile.telegram,
+                              contacts: {
+                                ...(profile as any)?.contacts,
+                                telegram: editedProfile.telegram
+                              },
+                              shippingAddress: {
+                                addressLine1: editedProfile.addressLine1,
+                                addressLine2: editedProfile.addressLine2,
+                                city: editedProfile.city,
+                                postalCode: editedProfile.postalCode,
+                                country: editedProfile.country
+                              }
+                            })
+                          })
+                          
+                          if (res.ok) {
+                            // Update local state
+                            setProfile(prev => prev ? {
+                              ...prev,
+                              name: editedProfile.name,
+                              email: editedProfile.email,
+                              phone: editedProfile.phone,
+                              telegram: editedProfile.telegram,
+                              contacts: {
+                                ...(prev as any)?.contacts,
+                                telegram: editedProfile.telegram
+                              },
+                              shippingAddress: {
+                                addressLine1: editedProfile.addressLine1,
+                                addressLine2: editedProfile.addressLine2,
+                                city: editedProfile.city,
+                                postalCode: editedProfile.postalCode,
+                                country: editedProfile.country
+                              }
+                            } : null)
+                            setIsEditing(false)
+                            setEditedProfile(null)
+                          } else {
+                            const error = await res.text()
+                            alert(`Failed to update profile: ${error}`)
+                          }
+                        } catch (error) {
+                          console.error('Error updating profile:', error)
+                          alert('Failed to update profile. Please try again.')
+                        } finally {
+                          setSavingProfile(false)
+                        }
+                      }}
+                      className="px-3 py-1 bg-green-900 text-green-100 hover:bg-green-800 disabled:opacity-50 disabled:cursor-not-allowed text-sm transition-colors"
+                      disabled={savingProfile}
+                    >
+                      {savingProfile ? 'Saving...' : 'Save Changes'}
+                    </button>
+                  </div>
                 </div>
-                
-                {/* Email */}
-                <div className="flex">
-                  <span className="text-green-500 w-24">Email:</span>
-                  <span className="flex-1">{profile.email || 'Not provided'}</span>
-                </div>
-                
-                {/* Phone */}
-                <div className="flex">
-                  <span className="text-green-500 w-24">Phone:</span>
-                  <span className="flex-1">{profile.phone || 'Not provided'}</span>
-                </div>
-                
-                {/* Telegram */}
-                <div className="flex">
-                  <span className="text-green-500 w-24">Telegram:</span>
-                  <span className="flex-1">
-                    {profile.telegram ? (
-                      <a href={`https://t.me/${profile.telegram.substring(1)}`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
-                        {profile.telegram}
-                      </a>
-                    ) : (
-                      'Not provided'
-                    )}
-                  </span>
-                </div>
-                
-                {/* Telegram Group */}
-                {profile.telegramGroup && (
+              ) : (
+                <div className="bg-green-900/20 p-4 rounded border border-green-800 space-y-2">
+                  {/* View Mode */}
+                  {/* Name */}
                   <div className="flex">
-                    <span className="text-green-500 w-24">TG Group:</span>
+                    <span className="text-green-500 w-24">Name:</span>
+                    <span className="flex-1">{profile.name}</span>
+                  </div>
+                  
+                  {/* Email */}
+                  <div className="flex">
+                    <span className="text-green-500 w-24">Email:</span>
+                    <span className="flex-1">{profile.email || 'Not provided'}</span>
+                  </div>
+                  
+                  {/* Phone */}
+                  <div className="flex">
+                    <span className="text-green-500 w-24">Phone:</span>
+                    <span className="flex-1">{profile.phone || 'Not provided'}</span>
+                  </div>
+                  
+                  {/* Telegram */}
+                  <div className="flex">
+                    <span className="text-green-500 w-24">Telegram:</span>
                     <span className="flex-1">
-                      <a href={profile.telegramGroup} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
-                        Group Link
-                      </a>
+                      {profile.telegram ? (
+                        <a href={`https://t.me/${profile.telegram.substring(1)}`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
+                          {profile.telegram}
+                        </a>
+                      ) : (
+                        'Not provided'
+                      )}
                     </span>
                   </div>
-                )}
-                
-                {/* Address */}
-                <div className="flex">
-                  <span className="text-green-500 w-24">Address:</span>
-                  <span className="flex-1">
-                    {profile.shippingAddress ? (
-                      <div className="space-y-1">
-                        {profile.shippingAddress.addressLine1 && <div>{profile.shippingAddress.addressLine1}</div>}
-                        {profile.shippingAddress.addressLine2 && <div>{profile.shippingAddress.addressLine2}</div>}
-                        {(profile.shippingAddress.city || profile.shippingAddress.postalCode) && (
-                          <div>
-                            {[profile.shippingAddress.city, profile.shippingAddress.postalCode].filter(Boolean).join(' ')}
-                          </div>
-                        )}
-                        {profile.shippingAddress.country && <div>{profile.shippingAddress.country}</div>}
-                      </div>
-                    ) : (
-                      'Not provided'
-                    )}
-                  </span>
+                  
+                  {/* Telegram Group */}
+                  {profile.telegramGroup && (
+                    <div className="flex">
+                      <span className="text-green-500 w-24">TG Group:</span>
+                      <span className="flex-1">
+                        <a href={profile.telegramGroup} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
+                          Group Link
+                        </a>
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* Address */}
+                  <div className="flex">
+                    <span className="text-green-500 w-24">Address:</span>
+                    <span className="flex-1">
+                      {profile.shippingAddress ? (
+                        <div className="space-y-1">
+                          {profile.shippingAddress.addressLine1 && <div>{profile.shippingAddress.addressLine1}</div>}
+                          {profile.shippingAddress.addressLine2 && <div>{profile.shippingAddress.addressLine2}</div>}
+                          {(profile.shippingAddress.city || profile.shippingAddress.postalCode) && (
+                            <div>
+                              {[profile.shippingAddress.city, profile.shippingAddress.postalCode].filter(Boolean).join(' ')}
+                            </div>
+                          )}
+                          {profile.shippingAddress.country && <div>{profile.shippingAddress.country}</div>}
+                        </div>
+                      ) : (
+                        'Not provided'
+                      )}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
             
             {/* Campaign Participation */}

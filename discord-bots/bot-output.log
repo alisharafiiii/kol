@@ -1,0 +1,13 @@
+🔍 Loading environment from: /Users/nabu/kol/.env.local
+✅ AI model initialized for sentiment analysis
+🚀 Engagement bot starting...
+✅ Engagement bot logged in as nabulines_bot#8452
+✅ Slash commands registered
+Bot permissions in #engagement-tracker: {
+  viewChannel: true,
+  sendMessages: true,
+  embedLinks: true,
+  readMessageHistory: true,
+  useExternalEmojis: false
+}
+✅ Posted tweet preview to #engagement-tracker

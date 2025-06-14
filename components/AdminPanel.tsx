@@ -61,6 +61,7 @@ interface KOLProfile {
   platformsUsed?: string[];
   twitterHandle?: string;
   role?: string;
+  tier?: 'hero' | 'legend' | 'star' | 'rising' | 'micro'; // User tier
   totalFollowers?: number;
   followerCount?: number;
   postPricePerPost?: number;
@@ -139,7 +140,7 @@ type BarChartOptions = ChartOptions<'bar'>;
 type PieChartOptions = ChartOptions<'pie'>;
 type DoughnutChartOptions = ChartOptions<'doughnut'>;
 
-type Tab = 'dashboard' | 'search' | 'leaderboard' | 'roles' | 'twitter-roles' | 'products' | 'discord' | 'engagement'
+type Tab = 'dashboard' | 'search' | 'leaderboard' | 'roles' | 'twitter-roles' | 'products' | 'discord' | 'engagement' | 'contests'
 
 // Helper function to safely get follower count from social accounts
 const getFollowerCount = (data: unknown): number => {
@@ -280,15 +281,28 @@ function ProfileModal({
   onClose, 
   onStatusChange,
   onDelete,
-  onRoleChange
+  onRoleChange,
+  onTierChange,
+  onSaveProfile
 }: { 
   user: KOLProfile; 
   onClose: () => void; 
   onStatusChange: (userId: string, newStatus: 'approved' | 'pending' | 'rejected') => void;
   onDelete: (userId: string) => void;
   onRoleChange: (userId: string, newRole: string) => void;
+  onTierChange: (userId: string, newTier: string) => void;
+  onSaveProfile?: (userId: string, updates: Partial<KOLProfile>) => void;
 }) {
   if (!user) return null;
+  
+  // Edit mode state
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editedUser, setEditedUser] = useState<KOLProfile>(user);
+  
+  // Update editedUser when user prop changes
+  useEffect(() => {
+    setEditedUser(user);
+  }, [user]);
   
   // Format dates for better display
   const formatDate = (dateString?: string) => {
@@ -311,6 +325,29 @@ function ProfileModal({
     (user.socialAccounts?.twitter && typeof user.socialAccounts.twitter === 'object' && 'imageUrl' in user.socialAccounts.twitter 
       ? user.socialAccounts.twitter.imageUrl as string 
       : null))?.replace('_normal', '_400x400');
+  
+  // Handle save
+  const handleSave = () => {
+    if (onSaveProfile) {
+      const updates: Partial<KOLProfile> = {};
+      
+      // Only include changed fields
+      if (editedUser.name !== user.name) updates.name = editedUser.name;
+      if (editedUser.email !== user.email) updates.email = editedUser.email;
+      if (editedUser.pricePerPost !== user.pricePerPost) updates.pricePerPost = editedUser.pricePerPost;
+      if (editedUser.priceMonthly !== user.priceMonthly) updates.priceMonthly = editedUser.priceMonthly;
+      if (editedUser.adminNotes !== user.adminNotes) updates.adminNotes = editedUser.adminNotes;
+      
+      onSaveProfile(user.id, updates);
+      setIsEditMode(false);
+    }
+  };
+  
+  // Cancel edit
+  const handleCancel = () => {
+    setEditedUser(user);
+    setIsEditMode(false);
+  };
   
   return (
     <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/80">
@@ -389,6 +426,37 @@ function ProfileModal({
                 <span className="text-xs text-purple-400 animate-pulse">← Edit Role</span>
               </div>
               
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-green-400/70">Tier:</span>
+                <span className={`px-2 py-0.5 rounded text-sm uppercase ${
+                  user.tier === 'hero' ? 'bg-amber-900 text-amber-300' : 
+                  user.tier === 'legend' ? 'bg-red-900 text-red-300' :
+                  user.tier === 'star' ? 'bg-blue-900 text-blue-300' :
+                  user.tier === 'rising' ? 'bg-green-900 text-green-300' :
+                  'bg-gray-900 text-gray-300'
+                }`}>
+                  {user.tier === 'hero' ? '👑 ' : 
+                   user.tier === 'legend' ? '⚔️ ' :
+                   user.tier === 'star' ? '⭐ ' :
+                   user.tier === 'rising' ? '🌟 ' :
+                   '✨ '
+                  }{user.tier || 'micro'}
+                </span>
+                <select
+                  className="bg-black border-2 border-amber-500 text-amber-300 px-3 py-1 text-sm rounded hover:border-amber-400 cursor-pointer"
+                  value={user.tier || 'micro'}
+                  onChange={(e) => onTierChange(user.id, e.target.value)}
+                  title="Change user tier"
+                >
+                  <option value="hero">Hero</option>
+                  <option value="legend">Legend</option>
+                  <option value="star">Star</option>
+                  <option value="rising">Rising</option>
+                  <option value="micro">Micro</option>
+                </select>
+                <span className="text-xs text-amber-400 animate-pulse">← Edit Tier</span>
+              </div>
+              
               {user.country && (
                 <span className="px-2 py-0.5 bg-blue-900 text-blue-300 rounded text-sm">
                   {typeof user.country === 'string' ? user.country : Array.isArray(user.country) ? user.country.join(', ') : 'Unknown'}
@@ -420,6 +488,20 @@ function ProfileModal({
               </button>
             </div>
             <button 
+              className="px-2 py-1 border border-blue-500 text-blue-400 hover:bg-blue-900/30 w-full"
+              onClick={() => setIsEditMode(!isEditMode)}
+            >
+              {isEditMode ? 'Cancel Edit' : 'Edit Profile'}
+            </button>
+            {isEditMode && (
+              <button 
+                className="px-2 py-1 bg-green-600 text-white hover:bg-green-700 w-full"
+                onClick={handleSave}
+              >
+                Save Changes
+              </button>
+            )}
+            <button 
               className="px-2 py-1 border border-red-700 text-red-600 hover:bg-red-900/50 w-full mt-2"
               onClick={() => {
                 if (confirm(`Are you sure you want to delete user ${user.name || user.id}?`)) {
@@ -447,10 +529,33 @@ function ProfileModal({
                   </div>
                 )}
                 
-                {user.email && (
+                <div className="flex">
+                  <span className="font-bold mr-2 w-24">Name:</span>
+                  {isEditMode ? (
+                    <input
+                      type="text"
+                      value={editedUser.name || ''}
+                      onChange={(e) => setEditedUser({...editedUser, name: e.target.value})}
+                      className="flex-1 bg-black border border-green-500 text-green-200 px-2 py-1 text-sm"
+                    />
+                  ) : (
+                    <span className="text-green-200">{user.name || 'Not set'}</span>
+                  )}
+                </div>
+                
+                {(user.email || isEditMode) && (
                   <div className="flex">
                     <span className="font-bold mr-2 w-24">Email:</span>
-                    <span className="text-green-200">{user.email}</span>
+                    {isEditMode ? (
+                      <input
+                        type="email"
+                        value={editedUser.email || ''}
+                        onChange={(e) => setEditedUser({...editedUser, email: e.target.value})}
+                        className="flex-1 bg-black border border-green-500 text-green-200 px-2 py-1 text-sm"
+                      />
+                    ) : (
+                      <span className="text-green-200">{user.email}</span>
+                    )}
                   </div>
                 )}
                 
@@ -464,22 +569,38 @@ function ProfileModal({
             </div>
             
             {/* Pricing Information */}
-            {(user.pricePerPost || user.postPricePerPost || user.priceMonthly || user.monthlySupportBudget) && (
+            {(user.pricePerPost || user.postPricePerPost || user.priceMonthly || user.monthlySupportBudget || isEditMode) && (
               <div className="border border-green-400/30 p-4 rounded-sm">
                 <h3 className="text-md border-b border-green-300/50 mb-4 pb-1 uppercase">Pricing</h3>
                 <div className="space-y-2 text-sm">
-                  {(user.pricePerPost || user.postPricePerPost) && (
-                    <div className="flex">
-                      <span className="font-bold mr-2 w-24">Per Post:</span>
-                      <span className="text-green-200">${user.pricePerPost || user.postPricePerPost}</span>
-                    </div>
-                  )}
-                  {(user.priceMonthly || user.monthlySupportBudget) && (
-                    <div className="flex">
-                      <span className="font-bold mr-2 w-24">Monthly:</span>
-                      <span className="text-green-200">${user.priceMonthly || user.monthlySupportBudget}</span>
-                    </div>
-                  )}
+                  <div className="flex">
+                    <span className="font-bold mr-2 w-24">Per Post:</span>
+                    {isEditMode ? (
+                      <input
+                        type="number"
+                        value={editedUser.pricePerPost || editedUser.postPricePerPost || ''}
+                        onChange={(e) => setEditedUser({...editedUser, pricePerPost: parseFloat(e.target.value) || 0})}
+                        className="flex-1 bg-black border border-green-500 text-green-200 px-2 py-1 text-sm"
+                        placeholder="0"
+                      />
+                    ) : (
+                      <span className="text-green-200">${user.pricePerPost || user.postPricePerPost || 0}</span>
+                    )}
+                  </div>
+                  <div className="flex">
+                    <span className="font-bold mr-2 w-24">Monthly:</span>
+                    {isEditMode ? (
+                      <input
+                        type="number"
+                        value={editedUser.priceMonthly || editedUser.monthlySupportBudget || ''}
+                        onChange={(e) => setEditedUser({...editedUser, priceMonthly: parseFloat(e.target.value) || 0})}
+                        className="flex-1 bg-black border border-green-500 text-green-200 px-2 py-1 text-sm"
+                        placeholder="0"
+                      />
+                    ) : (
+                      <span className="text-green-200">${user.priceMonthly || user.monthlySupportBudget || 0}</span>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
@@ -669,10 +790,19 @@ function ProfileModal({
             )}
             
             {/* Admin Notes */}
-            {user.adminNotes && (
+            {(user.adminNotes || isEditMode) && (
               <div className="border border-green-400/30 p-4 rounded-sm">
                 <h3 className="text-md border-b border-green-300/50 mb-4 pb-1 uppercase">Admin Notes</h3>
-                <div className="text-sm whitespace-pre-wrap">{user.adminNotes}</div>
+                {isEditMode ? (
+                  <textarea
+                    value={editedUser.adminNotes || ''}
+                    onChange={(e) => setEditedUser({...editedUser, adminNotes: e.target.value})}
+                    className="w-full bg-black border border-green-500 text-green-200 px-2 py-1 text-sm min-h-[100px]"
+                    placeholder="Add notes about this user..."
+                  />
+                ) : (
+                  <div className="text-sm whitespace-pre-wrap">{user.adminNotes}</div>
+                )}
               </div>
             )}
           </div>
@@ -1614,6 +1744,124 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
     }
   }
   
+  const handleTierChange = async (userId: string, newTier: string) => {
+    try {
+      // Find the user's twitter handle
+      const user = users.find(u => u.id === userId)
+      if (!user) {
+        alert('User not found')
+        return
+      }
+      
+      console.log('[DEBUG] Changing tier for user:', { userId, newTier, user })
+      
+      // Check for twitter handle in both possible fields
+      const twitterHandle = user.twitterHandle || user.handle
+      if (!twitterHandle) {
+        alert('User does not have a Twitter handle')
+        return
+      }
+      
+      // Clean the handle (remove @ if present)
+      const cleanHandle = twitterHandle.replace('@', '')
+      
+      console.log('[DEBUG] Making API call to:', `/api/user/full-profile?handle=${cleanHandle}`)
+      
+      const response = await fetch(`/api/user/full-profile?handle=${encodeURIComponent(cleanHandle)}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ tier: newTier }),
+      })
+
+      const responseData = await response.json()
+      console.log('[DEBUG] API Response:', { status: response.status, data: responseData })
+
+      if (!response.ok) {
+        throw new Error(responseData.error || 'Failed to update tier')
+      }
+
+      // Update local state
+      setUsers(prev => prev.map(u => 
+        u.id === userId ? { ...u, tier: newTier as KOLProfile['tier'] } : u
+      ))
+      
+      // Update selected user if this is the one being viewed
+      if (selectedUser?.id === userId) {
+        setSelectedUser(prev => prev ? { ...prev, tier: newTier as KOLProfile['tier'] } : null)
+      }
+      
+      // Show success message
+      alert(`Tier updated successfully!\n\nUser (${user.name || user.handle}) is now ${newTier.toUpperCase()} tier.`)
+      
+      // Don't reload the page - the UI is already updated
+      console.log('[DEBUG] Tier change completed')
+    } catch (error) {
+      console.error('Error updating tier:', error)
+      alert(`Failed to update tier: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+  
+  const handleSaveProfile = async (userId: string, updates: Partial<KOLProfile>) => {
+    try {
+      // Find the user's twitter handle
+      const user = users.find(u => u.id === userId)
+      if (!user) {
+        alert('User not found')
+        return
+      }
+      
+      console.log('[DEBUG] Saving profile for user:', { userId, updates, user })
+      
+      // Check for twitter handle in both possible fields
+      const twitterHandle = user.twitterHandle || user.handle
+      if (!twitterHandle) {
+        alert('User does not have a Twitter handle')
+        return
+      }
+      
+      // Clean the handle (remove @ if present)
+      const cleanHandle = twitterHandle.replace('@', '')
+      
+      console.log('[DEBUG] Making API call to:', `/api/user/full-profile?handle=${cleanHandle}`)
+      
+      const response = await fetch(`/api/user/full-profile?handle=${encodeURIComponent(cleanHandle)}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      })
+
+      const responseData = await response.json()
+      console.log('[DEBUG] API Response:', { status: response.status, data: responseData })
+
+      if (!response.ok) {
+        throw new Error(responseData.error || 'Failed to update profile')
+      }
+
+      // Update local state
+      setUsers(prev => prev.map(u => 
+        u.id === userId ? { ...u, ...updates } : u
+      ))
+      
+      // Update selected user if this is the one being viewed
+      if (selectedUser?.id === userId) {
+        setSelectedUser(prev => prev ? { ...prev, ...updates } : null)
+      }
+      
+      // Show success message
+      alert('Profile updated successfully!')
+      
+      // Don't reload the page - the UI is already updated
+      console.log('[DEBUG] Profile save completed')
+    } catch (error) {
+      console.error('Error updating profile:', error)
+      alert(`Failed to update profile: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+  
   /* =====================
      Roles management state
   ====================== */
@@ -1806,6 +2054,12 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
             onClick={() => setActiveTab('engagement')}
           >
             Engagement
+          </button>
+          <button 
+            className={`px-4 py-2 whitespace-nowrap ${activeTab === 'contests' ? 'bg-green-800' : ''}`}
+            onClick={() => setActiveTab('contests')}
+          >
+            Contests
           </button>
           {/* Roles management tab – visible to admins only.  */}
           {/* Roles tabs removed */}
@@ -2450,6 +2704,24 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                             {user.role}
                           </span>
                         )}
+                        
+                        {/* Tier Badge */}
+                        {user.tier && (
+                          <span className={`text-xs px-1.5 py-0.5 rounded ${
+                            user.tier === 'hero' ? 'bg-amber-900/50 text-amber-300' : 
+                            user.tier === 'legend' ? 'bg-red-900/50 text-red-300' :
+                            user.tier === 'star' ? 'bg-blue-900/50 text-blue-300' :
+                            user.tier === 'rising' ? 'bg-green-900/50 text-green-300' :
+                            'bg-gray-900/50 text-gray-300'
+                          }`}>
+                            {user.tier === 'hero' ? '👑' : 
+                             user.tier === 'legend' ? '⚔️' :
+                             user.tier === 'star' ? '⭐' :
+                             user.tier === 'rising' ? '🌟' :
+                             '✨'
+                            } {user.tier}
+                          </span>
+                        )}
                       </div>
                       
                       {/* User Stats - First Row */}
@@ -2790,6 +3062,25 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
             </div>
           </div>
         )}
+
+        {/* Contests Tab */}
+        {activeTab === 'contests' && (
+          <div className="space-y-6">
+            <h2 className="text-lg mb-4">Contest Management</h2>
+            <p className="text-sm opacity-70 mb-4">Create and manage Twitter engagement contests with prizes</p>
+            
+            {/* Redirect to Contests page */}
+            <div className="border border-green-300 p-8 text-center">
+              <p className="mb-4 text-green-300">Contest management has its own dedicated page for creating contests, managing submissions, and tracking leaderboards.</p>
+              <button
+                onClick={() => window.location.href = '/admin/contests'}
+                className="px-6 py-2 bg-green-900 text-green-100 rounded hover:bg-green-800 transition-colors"
+              >
+                Go to Contest Management →
+              </button>
+            </div>
+          </div>
+        )}
       </div>
       {/* User Profile Modal */}
       {showProfileModal && selectedUser && (
@@ -2799,6 +3090,8 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
           onStatusChange={updateUserStatus}
           onDelete={handleDeleteUser}
           onRoleChange={handleRoleChange}
+          onTierChange={handleTierChange}
+          onSaveProfile={handleSaveProfile}
         />
       )}
     </div>

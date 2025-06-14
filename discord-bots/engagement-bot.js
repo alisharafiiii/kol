@@ -145,7 +145,7 @@ async function updateUserRole(twitterHandle, newRole) {
 // Get tier-based scenarios
 async function getTierScenarios(tier) {
   try {
-    const scenarios = await redis.json.get(`engagement:scenarios:tier${tier}`)
+    const scenarios = await redis.json.get(`engagement:scenarios:${tier}`)
     return scenarios || getDefaultScenarios(tier)
   } catch (error) {
     console.error('Error getting tier scenarios:', error)
@@ -156,51 +156,91 @@ async function getTierScenarios(tier) {
 // Default scenarios by tier
 function getDefaultScenarios(tier) {
   const scenarios = {
-    1: {
-      dailyTweetLimit: 3,
+    'micro': {
+      dailyTweetLimit: 5,
       categories: ['General', 'DeFi', 'NFT'],
       minFollowers: 100,
       bonusMultiplier: 1.0
     },
-    2: {
-      dailyTweetLimit: 5,
+    'rising': {
+      dailyTweetLimit: 10,
       categories: ['General', 'DeFi', 'NFT', 'Gaming', 'Tech'],
       minFollowers: 500,
       bonusMultiplier: 1.5
     },
-    3: {
-      dailyTweetLimit: 10,
+    'star': {
+      dailyTweetLimit: 20,
       categories: ['General', 'DeFi', 'NFT', 'Gaming', 'Tech', 'Memes', 'News'],
       minFollowers: 1000,
       bonusMultiplier: 2.0
+    },
+    'legend': {
+      dailyTweetLimit: 30,
+      categories: ['General', 'DeFi', 'NFT', 'Gaming', 'Tech', 'Memes', 'News', 'Special'],
+      minFollowers: 5000,
+      bonusMultiplier: 2.5
+    },
+    'hero': {
+      dailyTweetLimit: 50,
+      categories: ['General', 'DeFi', 'NFT', 'Gaming', 'Tech', 'Memes', 'News', 'Special', 'VIP'],
+      minFollowers: 10000,
+      bonusMultiplier: 3.0
     }
   }
   
-  return scenarios[tier] || scenarios[1]
+  return scenarios[tier] || scenarios['micro']
 }
 
-// Create tweet embed
-function createTweetEmbed(tweet, submitterName) {
-  const embed = new EmbedBuilder()
-    .setColor(0x1DA1F2) // Twitter blue
-    .setTitle('🐦 New Tweet for Engagement!')
-    .setURL(tweet.url)
-    .setDescription(`**Click the title above to view and engage with this tweet!**`)
-    .addFields(
-      { name: '👤 Author', value: `[@${tweet.authorHandle}](https://twitter.com/${tweet.authorHandle})`, inline: true },
-      { name: '🏷️ Category', value: tweet.category || 'General', inline: true },
-      { name: '⭐ Tier', value: `Level ${tweet.tier}`, inline: true },
-      { name: '📤 Submitted by', value: submitterName, inline: true },
-      { name: '🎯 Bonus', value: `${tweet.bonusMultiplier}x points`, inline: true }
-    )
-    .setTimestamp(new Date(tweet.submittedAt))
-    .setFooter({ text: `💡 Engage to earn points! • ID: ${tweet.tweetId}` })
-  
-  if (tweet.content) {
-    embed.addFields({ name: '📝 Preview', value: tweet.content.substring(0, 280) + '...' })
+// Create minimal tweet embed with preview
+function createTweetEmbed(tweet, submitterName, includeButtons = true) {
+  // Choose color based on tier
+  const tierColors = {
+    'micro': 0x6B7280,  // Gray
+    'rising': 0x3BA55D, // Green
+    'star': 0x5865F2,   // Blue
+    'legend': 0xEA580C, // Orange
+    'hero': 0x9333EA    // Purple
   }
   
-  return embed
+  // Calculate potential points
+  const likePoints = Math.floor(10 * tweet.bonusMultiplier)
+  const retweetPoints = Math.floor(20 * tweet.bonusMultiplier)
+  const replyPoints = Math.floor(30 * tweet.bonusMultiplier)
+  
+  const embed = new EmbedBuilder()
+    .setColor(tierColors[tweet.tier] || 0x1DA1F2)
+    .setAuthor({ 
+      name: `@${tweet.authorHandle}`, 
+      url: `https://twitter.com/${tweet.authorHandle}`,
+      iconURL: 'https://abs.twimg.com/icons/apple-touch-icon-192x192.png'
+    })
+    .setDescription(
+      `${tweet.content ? `"${tweet.content}"\n\n` : ''}` +
+      `**💰 Earn ${tweet.bonusMultiplier}x points:**\n` +
+      `❤️ Like: ${likePoints} pts | 🔁 RT: ${retweetPoints} pts | 💬 Reply: ${replyPoints} pts`
+    )
+    .addFields(
+      { name: 'Tier', value: `⭐ ${tweet.tier}`, inline: true },
+      { name: 'Category', value: `${tweet.category}`, inline: true },
+      { name: 'Submitted', value: `<t:${Math.floor(new Date(tweet.submittedAt).getTime() / 1000)}:R>`, inline: true }
+    )
+    .setFooter({ text: `Submitted by ${submitterName}` })
+  
+  if (includeButtons) {
+    // Create clickable button for the tweet
+    const row = new ActionRowBuilder()
+      .addComponents(
+        new ButtonBuilder()
+          .setLabel('View & Engage')
+          .setStyle(ButtonStyle.Link)
+          .setURL(tweet.url)
+          .setEmoji('🐦')
+      )
+    
+    return { embeds: [embed], components: [row] }
+  }
+  
+  return { embeds: [embed] }
 }
 
 // Handle slash commands
@@ -237,8 +277,8 @@ client.on('ready', async () => {
       description: 'View the engagement leaderboard'
     },
     {
-      name: 'tweets',
-      description: 'View recent submitted tweets'
+      name: 'recent',
+      description: 'View recently submitted tweets'
     },
     {
       name: 'tier',
@@ -250,9 +290,16 @@ client.on('ready', async () => {
         required: true
       }, {
         name: 'tier',
-        type: 4, // INTEGER
-        description: 'Tier level (1-3)',
-        required: true
+        type: 3, // STRING
+        description: 'Tier level (micro/rising/star/legend/hero)',
+        required: true,
+        choices: [
+          { name: 'Micro', value: 'micro' },
+          { name: 'Rising', value: 'rising' },
+          { name: 'Star', value: 'star' },
+          { name: 'Legend', value: 'legend' },
+          { name: 'Hero', value: 'hero' }
+        ]
       }]
     },
     {
@@ -260,9 +307,16 @@ client.on('ready', async () => {
       description: 'Admin: Configure tier scenarios',
       options: [{
         name: 'tier',
-        type: 4, // INTEGER
-        description: 'Tier level (1-3)',
-        required: true
+        type: 3, // STRING
+        description: 'Tier level (micro/rising/star/legend/hero)',
+        required: true,
+        choices: [
+          { name: 'Micro', value: 'micro' },
+          { name: 'Rising', value: 'rising' },
+          { name: 'Star', value: 'star' },
+          { name: 'Legend', value: 'legend' },
+          { name: 'Hero', value: 'hero' }
+        ]
       }, {
         name: 'daily_limit',
         type: 4,
@@ -387,6 +441,24 @@ client.on('interactionCreate', async (interaction) => {
       // Submit tweet
       try {
         const { nanoid } = await import('nanoid')
+        // Try to fetch tweet content from Twitter API
+        let tweetContent = null
+        try {
+          const response = await fetch(`https://api.twitter.com/2/tweets/${tweetId}?tweet.fields=text`, {
+            headers: {
+              'Authorization': `Bearer ${process.env.TWITTER_BEARER_TOKEN}`
+            }
+          })
+          
+          if (response.ok) {
+            const tweetData = await response.json()
+            tweetContent = tweetData.data?.text || null
+            console.log('📝 Fetched tweet content:', tweetContent ? 'Success' : 'No content')
+          }
+        } catch (error) {
+          console.log('⚠️ Could not fetch tweet content:', error.message)
+        }
+
         const tweet = {
           id: nanoid(),
           tweetId,
@@ -395,14 +467,14 @@ client.on('interactionCreate', async (interaction) => {
           category: finalCategory,
           url,
           authorHandle,
+          content: tweetContent,
           tier: connection.tier,
           bonusMultiplier: scenarios.bonusMultiplier
         }
         
         await redis.json.set(`engagement:tweet:${tweet.id}`, '$', tweet)
-        // Use a different approach for recent tweets - store as a list
-        await redis.lpush('engagement:tweets:recent', tweet.id)
-        await redis.ltrim('engagement:tweets:recent', 0, 99) // Keep only 100 most recent
+        // Store in sorted set for admin panel compatibility
+        await redis.zadd('engagement:tweets:recent', { score: Date.now(), member: tweet.id })
         await redis.set(`engagement:tweetid:${tweet.tweetId}`, tweet.id)
         
         // Increment daily counter
@@ -412,12 +484,47 @@ client.on('interactionCreate', async (interaction) => {
         // Send to channel
         const channel = interaction.guild.channels.cache.find(ch => ch.name === BOT_CHANNEL_NAME)
         if (channel) {
+          // Debug: Check bot permissions in channel
+          const botMember = interaction.guild.members.cache.get(client.user.id)
+          const perms = channel.permissionsFor(botMember)
+          console.log(`Bot permissions in #${BOT_CHANNEL_NAME}:`, {
+            viewChannel: perms.has('ViewChannel'),
+            sendMessages: perms.has('SendMessages'),
+            embedLinks: perms.has('EmbedLinks'),
+            readMessageHistory: perms.has('ReadMessageHistory'),
+            useExternalEmojis: perms.has('UseExternalEmojis')
+          })
           try {
-            const embed = createTweetEmbed(tweet, interaction.user.username)
-            await channel.send({ embeds: [embed] })
+            const messageContent = createTweetEmbed(tweet, interaction.user.username)
+            await channel.send(messageContent)
+            console.log(`✅ Posted tweet preview to #${BOT_CHANNEL_NAME}`)
           } catch (channelError) {
             console.error('Error posting to channel:', channelError)
             console.log('Make sure the bot has permission to send messages in #engagement-tracker')
+            console.log('Required permissions: View Channel, Send Messages, Embed Links')
+            
+            // Try sending without buttons as fallback
+            try {
+              console.log('Attempting to send without buttons...')
+              const simpleEmbed = createTweetEmbed(tweet, interaction.user.username, false)
+              await channel.send(simpleEmbed)
+              console.log('✅ Sent simplified preview without buttons')
+            } catch (fallbackError) {
+              console.error('Even simple embed failed:', fallbackError)
+              console.log('Bot may lack basic permissions in the channel')
+              
+              // Last resort - send plain text
+              try {
+                const plainMessage = `**@${tweet.authorHandle}**\n` +
+                  `${tweet.content ? `"${tweet.content}"\n\n` : ''}` +
+                  `💰 Earn ${tweet.bonusMultiplier}x points | ⭐ Tier ${tweet.tier} | ${tweet.category}\n` +
+                  `🔗 ${tweet.url}`
+                await channel.send(plainMessage)
+                console.log('✅ Sent plain text preview')
+              } catch (textError) {
+                console.error('Cannot send any message to channel:', textError)
+              }
+            }
           }
         } else {
           console.log(`Channel "${BOT_CHANNEL_NAME}" not found. Please create it for tweet announcements.`)
@@ -446,18 +553,13 @@ client.on('interactionCreate', async (interaction) => {
       const today = new Date().toISOString().split('T')[0]
       const dailySubmissions = await redis.get(`engagement:daily:${interaction.user.id}:${today}`) || 0
       
-      // Get recent engagements
-      const logIds = await redis.zrevrange(`engagement:user:${interaction.user.id}:logs`, 0, 9)
+      // Get recent engagements (skip for now since we don't have logs yet)
       const logs = []
-      for (const id of logIds) {
-        const log = await redis.json.get(`engagement:log:${id}`)
-        if (log) logs.push(log)
-      }
       
       const embed = new EmbedBuilder()
         .setColor(0x00FF00)
         .setTitle('📊 Your Engagement Stats')
-        .setDescription(`**Twitter:** @${connection.twitterHandle}\n**Tier:** Level ${connection.tier}\n**Total Points:** ${connection.totalPoints || 0}`)
+        .setDescription(`**Twitter:** @${connection.twitterHandle}\n**Tier:** ${connection.tier.toUpperCase()}\n**Total Points:** ${connection.totalPoints || 0}`)
         .addFields(
           { name: 'Daily Limit', value: `${dailySubmissions}/${scenarios.dailyTweetLimit}`, inline: true },
           { name: 'Bonus Multiplier', value: `${scenarios.bonusMultiplier}x`, inline: true },
@@ -503,46 +605,60 @@ client.on('interactionCreate', async (interaction) => {
         .setDescription('Top 10 Engagers')
         .setTimestamp()
       
-      const top10 = entries.slice(0, 10).map((entry, index) => 
-        `**${index + 1}.** @${entry.twitterHandle} (T${entry.tier}) - ${entry.totalPoints} points`
-      ).join('\n')
+      const top10 = entries.slice(0, 10).map((entry, index) => {
+        const tierEmoji = {
+          'micro': '⚪',
+          'rising': '🟢',
+          'star': '⭐',
+          'legend': '🟠',
+          'hero': '👑'
+        }[entry.tier] || '⚪'
+        return `**${index + 1}.** @${entry.twitterHandle} ${tierEmoji} ${entry.tier.toUpperCase()} - ${entry.totalPoints} points`
+      }).join('\n')
       
       embed.addFields({ name: 'Rankings', value: top10 || 'No data yet' })
       
       await interaction.editReply({ embeds: [embed] })
     }
     
-    else if (commandName === 'tweets') {
+    else if (commandName === 'recent') {
       await interaction.deferReply()
       
-      // Get recent tweets
-      const tweetIds = await redis.lrange('engagement:tweets:recent', 0, 9) // Get last 10
-      const tweets = []
-      
-      for (const id of tweetIds) {
-        const tweet = await redis.json.get(`engagement:tweet:${id}`)
-        if (tweet) tweets.push(tweet)
-      }
-      
-      const embed = new EmbedBuilder()
-        .setColor(0x1DA1F2) // Twitter blue
-        .setTitle('🐦 Recent Tweets for Engagement')
-        .setDescription('Click on any tweet to engage and earn points!')
-        .setTimestamp()
-      
-      if (tweets.length === 0) {
-        embed.addFields({ name: 'No tweets yet', value: 'Be the first to submit a tweet with `/submit`!' })
-      } else {
-        tweets.forEach((tweet, index) => {
-          const submittedTime = new Date(tweet.submittedAt).toLocaleTimeString()
-          embed.addFields({
-            name: `${index + 1}. @${tweet.authorHandle} - ${tweet.category}`,
-            value: `[View Tweet](${tweet.url})\n📅 ${submittedTime} • Tier ${tweet.tier}`
+      try {
+        // Get recent tweets from sorted set
+        const tweetIds = await redis.zrange('engagement:tweets:recent', 0, 9, { rev: true }) // Get last 10
+        const tweets = []
+        
+        for (const id of tweetIds) {
+          const tweet = await redis.json.get(`engagement:tweet:${id}`)
+          if (tweet) tweets.push(tweet)
+        }
+        
+        const embed = new EmbedBuilder()
+          .setColor(0x1DA1F2) // Twitter blue
+          .setTitle('🐦 Recent Tweets for Engagement')
+          .setDescription('Click on any tweet to engage and earn points!')
+          .setTimestamp()
+        
+        if (tweets.length === 0) {
+          embed.addFields({ name: 'No tweets yet', value: 'Be the first to submit a tweet with `/submit`!' })
+        } else {
+          let tweetList = ''
+          tweets.forEach((tweet, index) => {
+            tweetList += `**${index + 1}. @${tweet.authorHandle}**\n`
+            if (tweet.content) {
+              tweetList += `"${tweet.content.substring(0, 100)}${tweet.content.length > 100 ? '...' : ''}"\n`
+            }
+            tweetList += `💰 ${tweet.bonusMultiplier}x points | ⭐ Tier ${tweet.tier} | [View Tweet](${tweet.url})\n\n`
           })
-        })
+          embed.addFields({ name: 'Recent Tweets', value: tweetList || 'No tweets yet' })
+        }
+        
+        await interaction.editReply({ embeds: [embed] })
+      } catch (error) {
+        console.error('Error in /recent command:', error)
+        await interaction.editReply('❌ An error occurred while fetching recent tweets.')
       }
-      
-      await interaction.editReply({ embeds: [embed] })
     }
     
     else if (commandName === 'tier') {
@@ -556,10 +672,11 @@ client.on('interactionCreate', async (interaction) => {
       }
       
       const user = interaction.options.getUser('user')
-      const tier = interaction.options.getInteger('tier')
+      const tier = interaction.options.getString('tier')
       
-      if (tier < 1 || tier > 3) {
-        await interaction.reply({ content: '❌ Tier must be between 1 and 3.', flags: 64 })
+      const validTiers = ['micro', 'rising', 'star', 'legend', 'hero']
+      if (!validTiers.includes(tier)) {
+        await interaction.reply({ content: '❌ Invalid tier. Must be one of: micro, rising, star, legend, hero', flags: 64 })
         return
       }
       
@@ -570,7 +687,7 @@ client.on('interactionCreate', async (interaction) => {
       }
       
       await redis.json.set(`engagement:connection:${user.id}`, '$.tier', tier)
-      await interaction.reply({ content: `✅ Updated ${user.username}'s tier to Level ${tier}`, flags: 64 })
+      await interaction.reply({ content: `✅ Updated ${user.username}'s tier to ${tier.toUpperCase()}`, flags: 64 })
     }
     
     else if (commandName === 'scenarios') {
@@ -583,13 +700,14 @@ client.on('interactionCreate', async (interaction) => {
         return
       }
       
-      const tier = interaction.options.getInteger('tier')
+      const tier = interaction.options.getString('tier')
       const dailyLimit = interaction.options.getInteger('daily_limit')
       const minFollowers = interaction.options.getInteger('min_followers')
       const bonusMultiplier = interaction.options.getNumber('bonus_multiplier')
       
-      if (tier < 1 || tier > 3) {
-        await interaction.reply({ content: '❌ Tier must be between 1 and 3.', flags: 64 })
+      const validTiers = ['micro', 'rising', 'star', 'legend', 'hero']
+      if (!validTiers.includes(tier)) {
+        await interaction.reply({ content: '❌ Invalid tier. Must be one of: micro, rising, star, legend, hero', flags: 64 })
         return
       }
       
@@ -602,10 +720,10 @@ client.on('interactionCreate', async (interaction) => {
       if (bonusMultiplier !== null) currentScenarios.bonusMultiplier = bonusMultiplier
       
       // Save scenarios
-      await redis.json.set(`engagement:scenarios:tier${tier}`, '$', currentScenarios)
+      await redis.json.set(`engagement:scenarios:${tier}`, '$', currentScenarios)
       
       await interaction.reply({ 
-        content: `✅ Updated Tier ${tier} scenarios:\n` +
+        content: `✅ Updated ${tier.toUpperCase()} tier scenarios:\n` +
                  `Daily Limit: ${currentScenarios.dailyTweetLimit}\n` +
                  `Min Followers: ${currentScenarios.minFollowers}\n` +
                  `Bonus Multiplier: ${currentScenarios.bonusMultiplier}x`,
@@ -653,19 +771,44 @@ client.on('interactionCreate', async (interaction) => {
         try {
           const member = await interaction.guild.members.fetch(interaction.user.id)
           const kolRole = interaction.guild.roles.cache.find(role => role.name.toLowerCase() === KOL_ROLE_NAME)
-          if (kolRole && !member.roles.cache.has(kolRole.id)) {
-            await member.roles.add(kolRole)
+          
+          if (kolRole) {
+            // Check if bot has permission to manage roles
+            const botMember = interaction.guild.members.cache.get(client.user.id)
+            if (!botMember.permissions.has('ManageRoles')) {
+              console.warn('⚠️  Bot lacks "Manage Roles" permission - cannot assign KOL role')
+              console.log('   Please grant the bot "Manage Roles" permission in Discord')
+            } 
+            // Check if bot's highest role is above the KOL role
+            else if (botMember.roles.highest.position <= kolRole.position) {
+              console.warn('⚠️  Bot\'s role is not high enough to assign the KOL role')
+              console.log('   Please move the bot\'s role above the KOL role in Discord settings')
+            }
+            // Try to assign the role
+            else if (!member.roles.cache.has(kolRole.id)) {
+              await member.roles.add(kolRole)
+              console.log(`✅ Assigned KOL role to ${member.user.tag}`)
+            }
+          } else {
+            console.warn(`⚠️  No role found with name "${KOL_ROLE_NAME}" (case-insensitive)`)
+            console.log('   Please create a role named "kol" in your Discord server')
           }
         } catch (error) {
-          console.error('Error assigning Discord role:', error)
+          console.error('❌ Error assigning Discord role:', error.message)
+          if (error.code === 50013) {
+            console.log('   This is a permissions issue. Please check:')
+            console.log('   1. Bot has "Manage Roles" permission')
+            console.log('   2. Bot\'s role is above the KOL role in the hierarchy')
+          }
         }
       }
       
-      // Create connection
+      // Create connection - get tier from user profile
+      const userTier = userData.tier || 'micro'  // Default to micro if no tier
       const connection = {
         discordId: interaction.user.id,
         twitterHandle: cleanHandle,
-        tier: 1,
+        tier: userTier,
         connectedAt: new Date(),
         totalPoints: 0,
         role: finalRole
@@ -689,6 +832,22 @@ client.on('interactionCreate', async (interaction) => {
 
 // Error handling
 client.on('error', console.error)
+
+// Handle regular messages (for ping/pong)
+client.on('messageCreate', async (message) => {
+  // Ignore messages from bots
+  if (message.author.bot) return
+  
+  // Simple ping/pong response
+  if (message.content.toLowerCase() === 'ping') {
+    try {
+      await message.reply('pong! 🏓')
+      console.log(`Replied to ping from ${message.author.tag}`)
+    } catch (error) {
+      console.error('Error replying to ping:', error)
+    }
+  }
+})
 
 // Login
 client.login(process.env.DISCORD_BOT_TOKEN)

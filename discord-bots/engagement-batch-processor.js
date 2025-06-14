@@ -37,22 +37,12 @@ async function processBatch() {
   }
   
   await redis.json.set(`engagement:batch:${batchId}`, '$', batchJob)
-  await redis.zadd('engagement:batches', Date.now(), batchId)
+  await redis.zadd('engagement:batches', { score: Date.now(), member: batchId })
   
   try {
-    // Get recent tweets (stored as a list)
-    const allTweetIds = await redis.lrange('engagement:tweets:recent', 0, -1)
-    
-    // Filter tweets from last 24 hours
+    // Get recent tweets from last 24 hours (stored as sorted set)
     const cutoff = Date.now() - (24 * 60 * 60 * 1000)
-    const tweetIds = []
-    
-    for (const tweetId of allTweetIds) {
-      const tweet = await redis.json.get(`engagement:tweet:${tweetId}`)
-      if (tweet && new Date(tweet.submittedAt).getTime() > cutoff) {
-        tweetIds.push(tweetId)
-      }
-    }
+    const tweetIds = await redis.zrange('engagement:tweets:recent', cutoff, '+inf', { byScore: true })
     
     console.log(`📊 Found ${tweetIds.length} tweets from last 24 hours to process`)
     
@@ -122,8 +112,8 @@ async function processBatch() {
                 }
                 
                 await redis.json.set(`engagement:log:${logId}`, '$', log)
-                await redis.zadd(`engagement:user:${connection}:logs`, Date.now(), logId)
-                await redis.zadd(`engagement:tweet:${tweet.tweetId}:logs`, Date.now(), logId)
+                await redis.zadd(`engagement:user:${connection}:logs`, { score: Date.now(), member: logId })
+                await redis.zadd(`engagement:tweet:${tweet.tweetId}:logs`, { score: Date.now(), member: logId })
                 await redis.set(`engagement:interaction:${tweet.tweetId}:${connection}:like`, logId)
                 
                 // Update user points
@@ -170,8 +160,8 @@ async function processBatch() {
                 }
                 
                 await redis.json.set(`engagement:log:${logId}`, '$', log)
-                await redis.zadd(`engagement:user:${connection}:logs`, Date.now(), logId)
-                await redis.zadd(`engagement:tweet:${tweet.tweetId}:logs`, Date.now(), logId)
+                await redis.zadd(`engagement:user:${connection}:logs`, { score: Date.now(), member: logId })
+                await redis.zadd(`engagement:tweet:${tweet.tweetId}:logs`, { score: Date.now(), member: logId })
                 await redis.set(`engagement:interaction:${tweet.tweetId}:${connection}:retweet`, logId)
                 
                 await redis.json.numincrby(`engagement:connection:${connection}`, '$.totalPoints', points)

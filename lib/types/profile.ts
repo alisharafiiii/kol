@@ -97,9 +97,12 @@ export interface UnifiedProfile {
   rejectedBy?: string
   rejectedAt?: Date
   
+  // Universal Tier (now for all users)
+  tier: KOLTier  // Required for all users, defaults to 'micro'
+  
   // KOL Specific Fields
   isKOL: boolean
-  currentTier?: KOLTier
+  currentTier?: KOLTier  // Deprecated - use tier instead
   kolMetrics?: KOLMetrics
   campaigns?: CampaignParticipation[]
   

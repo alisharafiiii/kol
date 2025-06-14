@@ -1137,17 +1137,17 @@ export default function LoginModal() {
   if (stage === 'hidden') return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 font-mono text-green-300 p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 font-mono text-green-300 p-4 sm:p-6">
       <div 
         className="absolute inset-0 bg-black opacity-80" 
         onClick={handleClose} 
       />
-      <div className="relative z-10 rounded border-4 border-green-400 bg-black p-6 space-y-4 max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="relative z-10 rounded border-2 border-green-400 bg-black p-3 sm:p-6 space-y-2 sm:space-y-4 w-[calc(100%-2rem)] max-w-md max-h-[calc(100vh-2rem)] sm:max-h-[90vh] overflow-y-auto">
         {/* Admin Panel Button (if user has admin role) */}
         {userProfile?.role === 'admin' && (
-          <div className="absolute top-3 right-3">
+          <div className="absolute top-2 right-2 sm:top-3 sm:right-3">
             <button 
-              className="px-3 py-1 bg-purple-600 text-white text-xs animate-pulse hover:bg-purple-500"
+              className="px-2 py-1 sm:px-3 sm:py-1 bg-purple-600 text-white text-[10px] sm:text-xs animate-pulse hover:bg-purple-500"
               onClick={() => router.push('/admin')}
             >
               Admin Panel
@@ -1157,83 +1157,105 @@ export default function LoginModal() {
         
         {/* Choice */}
         {stage === 'choice' && (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2 sm:gap-3">
             {isLoggedIn && (
-              <div className="mb-5">
-                {/* Pixel-style Driver's License */}
-                <div className="license-card border-4 border-green-400 p-3 bg-black mb-3">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="license-header text-xs uppercase font-bold tracking-widest">
-                      CYBERNETIC ACCESS PERMIT
+              <div className="mb-2 sm:mb-5">
+                {/* Pixel-style Driver's License - Compact and Responsive */}
+                <div className="license-card border-2 border-green-400 p-1.5 sm:p-2 bg-black">
+                  {/* Header Bar */}
+                  <div className="flex justify-between items-center border-b border-green-400 pb-0.5 mb-1">
+                    <div className="text-[7px] sm:text-[9px] uppercase font-bold tracking-wide text-green-300">
+                      CYBERNETIC ACCESS
                     </div>
-                    <div className={`license-hologram text-xs animate-pulse ${
+                    <div className={`text-[7px] sm:text-[9px] font-bold ${
                       userProfile?.approvalStatus === 'approved' ? 'text-green-400' : 
                       userProfile?.approvalStatus === 'rejected' ? 'text-red-400' : 
                       'text-yellow-400'
                     }`}>
-                      [{userProfile?.approvalStatus === 'approved' ? 'VERIFIED' : 
-                        userProfile?.approvalStatus === 'rejected' ? 'DENIED' : 
-                        'PENDING'}]
+                      {userProfile?.approvalStatus === 'approved' ? '✓ ACTIVE' : 
+                        userProfile?.approvalStatus === 'rejected' ? '✗ DENIED' : 
+                        '⏳ PENDING'}
                     </div>
                   </div>
                   
-                  <div className="flex gap-3">
-                    <div className="license-photo w-20 h-20 border-2 border-green-300 overflow-hidden relative">
-                      {session?.user?.image ? (
-                        <img 
-                          src={session.user.image} 
-                          alt={session.user.name || 'User'} 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="absolute inset-0 bg-green-900 flex items-center justify-center">
-                          <span className="text-xs text-green-300">NO IMAGE</span>
-                        </div>
-                      )}
-                      <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-center">
-                        <div className="text-[8px] text-green-300">ID-7734</div>
+                  {/* Main Content */}
+                  <div className="flex gap-1.5 sm:gap-2">
+                    {/* Photo Section */}
+                    <div className="flex-shrink-0">
+                      <div className="w-[60px] h-[75px] sm:w-[70px] sm:h-[88px] border border-green-300 overflow-hidden relative bg-green-900/20">
+                        {session?.user?.image ? (
+                          <img 
+                            src={session.user.image.replace('_normal', '_400x400')} 
+                            alt={session.user.name || 'User'} 
+                            className="w-full h-full object-cover"
+                            style={{ imageRendering: 'pixelated' }}
+                          />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="text-[8px] sm:text-[9px] text-green-300">NO PHOTO</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="text-center bg-green-900/30 border border-green-300 border-t-0 py-0.5">
+                        <div className="text-[6px] sm:text-[7px] text-green-300 font-bold">ID-7734</div>
                       </div>
                     </div>
                     
-                    <div className="license-data flex-1 text-xs flex flex-col gap-1">
-                      <div className="license-field">
-                        <span className="opacity-70">HANDLE:</span> <span className="font-bold">@{userProfile?.twitterHandle?.replace('@', '') || (session as any)?.twitterHandle || session?.user?.name || 'unknown'}</span>
-                      </div>
-                      <div className="license-field">
-                        <span className="opacity-70">ACCESS LEVEL:</span> <span className="font-bold">{userProfile?.role?.toUpperCase() || 'USER'}</span>
-                      </div>
-                      <div className="license-field">
-                        <span className="opacity-70">ISSUED:</span> <span className="font-bold">{new Date().toLocaleDateString()}</span>
-                      </div>
-                      <div className="license-field">
-                        <span className="opacity-70">STATUS:</span> 
-                        <span className={`font-bold ${
-                          userProfile?.approvalStatus === 'approved' ? 'text-green-400 animate-pulse' : 
-                          userProfile?.approvalStatus === 'rejected' ? 'text-red-400' : 
-                          'text-yellow-400'
-                        }`}>
-                          {userProfile?.approvalStatus?.toUpperCase() || 'PENDING'}
-                        </span>
+                    {/* Info Section */}
+                    <div className="flex-1 flex flex-col justify-between min-w-0">
+                      <div className="space-y-1 sm:space-y-1.5">
+                        <div>
+                          <div className="text-[6px] sm:text-[7px] text-green-500 uppercase">Handle</div>
+                          <div className="text-[10px] sm:text-[12px] font-bold text-green-300 truncate">
+                            @{userProfile?.twitterHandle?.replace('@', '') || (session as any)?.twitterHandle || session?.user?.name || 'unknown'}
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <div className="text-[6px] sm:text-[7px] text-green-500 uppercase">Level</div>
+                          <div className="text-[10px] sm:text-[12px] font-bold text-green-300">
+                            {userProfile?.role?.toUpperCase() || 'USER'}
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+                          <div>
+                            <div className="text-[6px] sm:text-[7px] text-green-500 uppercase">Issued</div>
+                            <div className="text-[9px] sm:text-[10px] font-bold text-green-300">
+                              {new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' })}
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-[6px] sm:text-[7px] text-green-500 uppercase">Expires</div>
+                            <div className="text-[9px] sm:text-[10px] font-bold text-green-300">
+                              NEVER
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                   
-                  <div className="license-barcode mt-3 flex justify-between items-center">
-                    <div className="license-signature text-[6px] opacity-70 uppercase">
-                      KOL-SYSTEM//AUTHORIZED~SIGNATURE
-                    </div>
-                    <div className="barcode-area border border-green-300 p-1 bg-green-900/20">
-                      <div className="barcode flex items-center gap-[1px]">
-                        {Array(15).fill(0).map((_, i) => (
-                          <div 
-                            key={i} 
-                            className="bar h-8" 
-                            style={{ 
-                              width: Math.floor(Math.random() * 3) + 1 + 'px',
-                              backgroundColor: `rgba(134, 239, 172, ${Math.random() * 0.8 + 0.2})`
-                            }}
-                          ></div>
-                        ))}
+                  {/* Barcode Section */}
+                  <div className="mt-1 sm:mt-1.5 pt-0.5 sm:pt-1 border-t border-green-400/50">
+                    <div className="flex items-center gap-1 sm:gap-1.5">
+                      <div className="text-[5px] sm:text-[6px] text-green-500 uppercase whitespace-nowrap">AUTH</div>
+                      <div className="flex-1 bg-green-900/20 p-0.5 flex items-center justify-center">
+                        <div className="flex items-center h-[14px] sm:h-[16px]" style={{ gap: '1px' }}>
+                          {Array(40).fill(0).map((_, i) => (
+                            <div 
+                              key={i} 
+                              className="h-full bg-green-300" 
+                              style={{ 
+                                width: Math.random() > 0.7 ? '2px' : '1px',
+                                opacity: Math.random() * 0.5 + 0.5
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <div className="text-[6px] sm:text-[7px] text-green-300 font-mono">
+                        {userProfile?.approvalStatus === 'approved' ? 'ACTIVE' : 'REVIEW'}
                       </div>
                     </div>
                   </div>
@@ -1243,13 +1265,13 @@ export default function LoginModal() {
             
             {/* Show navigation buttons for approved users */}
             {userProfile?.approvalStatus === 'approved' && (
-              <div className="mb-3 space-y-2">
+              <div className="space-y-1.5 sm:space-y-2">
                 <button 
                   onClick={() => {
                     router.push('/scout')
                     handleClose()
                   }} 
-                  className="w-full border border-green-300 px-4 py-2 hover:bg-green-900 text-green-300"
+                  className="w-full border border-green-300 px-3 py-2 sm:px-4 sm:py-2 hover:bg-green-900 text-green-300 text-xs sm:text-base transition-colors"
                 >
                   Scout Projects
                 </button>
@@ -1257,42 +1279,59 @@ export default function LoginModal() {
                   onClick={() => {
                     router.push('/campaigns')
                     handleClose()
-                  }} 
-                  className="w-full border border-green-300 px-4 py-2 hover:bg-green-900 text-green-300"
+                  }}
+                  className="w-full border border-green-300 px-3 py-2 sm:px-4 sm:py-2 hover:bg-green-900 text-green-300 text-xs sm:text-base transition-colors"
                 >
                   View Campaigns
                 </button>
+                {/* Contest Button - Yellow outline with NEW badge */}
+                <div className="relative">
+                  <button 
+                    onClick={() => {
+                      router.push('/contests')
+                      handleClose()
+                    }}
+                    className="relative w-full border border-yellow-500 px-3 py-2 sm:px-4 sm:py-2 hover:bg-yellow-900/30 text-yellow-500 text-xs sm:text-base transition-colors"
+                  >
+                    View Contests
+                  </button>
+                  <span className="absolute -top-1.5 -right-1.5 bg-yellow-500 text-black text-[8px] sm:text-xs px-1 sm:px-2 py-0.5 rounded-full font-mono font-bold animate-pulse">
+                    NEW
+                  </span>
+                </div>
               </div>
             )}
             
-            <button onClick={() => setStage('enter')} className="border border-green-300 px-4 py-2 hover:bg-gray-900">enter</button>
-            
-            {/* Show Profile button if user has profile, Apply button otherwise */}
-            {hasProfile ? (
-              <button 
-                onClick={() => {
-                  setShowProfileModal(true)
-                }} 
-                className="border border-green-300 px-4 py-2 hover:bg-gray-900 bg-green-900/50"
-              >
-                profile
-              </button>
-            ) : (
-              <button onClick={() => setStage('apply')} className="border border-green-300 px-4 py-2 hover:bg-gray-900">apply</button>
-            )}
-            
-            <button onClick={handleClose} className="border border-green-300 px-4 py-2 text-xs hover:bg-gray-900">close</button>
+            <div className="space-y-1.5 sm:space-y-2">
+              <button onClick={() => setStage('enter')} className="w-full border border-green-300 px-3 py-2 sm:px-4 sm:py-2 hover:bg-gray-900 text-xs sm:text-base transition-colors">enter</button>
+              
+              {/* Show Profile button if user has profile, Apply button otherwise */}
+              {hasProfile ? (
+                <button 
+                  onClick={() => {
+                    setShowProfileModal(true)
+                  }} 
+                  className="w-full border border-green-300 px-3 py-2 sm:px-4 sm:py-2 hover:bg-gray-900 bg-green-900/50 text-xs sm:text-base transition-colors"
+                >
+                  profile
+                </button>
+              ) : (
+                <button onClick={() => setStage('apply')} className="w-full border border-green-300 px-3 py-2 sm:px-4 sm:py-2 hover:bg-gray-900 text-xs sm:text-base transition-colors">apply</button>
+              )}
+              
+              <button onClick={handleClose} className="w-full border border-green-300 px-2 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs hover:bg-gray-900 transition-colors">close</button>
+            </div>
           </div>
         )}
 
         {/* Enter */}
         {stage === 'enter' && (
-          <div className="flex flex-col gap-5">
-            <h2 className="text-sm uppercase">Connect</h2>
+          <div className="flex flex-col gap-2 sm:gap-3">
+            <h2 className="text-xs sm:text-sm uppercase">Connect</h2>
             
             {/* X/Twitter Section */}
-            <div className="border border-green-300 p-3">
-              <label className="text-xs uppercase block mb-2">X/Twitter</label>
+            <div className="border border-green-300 p-2 sm:p-3">
+              <label className="text-xs uppercase block mb-1 sm:mb-2">X/Twitter</label>
               {session?.user ? (
                 <div className="flex items-center">
                   <img
@@ -1340,12 +1379,12 @@ export default function LoginModal() {
             </div>
             
             {/* Coinbase Wallet Section */}
-            <div className="border border-green-300 p-3">
-              <label className="text-xs uppercase block mb-2">Coinbase Wallet</label>
+            <div className="border border-green-300 p-2 sm:p-3">
+              <label className="text-xs uppercase block mb-1 sm:mb-2">Coinbase Wallet</label>
               {!connectedWallets.coinbase ? (
                 <div>
                   <button 
-                    className="bg-black border border-green-300 hover:bg-green-800 text-xs p-2"
+                    className="bg-black border border-green-300 hover:bg-green-800 text-xs p-1.5 sm:p-2 w-full"
                     onClick={connectCoinbaseWallet}
                     disabled={walletConnectionPending}
                   >
@@ -1354,13 +1393,13 @@ export default function LoginModal() {
                   {errorMessage && <p className="text-red-500 text-xs mt-1">{errorMessage}</p>}
                 </div>
               ) : (
-                <div className="flex items-center">
-                  <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 min-w-0">
                     <span className="text-xs font-bold text-green-400">Connected: </span>
                     <span className="text-xs">{maskAddress(connectedWallets.addresses.coinbase || '')}</span>
                   </div>
                   <button 
-                    className="text-red-500 ml-2 border border-red-500 px-2 py-1 text-xs hover:bg-red-900"
+                    className="text-red-500 border border-red-500 px-2 py-1 text-xs hover:bg-red-900"
                     onClick={() => disconnectWallet('coinbase')}
                   >
                     Disconnect
@@ -1370,12 +1409,12 @@ export default function LoginModal() {
             </div>
             
             {/* Phantom Wallet Section */}
-            <div className="border border-green-300 p-3">
-              <label className="text-xs uppercase block mb-2">Phantom Wallet</label>
+            <div className="border border-green-300 p-2 sm:p-3">
+              <label className="text-xs uppercase block mb-1 sm:mb-2">Phantom Wallet</label>
               {!connectedWallets.phantom ? (
                 <div>
                   <button 
-                    className="bg-black border border-green-300 hover:bg-green-800 text-xs p-2"
+                    className="bg-black border border-green-300 hover:bg-green-800 text-xs p-1.5 sm:p-2 w-full"
                     onClick={connectPhantomWallet}
                     disabled={walletConnectionPending}
                   >
@@ -1384,13 +1423,13 @@ export default function LoginModal() {
                   {errorMessage && <p className="text-red-500 text-xs mt-1">{errorMessage}</p>}
                 </div>
               ) : (
-                <div className="flex items-center">
-                  <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 min-w-0">
                     <span className="text-xs font-bold text-green-400">Connected: </span>
                     <span className="text-xs">{maskAddress(connectedWallets.addresses.phantom || '')}</span>
                   </div>
                   <button 
-                    className="text-red-500 ml-2 border border-red-500 px-2 py-1 text-xs hover:bg-red-900"
+                    className="text-red-500 border border-red-500 px-2 py-1 text-xs hover:bg-red-900"
                     onClick={() => disconnectWallet('phantom')}
                   >
                     Disconnect

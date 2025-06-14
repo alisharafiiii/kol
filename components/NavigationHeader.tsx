@@ -79,13 +79,16 @@ export default function NavigationHeader() {
                 <button
                   key={item.path}
                   onClick={() => router.push(item.path)}
-                  className={`px-3 py-1.5 text-xs sm:text-sm font-mono transition-colors ${
+                  className={`px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-mono transition-colors relative ${
                     isActive(item.path)
-                      ? 'text-green-300 border-b-2 border-green-300'
+                      ? 'text-green-300'
                       : 'text-green-300/70 hover:text-green-300'
                   }`}
                 >
                   {item.label}
+                  {isActive(item.path) && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-green-300" />
+                  )}
                 </button>
               )
             })}

@@ -38,6 +38,10 @@ const commands = [
     description: 'View the engagement leaderboard'
   },
   {
+    name: 'tweets',
+    description: 'View recent submitted tweets'
+  },
+  {
     name: 'tier',
     description: 'Admin: Set user tier',
     options: [{

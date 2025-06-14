@@ -78,6 +78,7 @@ export interface InfluencerProfile {
   audienceTypes?: string[]            // e.g. ['NFT Collectors','Traders']
   primaryLanguage?: string
   chains?: string[]                   // active chains
+  tier?: 'hero' | 'legend' | 'star' | 'rising' | 'micro'  // User tier (added for all users)
   postPricePerPost?: number
   monthlySupportBudget?: number
   bestCollabUrls?: string[]           // default 3, admin can add more

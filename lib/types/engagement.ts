@@ -1,7 +1,7 @@
 export interface TwitterConnection {
   discordId: string
   twitterHandle: string
-  tier: number
+  tier: 'hero' | 'legend' | 'star' | 'rising' | 'micro'
   connectedAt: Date
   totalPoints: number
 }
@@ -43,7 +43,7 @@ export interface PointRule {
 export interface LeaderboardEntry {
   discordId: string
   twitterHandle: string
-  tier: number
+  tier: 'hero' | 'legend' | 'star' | 'rising' | 'micro'
   totalPoints: number
   weeklyPoints: number
   rank: number

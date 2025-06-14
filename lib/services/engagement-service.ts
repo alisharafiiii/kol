@@ -4,7 +4,7 @@ import { TwitterConnection, Tweet, EngagementLog, PointRule, LeaderboardEntry, B
 
 export class EngagementService {
   // Twitter Connection Management
-  static async connectTwitter(discordId: string, twitterHandle: string, tier: number = 1): Promise<TwitterConnection> {
+  static async connectTwitter(discordId: string, twitterHandle: string, tier: TwitterConnection['tier'] = 'micro'): Promise<TwitterConnection> {
     const connection: TwitterConnection = {
       discordId,
       twitterHandle: twitterHandle.toLowerCase().replace('@', ''),
@@ -32,7 +32,7 @@ export class EngagementService {
     return this.getConnection(discordId)
   }
   
-  static async updateUserTier(discordId: string, tier: number): Promise<void> {
+  static async updateUserTier(discordId: string, tier: TwitterConnection['tier']): Promise<void> {
     await redis.json.set(`engagement:connection:${discordId}`, '$.tier', tier)
   }
   
@@ -55,7 +55,7 @@ export class EngagementService {
     }
     
     await redis.json.set(`engagement:tweet:${tweet.id}`, '$', tweet as any)
-    await redis.zadd('engagement:tweets:recent', Date.now(), tweet.id)
+    await redis.zadd('engagement:tweets:recent', { score: Date.now(), member: tweet.id })
     
     // Store by tweet ID for duplicate checking
     await redis.set(`engagement:tweetid:${tweet.tweetId}`, tweet.id)
@@ -70,7 +70,7 @@ export class EngagementService {
   
   static async getRecentTweets(hours: number = 24): Promise<Tweet[]> {
     const cutoff = Date.now() - (hours * 60 * 60 * 1000)
-    const tweetIds = await redis.zrangebyscore('engagement:tweets:recent', cutoff, '+inf')
+    const tweetIds = await redis.zrange('engagement:tweets:recent', cutoff, '+inf', { byScore: true })
     
     const tweets: Tweet[] = []
     for (const id of tweetIds) {
@@ -143,16 +143,16 @@ export class EngagementService {
     }
     
     // Add to user's engagement history
-    await redis.zadd(`engagement:user:${userDiscordId}:logs`, Date.now(), log.id)
+    await redis.zadd(`engagement:user:${userDiscordId}:logs`, { score: Date.now(), member: log.id })
     
     // Add to tweet's engagement logs
-    await redis.zadd(`engagement:tweet:${tweetId}:logs`, Date.now(), log.id)
+    await redis.zadd(`engagement:tweet:${tweetId}:logs`, { score: Date.now(), member: log.id })
     
     return log
   }
   
   static async getUserEngagements(discordId: string, limit: number = 50): Promise<EngagementLog[]> {
-    const logIds = await redis.zrevrange(`engagement:user:${discordId}:logs`, 0, limit - 1)
+    const logIds = await redis.zrange(`engagement:user:${discordId}:logs`, 0, limit - 1, { rev: true })
     const logs: EngagementLog[] = []
     
     for (const id of logIds) {
@@ -174,7 +174,7 @@ export class EngagementService {
     }
     
     await redis.json.set(`engagement:batch:${job.id}`, '$', job as any)
-    await redis.zadd('engagement:batches', Date.now(), job.id)
+    await redis.zadd('engagement:batches', { score: Date.now(), member: job.id })
     
     return job
   }
@@ -186,7 +186,7 @@ export class EngagementService {
   }
   
   static async getRecentBatchJobs(limit: number = 10): Promise<BatchJob[]> {
-    const jobIds = await redis.zrevrange('engagement:batches', 0, limit - 1)
+    const jobIds = await redis.zrange('engagement:batches', 0, limit - 1, { rev: true })
     const jobs: BatchJob[] = []
     
     for (const id of jobIds) {
@@ -207,10 +207,11 @@ export class EngagementService {
       if (connection) {
         // Calculate weekly points from recent logs
         const weekCutoff = Date.now() - (7 * 24 * 60 * 60 * 1000)
-        const weeklyLogIds = await redis.zrangebyscore(
+        const weeklyLogIds = await redis.zrange(
           `engagement:user:${connection.discordId}:logs`,
           weekCutoff,
-          '+inf'
+          '+inf',
+          { byScore: true }
         )
         
         let weeklyPoints = 0

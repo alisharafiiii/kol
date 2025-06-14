@@ -95,8 +95,8 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
       // For product fields, only update the specific entry
       try {
         await onUpdate(kolId, { [field]: value })
-        setEditingId(null)
-        setEditingField(null)
+    setEditingId(null)
+    setEditingField(null)
         setEditValue('')
       } catch (error) {
         console.error('Error updating KOL:', error)
@@ -691,12 +691,12 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
                                 </div>
                               ))
                             })()}
-                          </div>
-                        ) : (
+                    </div>
+                  ) : (
                           <div className="text-xs text-gray-500 hover:text-green-400">
                             {canEdit ? '+ Add' : '-'}
                           </div>
-                        )}
+                  )}
                       </div>
                     )
                   })()}

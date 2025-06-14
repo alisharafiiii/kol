@@ -1,0 +1,239 @@
+🧹 Cleaning Duplicate Profiles
+
+1️⃣ Fetching all user profiles...
+   Found 282 total user keys
+
+2️⃣ Analyzing profiles for duplicates...
+   ✅ Analyzed 259 unique Twitter handles
+   ⚠️ 0 profiles had errors
+
+3️⃣ Processing duplicates...
+
+   📊 Handle: @sharafi_eth has 3 profiles:
+      1. user:user_sharafi_eth
+         Name: nabu.base.eth
+         Status: approved, Role: admin, Score: 1659.9534777777778
+      2. user:twitter_sharafi_eth
+         Name: nabu.base.eth
+         Status: approved, Role: admin, Score: 1624.9534963773149
+      3. user:sharafi_eth
+         Name: nabu.base.eth
+         Status: approved, Role: admin, Score: 1613.2802968287037
+      ✅ Keeping: user:user_sharafi_eth (highest score: 1659.9534777777778)
+      ❌ Deleting: user:twitter_sharafi_eth
+      ❌ Deleting: user:sharafi_eth
+
+   📊 Handle: @soroshlp has 2 profiles:
+      1. user:twitter_$0RO$H.base.eth
+         Name: $0RO$H.base.eth
+         Status: approved, Role: user, Score: 1219.9477528009259
+      2. user:user_soroshlp
+         Name: $0RO$H.base.eth
+         Status: pending, Role: user, Score: 312.9184610069444
+      ✅ Keeping: user:twitter_$0RO$H.base.eth (highest score: 1219.9477528009259)
+      ❌ Deleting: user:user_soroshlp
+
+   📊 Handle: @0xuncleb has 2 profiles:
+      1. user:undefined
+         Name: Bahram ∞ (🫰,✨)
+         Status: approved, Role: user, Score: 1125
+      2. user:twitter_0xuncleb
+         Name: Bahram ∞ (🫰,✨)
+         Status: pending, Role: viewer, Score: 223.4693342013889
+      ✅ Keeping: user:undefined (highest score: 1125)
+      ❌ Deleting: user:twitter_0xuncleb
+
+   📊 Handle: @basehive 🚀 has 2 profiles:
+      1. user:twitter_basehive 🚀
+         Name: BaseHive 🚀
+         Status: pending, Role: user, Score: 308.96861226851854
+      2. user:twitter_BaseHive 🚀
+         Name: BaseHive 🚀
+         Status: rejected, Role: user, Score: 135
+      ✅ Keeping: user:twitter_basehive 🚀 (highest score: 308.96861226851854)
+      ❌ Deleting: user:twitter_BaseHive 🚀
+
+   📊 Handle: @berayan.base.eth🟡 has 2 profiles:
+      1. user:twitter_berayan.base.eth🟡
+         Name: Berayan.base.eth🟡
+         Status: pending, Role: user, Score: 309.08351599537036
+      2. user:twitter_Berayan.base.eth🟡
+         Name: Berayan.base.eth🟡
+         Status: pending, Role: user, Score: 225
+      ✅ Keeping: user:twitter_berayan.base.eth🟡 (highest score: 309.08351599537036)
+      ❌ Deleting: user:twitter_Berayan.base.eth🟡
+
+   📊 Handle: @blue.base.eth has 2 profiles:
+      1. user:twitter_blue.base.eth
+         Name: Blue.base.eth
+         Status: pending, Role: user, Score: 309.10120350694444
+      2. user:twitter_Blue.base.eth
+         Name: Blue.base.eth
+         Status: pending, Role: user, Score: 225
+      ✅ Keeping: user:twitter_blue.base.eth (highest score: 309.10120350694444)
+      ❌ Deleting: user:twitter_Blue.base.eth
+
+   📊 Handle: @em ahmad.base.eth has 2 profiles:
+      1. user:twitter_em ahmad.base.eth
+         Name: EM Ahmad.base.eth
+         Status: pending, Role: user, Score: 307.76163083333336
+      2. user:twitter_EM Ahmad.base.eth
+         Name: EM Ahmad.base.eth
+         Status: pending, Role: user, Score: 225
+      ✅ Keeping: user:twitter_em ahmad.base.eth (highest score: 307.76163083333336)
+      ❌ Deleting: user:twitter_EM Ahmad.base.eth
+
+   📊 Handle: @erfanweb3.0 has 2 profiles:
+      1. user:twitter_erfanweb3.0
+         Name: ErfaNweb3.0
+         Status: pending, Role: user, Score: 312.90529031250003
+      2. user:twitter_ErfaNweb3.0
+         Name: ErfaNweb3.0
+         Status: pending, Role: user, Score: 225
+      ✅ Keeping: user:twitter_erfanweb3.0 (highest score: 312.90529031250003)
+      ❌ Deleting: user:twitter_ErfaNweb3.0
+
+   📊 Handle: @haydar web3 has 2 profiles:
+      1. user:twitter_haydar web3
+         Name: Haydar Web3
+         Status: pending, Role: user, Score: 309.32333902777776
+      2. user:twitter_Haydar Web3
+         Name: Haydar Web3
+         Status: pending, Role: user, Score: 225
+      ✅ Keeping: user:twitter_haydar web3 (highest score: 309.32333902777776)
+      ❌ Deleting: user:twitter_Haydar Web3
+
+   📊 Handle: @m.t.j.base.eth has 2 profiles:
+      1. user:twitter_m.t.j.base.eth
+         Name: M.T.j.base.eth
+         Status: pending, Role: user, Score: 298.08112407407407
+      2. user:twitter_M.T.j.base.eth
+         Name: M.T.j.base.eth
+         Status: pending, Role: user, Score: 225
+      ✅ Keeping: user:twitter_m.t.j.base.eth (highest score: 298.08112407407407)
+      ❌ Deleting: user:twitter_M.T.j.base.eth
+
+   📊 Handle: @masoud.base.eth has 2 profiles:
+      1. user:twitter_masoud.base.eth
+         Name: MASOUD.base.eth
+         Status: pending, Role: user, Score: 291.3588455439815
+      2. user:twitter_MASOUD.base.eth
+         Name: MASOUD.base.eth
+         Status: pending, Role: user, Score: 225
+      ✅ Keeping: user:twitter_masoud.base.eth (highest score: 291.3588455439815)
+      ❌ Deleting: user:twitter_MASOUD.base.eth
+
+   📊 Handle: @navy has 2 profiles:
+      1. user:twitter_navy
+         Name: Navy
+         Status: pending, Role: user, Score: 308.4160500925926
+      2. user:twitter_Navy
+         Name: Navy
+         Status: pending, Role: user, Score: 225
+      ✅ Keeping: user:twitter_navy (highest score: 308.4160500925926)
+      ❌ Deleting: user:twitter_Navy
+
+   📊 Handle: @orin.base.eth🐈 has 2 profiles:
+      1. user:twitter_orin.base.eth🐈
+         Name: Orin.base.eth🐈
+         Status: pending, Role: user, Score: 307.89734449074075
+      2. user:twitter_Orin.base.eth🐈
+         Name: Orin.base.eth🐈
+         Status: pending, Role: user, Score: 225
+      ✅ Keeping: user:twitter_orin.base.eth🐈 (highest score: 307.89734449074075)
+      ❌ Deleting: user:twitter_Orin.base.eth🐈
+
+   📊 Handle: @parsa has 2 profiles:
+      1. user:twitter_parsa
+         Name: PARSA
+         Status: pending, Role: user, Score: 304.9726563425926
+      2. user:twitter_Parsa
+         Name: Parsa
+         Status: pending, Role: user, Score: 225
+      ✅ Keeping: user:twitter_parsa (highest score: 304.9726563425926)
+      ❌ Deleting: user:twitter_Parsa
+
+   📊 Handle: @r$.eth has 2 profiles:
+      1. user:twitter_r$.eth
+         Name: R$.ETH
+         Status: pending, Role: user, Score: 309.0255863194444
+      2. user:twitter_R$.ETH
+         Name: R$.ETH
+         Status: pending, Role: user, Score: 225
+      ✅ Keeping: user:twitter_r$.eth (highest score: 309.0255863194444)
+      ❌ Deleting: user:twitter_R$.ETH
+
+   📊 Handle: @ramin.base.eth has 2 profiles:
+      1. user:twitter_ramin.base.eth
+         Name: Ramin.base.eth
+         Status: pending, Role: user, Score: 316.7976107638889
+      2. user:twitter_Ramin.base.eth
+         Name: Ramin.base.eth
+         Status: pending, Role: user, Score: 225
+      ✅ Keeping: user:twitter_ramin.base.eth (highest score: 316.7976107638889)
+      ❌ Deleting: user:twitter_Ramin.base.eth
+
+   📊 Handle: @shafagh.base.eth has 2 profiles:
+      1. user:twitter_shafagh.base.eth
+         Name: Shafagh.base.eth
+         Status: pending, Role: user, Score: 309.1613941550926
+      2. user:twitter_Shafagh.base.eth
+         Name: Shafagh.base.eth
+         Status: pending, Role: user, Score: 225
+      ✅ Keeping: user:twitter_shafagh.base.eth (highest score: 309.1613941550926)
+      ❌ Deleting: user:twitter_Shafagh.base.eth
+
+   📊 Handle: @that crypto guy has 2 profiles:
+      1. user:twitter_that crypto guy
+         Name: That crypto guy
+         Status: pending, Role: user, Score: 315.7831424074074
+      2. user:twitter_That crypto guy
+         Name: That crypto guy
+         Status: pending, Role: user, Score: 225
+      ✅ Keeping: user:twitter_that crypto guy (highest score: 315.7831424074074)
+      ❌ Deleting: user:twitter_That crypto guy
+
+   📊 Handle: @zach has 2 profiles:
+      1. user:twitter_zach
+         Name: Zach
+         Status: pending, Role: user, Score: 291.15566552083334
+      2. user:twitter_Zach
+         Name: Zach
+         Status: pending, Role: user, Score: 225
+      ✅ Keeping: user:twitter_zach (highest score: 291.15566552083334)
+      ❌ Deleting: user:twitter_Zach
+
+   📊 Handle: @nabulines has 2 profiles:
+      1. user:twitter_nabulines
+         Name: NABULINES
+         Status: approved, Role: admin, Score: 1624.175943449074
+      2. user:user_nabulines
+         Name: NABULINES
+         Status: approved, Role: admin, Score: 1623.9978520254629
+      ✅ Keeping: user:twitter_nabulines (highest score: 1624.175943449074)
+      ❌ Deleting: user:user_nabulines
+
+   📊 Handle: @🖤black and white🤍 has 2 profiles:
+      1. user:twitter_🖤black and white🤍
+         Name: 🖤black and white🤍
+         Status: pending, Role: user, Score: 316.0274307523148
+      2. user:user_🖤black and white🤍
+         Name: 🖤black and white🤍
+         Status: pending, Role: user, Score: 210
+      ✅ Keeping: user:twitter_🖤black and white🤍 (highest score: 316.0274307523148)
+      ❌ Deleting: user:user_🖤black and white🤍
+
+4️⃣ Cleaning orphaned/invalid keys...
+   ❌ Deleted orphaned key: user:undefined
+   ❌ Deleted orphaned key: user:twitter_undefined
+
+5️⃣ Summary:
+   📊 Total profiles analyzed: 282
+   👥 Unique Twitter handles: 259
+   🔄 Handles with duplicates: 21
+   ❌ Profiles deleted: 24
+   ⚠️ Errors encountered: 0
+
+   📝 Deletion log saved to: cleanup:log:2025-06-13T21:39:11.283Z
+
+✅ Cleanup complete!
