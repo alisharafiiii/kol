@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Download, RefreshCw, Calculator, TrendingUp } from '@/components/icons'
 import BudgetCalculator from '@/components/BudgetCalculator'
@@ -13,6 +13,20 @@ import {
   TIER_COLORS,
   CHART_COLORS
 } from '@/components/charts/ChartComponents'
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  ScatterChart,
+  Scatter,
+  Cell,
+  ZAxis
+} from 'recharts'
 import { PDFExporter } from '@/lib/pdf-export'
 import type { CampaignKOL, KOLTier, SocialPlatform, DeviceStatus, PaymentStatus, CampaignStage } from '@/lib/types/profile'
 import type { Campaign, KOL } from '@/lib/campaign'
@@ -45,10 +59,10 @@ interface BudgetChartData extends ChartData {
 }
 
 // Adapter function to convert KOL to CampaignKOL format
-function mapKOLToCampaignKOL(kol: KOL): CampaignKOL {
+function mapKOLToCampaignKOL(kol: KOL, campaign?: Campaign): CampaignKOL {
   // Parse budget to get numeric value
   let budgetValue = 0
-  if (kol.budget === 'free') {
+  if (!kol.budget || kol.budget === 'free') {
     budgetValue = 0
   } else if (kol.budget === 'with device') {
     budgetValue = 500 // Estimated device cost
@@ -57,10 +71,19 @@ function mapKOLToCampaignKOL(kol: KOL): CampaignKOL {
     budgetValue = parseFloat(kol.budget.replace(/[$,]/g, '')) || 0
   }
   
+  // Calculate total engagement from individual metrics
+  const totalEngagement = (kol.likes || 0) + (kol.retweets || 0) + (kol.comments || 0)
+  const views = kol.views || 0
+  const engagementRate = views > 0 ? (totalEngagement / views) * 100 : 0
+  
+  // Add product cost if available
+  const productCost = (kol.productCost || 0) * (kol.productQuantity || 1)
+  const totalCost = budgetValue + productCost
+  
   return {
     id: kol.id,
-    campaignId: '', // Will be filled from campaign context
-    kolId: kol.id, // Using same ID for now
+    campaignId: campaign?.id || '',
+    kolId: kol.id,
     kolHandle: kol.handle,
     kolName: kol.name,
     kolImage: kol.pfp,
@@ -70,18 +93,18 @@ function mapKOLToCampaignKOL(kol: KOL): CampaignKOL {
     budget: budgetValue,
     paymentStatus: kol.payment as PaymentStatus,
     links: kol.links || [],
-    platform: (kol.platform[0] || 'twitter') as SocialPlatform,
-    contentType: 'tweet', // Default content type
-    metrics: undefined, // No metrics data in KOL type
-    totalViews: kol.views || 0,
-    totalEngagement: 0, // Not available in current KOL type
-    engagementRate: 0, // Not available in current KOL type
-    score: 0, // Not available in current KOL type
+    platform: (kol.platform?.[0] || 'twitter') as SocialPlatform,
+    contentType: 'tweet',
+    metrics: undefined, // KOL type doesn't have metrics in the expected format
+    totalViews: views,
+    totalEngagement,
+    engagementRate,
+    score: engagementRate * 10, // Simple score calculation
     addedAt: new Date(kol.lastUpdated || Date.now()),
-    addedBy: kol.addedBy || '',
-    postedAt: undefined,
+    addedBy: '', // KOL type doesn't have addedBy
+    postedAt: kol.links && kol.links.length > 0 ? new Date(kol.lastUpdated || Date.now()) : undefined,
     completedAt: kol.stage === 'done' ? new Date() : undefined,
-    lastSyncedAt: undefined,
+    lastSyncedAt: kol.lastUpdated ? new Date(kol.lastUpdated) : undefined
   }
 }
 
@@ -117,7 +140,7 @@ export default function CampaignAnalyticsPage({ params }: { params: { slug: stri
       setCampaign(campaignData)
       
       // Use KOLs from the campaign object - they're already included
-      setKols(campaignData.kols.map(mapKOLToCampaignKOL))
+      setKols(campaignData.kols.map((kol: KOL) => mapKOLToCampaignKOL(kol, campaignData)))
       
     } catch (err: any) {
       setError(err.message)
@@ -137,6 +160,8 @@ export default function CampaignAnalyticsPage({ params }: { params: { slug: stri
     // Basic stats
     totalKOLs: kols.length,
     totalBudget: kols.reduce((sum, kol) => sum + kol.budget, 0),
+    totalProductCost: campaign?.kols?.reduce((sum, kol) => sum + ((kol.productCost || 0) * (kol.productQuantity || 1)), 0) || 0,
+    totalCost: 0, // Will be calculated below
     totalViews: kols.reduce((sum, kol) => sum + (kol.totalViews || 0), 0),
     totalEngagement: kols.reduce((sum, kol) => sum + (kol.totalEngagement || 0), 0),
     
@@ -167,10 +192,13 @@ export default function CampaignAnalyticsPage({ params }: { params: { slug: stri
     performanceTimeline: [] as ChartData[],
   }
   
+  // Add total cost (budget + products)
+  analytics.totalCost = analytics.totalBudget + analytics.totalProductCost
+  
   // Calculate efficiency metrics
-  if (analytics.totalBudget > 0) {
-    analytics.costPerView = analytics.totalViews > 0 ? analytics.totalBudget / analytics.totalViews : 0
-    analytics.costPerEngagement = analytics.totalEngagement > 0 ? analytics.totalBudget / analytics.totalEngagement : 0
+  if (analytics.totalCost > 0) {
+    analytics.costPerView = analytics.totalViews > 0 ? analytics.totalCost / analytics.totalViews : 0
+    analytics.costPerEngagement = analytics.totalEngagement > 0 ? analytics.totalCost / analytics.totalEngagement : 0
   }
   
   if (kols.length > 0) {
@@ -286,6 +314,120 @@ export default function CampaignAnalyticsPage({ params }: { params: { slug: stri
       percentage: (budget / analytics.totalBudget) * 100,
       color: TIER_COLORS[tier]
     }))
+  
+  // Prepare data for advanced visualizations
+  const bubbleChartData = useMemo(() => {
+    return campaign?.kols?.map(kol => {
+      let budgetValue = 0
+      if (kol.budget && kol.budget !== 'free' && kol.budget !== 'with device') {
+        budgetValue = parseFloat(kol.budget.replace(/[^0-9.-]+/g, '')) || 0
+      }
+      
+      const productCost = (kol.productCost || 0) * (kol.productQuantity || 1)
+      const totalCost = budgetValue + productCost
+      
+      return {
+        name: kol.name,
+        handle: kol.handle,
+        x: totalCost,
+        y: kol.views || 0,
+        z: getTierSize(kol.tier),
+        tier: kol.tier || 'micro',
+        budget: kol.budget,
+        budgetValue,
+        productCost,
+        totalCost
+      }
+    }) || []
+  }, [campaign])
+  
+  const heatmapData = useMemo(() => {
+    const tiers = ['hero', 'legend', 'star', 'rising', 'micro'] as const
+    const tierGroups: Record<string, any[]> = {}
+    
+    campaign?.kols?.forEach(kol => {
+      const tier = kol.tier || 'micro'
+      if (!tierGroups[tier]) tierGroups[tier] = []
+      
+      let budgetValue = 0
+      if (kol.budget && kol.budget !== 'free' && kol.budget !== 'with device') {
+        budgetValue = parseFloat(kol.budget.replace(/[^0-9.-]+/g, '')) || 0
+      }
+      
+      const productCost = (kol.productCost || 0) * (kol.productQuantity || 1)
+      const totalCost = budgetValue + productCost
+      const costPerView = kol.views && kol.views > 0 ? totalCost / kol.views : 0
+      
+      tierGroups[tier].push({
+        name: kol.name,
+        costPerView,
+        views: kol.views || 0,
+        totalCost
+      })
+    })
+    
+    return tiers
+      .filter(tier => tierGroups[tier]?.length > 0)
+      .map(tier => ({
+        tier: tier.charAt(0).toUpperCase() + tier.slice(1),
+        kols: tierGroups[tier].sort((a, b) => a.costPerView - b.costPerView)
+      }))
+  }, [campaign])
+  
+  // Helper functions for visualizations
+  function getTierSize(tier?: string) {
+    switch (tier) {
+      case 'hero': return 100
+      case 'legend': return 85
+      case 'star': return 75
+      case 'rising': return 50
+      case 'micro': return 25
+      default: return 15
+    }
+  }
+  
+  function getTierColor(tier?: string) {
+    switch (tier) {
+      case 'hero': return '#fbbf24'
+      case 'legend': return '#a855f7'
+      case 'star': return '#3b82f6'
+      case 'rising': return '#10b981'
+      case 'micro': return '#6b7280'
+      default: return '#374151'
+    }
+  }
+  
+  function getHeatmapColor(costPerView: number) {
+    if (costPerView === 0) return '#1f2937'
+    if (costPerView < 0.01) return '#581c87'
+    if (costPerView < 0.05) return '#7c3aed'
+    if (costPerView < 0.1) return '#a78bfa'
+    if (costPerView < 0.5) return '#e9d5ff'
+    return '#fbbf24'
+  }
+  
+  // Custom tooltip for bubble chart
+  const BubbleTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload
+      return (
+        <div className="bg-black border border-green-300 p-2 text-xs">
+          <p className="font-bold">{data.name}</p>
+          <p>@{data.handle}</p>
+          <p>Budget: {data.budget}</p>
+          {data.productCost > 0 && (
+            <>
+              <p className="text-purple-400">Product: ${data.productCost}</p>
+              <p className="text-green-400">Total Cost: ${data.totalCost}</p>
+            </>
+          )}
+          <p>Views: {data.y.toLocaleString()}</p>
+          <p>Tier: {data.tier}</p>
+        </div>
+      )
+    }
+    return null
+  }
   
   const exportAnalytics = async () => {
     if (!campaign) return
@@ -467,7 +609,13 @@ export default function CampaignAnalyticsPage({ params }: { params: { slug: stri
           </div>
           <div className="bg-green-900/20 border border-green-500 rounded-lg p-6">
             <h3 className="text-sm font-medium text-green-400 mb-2">Total Budget</h3>
-            <p className="text-3xl font-bold text-green-300">${analytics.totalBudget.toLocaleString()}</p>
+            <p className="text-3xl font-bold text-green-300">${analytics.totalCost.toLocaleString()}</p>
+            {analytics.totalProductCost > 0 && (
+              <div className="text-xs text-green-500 mt-1">
+                <div>Cash: ${analytics.totalBudget.toLocaleString()}</div>
+                <div>Products: ${analytics.totalProductCost.toLocaleString()}</div>
+              </div>
+            )}
           </div>
           <div className="bg-green-900/20 border border-green-500 rounded-lg p-6">
             <h3 className="text-sm font-medium text-green-400 mb-2">Total Views</h3>
@@ -615,7 +763,7 @@ export default function CampaignAnalyticsPage({ params }: { params: { slug: stri
         </div>
         
         {/* Top Performers */}
-        <div className="bg-green-900/20 border border-green-500 rounded-lg p-6">
+        <div className="bg-green-900/20 border border-green-500 rounded-lg p-6 mb-8">
           <h3 className="text-lg font-semibold mb-4">Top Performers</h3>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -662,6 +810,114 @@ export default function CampaignAnalyticsPage({ params }: { params: { slug: stri
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+
+        {/* Advanced Visualizations */}
+        <div className="space-y-8">
+          {/* Views vs Budget Bubble Chart */}
+          <div className="bg-green-900/20 border border-green-500 rounded-lg p-6">
+            <h3 className="text-lg font-semibold mb-4">Views vs Budget Analysis</h3>
+            <ResponsiveContainer width="100%" height={400}>
+              <ScatterChart>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis 
+                  type="number" 
+                  dataKey="x" 
+                  name="Total Cost" 
+                  stroke="#10b981"
+                  label={{ value: 'Total Cost ($)', position: 'insideBottom', offset: -5 }}
+                />
+                <YAxis 
+                  type="number" 
+                  dataKey="y" 
+                  name="Views" 
+                  stroke="#10b981"
+                  label={{ value: 'Views', angle: -90, position: 'insideLeft' }}
+                />
+                <ZAxis type="number" dataKey="z" range={[30, 300]} />
+                <Tooltip content={<BubbleTooltip />} />
+                <Scatter 
+                  name="KOLs" 
+                  data={bubbleChartData}
+                  fill="#8884d8"
+                >
+                  {bubbleChartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={getTierColor(entry.tier)} />
+                  ))}
+                </Scatter>
+              </ScatterChart>
+            </ResponsiveContainer>
+            <div className="flex flex-wrap justify-center gap-4 mt-4 text-xs">
+              {['hero', 'legend', 'star', 'rising', 'micro'].map(tier => (
+                <span key={tier} className="flex items-center gap-1">
+                  <span className="w-3 h-3 rounded-full" style={{ backgroundColor: getTierColor(tier) }}></span>
+                  {tier.charAt(0).toUpperCase() + tier.slice(1)}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Cost Efficiency Heatmap */}
+          <div className="bg-green-900/20 border border-green-500 rounded-lg p-6">
+            <h3 className="text-lg font-semibold mb-4">Cost Efficiency Heatmap</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full border border-green-300">
+                <thead>
+                  <tr className="border-b border-green-300">
+                    <th className="p-2 text-left text-xs uppercase">Tier</th>
+                    <th className="p-2 text-left text-xs uppercase">KOLs (sorted by efficiency)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {heatmapData.map(row => (
+                    <tr key={row.tier} className="border-b border-green-300">
+                      <td className="p-2 font-bold">{row.tier}</td>
+                      <td className="p-2">
+                        <div className="flex flex-wrap gap-2">
+                          {row.kols.map((kol: any) => (
+                            <div
+                              key={kol.name}
+                              className="px-2 py-1 text-xs rounded"
+                              style={{ backgroundColor: getHeatmapColor(kol.costPerView) }}
+                              title={`${kol.name}: $${kol.costPerView.toFixed(3)}/view`}
+                            >
+                              {kol.name}
+                              <span className="ml-1 text-[10px] opacity-75">
+                                ${kol.costPerView.toFixed(2)}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="mt-4 flex flex-wrap gap-2 text-xs">
+                <span>Cost/View:</span>
+                <span className="flex items-center gap-1">
+                  <span className="w-4 h-4 rounded" style={{ backgroundColor: '#581c87' }}></span>
+                  &lt;$0.01
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-4 h-4 rounded" style={{ backgroundColor: '#7c3aed' }}></span>
+                  &lt;$0.05
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-4 h-4 rounded" style={{ backgroundColor: '#a78bfa' }}></span>
+                  &lt;$0.10
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-4 h-4 rounded" style={{ backgroundColor: '#e9d5ff' }}></span>
+                  &lt;$0.50
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-4 h-4 rounded" style={{ backgroundColor: '#fbbf24' }}></span>
+                  &gt;$0.50
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

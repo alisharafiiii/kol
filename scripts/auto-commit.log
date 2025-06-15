@@ -242,3 +242,45 @@ After doing this, you may fix the identity used for this commit with:
 fatal: could not read Username for 'https://github.com': Device not configured
 Sat Jun 14 02:00:02 EDT 2025: Backup completed successfully
 Sun Jun 15 02:00:00 EDT 2025: Changes detected, creating backup commit...
+[main df5dedc] Auto-backup: 2025-06-15 02:00:00
+ Committer: nabu <nabu@nabus-MacBook-Pro.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 49 files changed, 19383 insertions(+), 417 deletions(-)
+ create mode 100644 FRONTEND_CSRF_GUIDE.md
+ create mode 100644 PRODUCTION_ENV_GUIDE.md
+ create mode 100644 SECURITY_FIXES_IMPLEMENTED.md
+ create mode 100644 analytics-bot-debug.log
+ create mode 100644 app/api/auth/debug/route.ts
+ create mode 100644 app/api/csrf-token/route.ts
+ create mode 100644 app/api/discord/bot-reboot/route.ts
+ create mode 100644 app/api/discord/bot-status/route.ts
+ create mode 100644 app/auth/debug/page.tsx
+ create mode 100644 app/auth/signin/page.tsx
+ create mode 100644 app/not-found.tsx
+ create mode 100644 app/tree/page.tsx
+ create mode 100644 discord-bots/DISCORD_BOTS_SETUP.md
+ create mode 100644 discord-bots/analytics-bot.js
+ create mode 100644 discord-bots/check-discord-projects.js
+ create mode 100755 discord-bots/start-all-bots.sh
+ create mode 100755 discord-bots/start-analytics-bot.sh
+ create mode 100755 discord-bots/start-engagement-bot.sh
+ create mode 100644 hooks/useCSRF.ts
+ create mode 100644 lib/admin-config.ts
+ create mode 100644 lib/csrf.ts
+ create mode 100644 lib/file-upload-security.ts
+ create mode 100644 lib/sanitize-html.ts
+ create mode 100644 lib/utils/user-stats.ts
+ create mode 100644 package-lock.json
+fatal: could not read Username for 'https://github.com': Device not configured
+Sun Jun 15 02:00:01 EDT 2025: Backup completed successfully

@@ -17,13 +17,14 @@ interface KOLTableProps {
 export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit }: KOLTableProps) {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editingField, setEditingField] = useState<string | null>(null)
-  const [editValue, setEditValue] = useState('')
+  const [editValue, setEditValue] = useState<string | string[]>('')
   const [selectedKOL, setSelectedKOL] = useState<{ handle: string; name: string } | null>(null)
   const [products, setProducts] = useState<Product[]>([])
   const [loadingProducts, setLoadingProducts] = useState(true)
   const [showProductModal, setShowProductModal] = useState<string | null>(null)
   const [updatingProduct, setUpdatingProduct] = useState<string | null>(null)
   const [selectedProducts, setSelectedProducts] = useState<string[]>([])
+  const [newLinkInput, setNewLinkInput] = useState('')
 
   const stages: KOL['stage'][] = ['reached out', 'preparing', 'posted', 'done', 'cancelled']
   const devices: KOL['device'][] = ['na', 'on the way', 'received', 'owns', 'sent before', 'problem']
@@ -59,16 +60,23 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
   const startEdit = (kolId: string, field: string, value: any) => {
     setEditingId(kolId)
     setEditingField(field)
-    setEditValue(Array.isArray(value) ? value.join(', ') : String(value || ''))
+    if (field === 'links') {
+      setEditValue(value || [])
+    } else {
+      setEditValue(Array.isArray(value) ? value.join(', ') : String(value || ''))
+    }
   }
 
   const saveEdit = async (kolId: string, field: string) => {
     let value: any = editValue
     
     if (field === 'views' || field === 'likes' || field === 'retweets' || field === 'comments') {
-      value = parseInt(editValue) || 0
-    } else if (field === 'links' || field === 'platform') {
-      value = editValue.split(',').map(v => v.trim()).filter(Boolean)
+      value = parseInt(String(editValue)) || 0
+    } else if (field === 'links') {
+      // For links, editValue is already an array
+      value = editValue
+    } else if (field === 'platform') {
+      value = String(editValue).split(',').map((v: string) => v.trim()).filter(Boolean)
     }
     
     // Find the KOL being edited
@@ -87,6 +95,7 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
         setEditingId(null)
         setEditingField(null)
         setEditValue('')
+        setNewLinkInput('')
       } catch (error) {
         console.error('Error updating KOLs:', error)
         alert('Failed to update. Please try again.')
@@ -95,8 +104,8 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
       // For product fields, only update the specific entry
       try {
         await onUpdate(kolId, { [field]: value })
-    setEditingId(null)
-    setEditingField(null)
+        setEditingId(null)
+        setEditingField(null)
         setEditValue('')
       } catch (error) {
         console.error('Error updating KOL:', error)
@@ -143,6 +152,7 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
     setEditingId(null)
     setEditingField(null)
     setEditValue('')
+    setNewLinkInput('')
   }
 
   const getStageColor = (stage: KOL['stage']) => {
@@ -879,23 +889,90 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
                 
                 <td className="p-2">
                   {editingId === kol.id && editingField === 'links' ? (
-                    <input
-                      type="text"
-                      value={editValue}
-                      onChange={(e) => setEditValue(e.target.value)}
-                      onBlur={() => saveEdit(kol.id, 'links')}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') saveEdit(kol.id, 'links')
-                        if (e.key === 'Escape') cancelEdit()
-                      }}
-                      className="bg-black border border-green-300 text-xs p-1 w-32"
-                      placeholder="Comma separated"
-                      autoFocus
-                    />
+                    <div className="space-y-2 bg-black border border-green-300 p-2 rounded min-w-[200px]">
+                      {/* Existing links */}
+                      {((editValue as string[]) || kol.links || []).map((link, i) => (
+                        <div key={i} className="flex items-center gap-1">
+                          <input
+                            type="text"
+                            value={link}
+                            onChange={(e) => {
+                              const currentLinks = editValue as string[] || kol.links || []
+                              const newLinks = [...currentLinks]
+                              newLinks[i] = e.target.value
+                              setEditValue(newLinks)
+                            }}
+                            className="bg-gray-900 border border-gray-600 text-xs p-1 flex-1"
+                            placeholder="https://..."
+                          />
+                          <button
+                            onClick={() => {
+                              const currentLinks = editValue as string[] || kol.links || []
+                              const newLinks = currentLinks.filter((_, idx) => idx !== i)
+                              setEditValue(newLinks)
+                            }}
+                            className="text-red-400 hover:text-red-300 text-xs px-1"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                      
+                      {/* Add new link input */}
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="text"
+                          value={newLinkInput}
+                          onChange={(e) => setNewLinkInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && newLinkInput.trim()) {
+                              e.preventDefault()
+                              const currentLinks = editValue as string[] || kol.links || []
+                              const newLinks = [...currentLinks, newLinkInput.trim()]
+                              setEditValue(newLinks)
+                              setNewLinkInput('')
+                            }
+                          }}
+                          className="bg-gray-900 border border-gray-600 text-xs p-1 flex-1"
+                          placeholder="Add new link..."
+                        />
+                        <button
+                          onClick={() => {
+                            if (newLinkInput.trim()) {
+                              const currentLinks = editValue as string[] || kol.links || []
+                              const newLinks = [...currentLinks, newLinkInput.trim()]
+                              setEditValue(newLinks)
+                              setNewLinkInput('')
+                            }
+                          }}
+                          className="text-green-400 hover:text-green-300 text-xs px-1"
+                        >
+                          +
+                        </button>
+                      </div>
+                      
+                      {/* Save/Cancel buttons */}
+                      <div className="flex gap-2 pt-1">
+                        <button
+                          onClick={() => saveEdit(kol.id, 'links')}
+                          className="text-xs bg-green-900/50 border border-green-500 text-green-300 px-2 py-1 rounded hover:bg-green-800/50"
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={() => {
+                            cancelEdit()
+                          }}
+                          className="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded hover:bg-gray-700"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
                   ) : (
                     <div 
-                      className="text-xs cursor-pointer"
-                      onClick={() => canEdit && startEdit(kol.id, 'links', kol.links)}
+                      className="text-xs cursor-pointer hover:bg-green-900/20 p-1 rounded"
+                      onClick={() => canEdit && startEdit(kol.id, 'links', kol.links || [])}
                     >
                       {(kol.links || []).length > 0 ? (
                         <div className="space-y-1">
@@ -911,9 +988,16 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
                               {shortenUrl(link)}
                             </a>
                           ))}
+                          {canEdit && (
+                            <div className="text-gray-500 hover:text-green-400 mt-1">
+                              + Add link
+                            </div>
+                          )}
                         </div>
                       ) : (
-                        <span className="text-gray-500">No links</span>
+                        <span className="text-gray-500 hover:text-green-400">
+                          {canEdit ? '+ Add link' : 'No links'}
+                        </span>
                       )}
                     </div>
                   )}

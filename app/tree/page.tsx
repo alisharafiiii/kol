@@ -61,6 +61,7 @@ export default function TreePage() {
   ]
 
   const kolTeam = [
+    { handle: 'sharafi_eth', emoji: '⚜️', accessIcon: '✨', hours: '13:00 - 04:00', isLeader: true },
     { handle: 'parsa_nftt', emoji: '🏹', accessIcon: '👀', hours: '09:00 - 21:00' },
     { handle: 'azurite_nft', emoji: '📣', accessIcon: '👀', hours: '10:00 - 19:00' },
     { handle: 'iamrexorex', emoji: '🤝', accessIcon: '👀', hours: '10:00 - 19:00' },
@@ -150,11 +151,6 @@ export default function TreePage() {
                   </div>
                   
                   <div className={`ml-8 ${member.isLeader ? 'bg-gradient-to-r from-yellow-950/30 to-transparent border-2 border-yellow-400/50 hover:border-yellow-400' : 'bg-gradient-to-r from-green-950/20 to-transparent border border-green-400/20 hover:border-green-400/50'} p-4 rounded-lg transition-all group-hover:translate-x-2 relative`}>
-                    {member.isLeader && (
-                      <div className="absolute -top-3 left-4 bg-black px-2">
-                        <span className="text-yellow-400 text-xs font-bold">👑 FOUNDER & HEAD OF BOTH DIVISIONS</span>
-                      </div>
-                    )}
                     <div className="flex items-center gap-4">
                       <div className="relative">
                         <div className={`absolute inset-0 ${member.isLeader ? 'bg-yellow-400' : 'bg-green-400'} blur-md opacity-50 group-hover:opacity-100 transition-opacity`}></div>
@@ -223,13 +219,13 @@ export default function TreePage() {
                     {i === kolTeam.length - 1 ? '└──' : '├──'}
                   </div>
                   
-                  <div className="ml-8 bg-gradient-to-r from-blue-950/20 to-transparent p-4 rounded-lg border border-blue-400/20 hover:border-blue-400/50 transition-all group-hover:translate-x-2">
+                  <div className={`ml-8 ${member.isLeader ? 'bg-gradient-to-r from-yellow-950/30 to-transparent border-2 border-yellow-400/50 hover:border-yellow-400' : 'bg-gradient-to-r from-blue-950/20 to-transparent border border-blue-400/20 hover:border-blue-400/50'} p-4 rounded-lg transition-all group-hover:translate-x-2 relative`}>
                     <div className="flex items-center gap-4">
                       <div className="relative">
-                        <div className="absolute inset-0 bg-blue-400 blur-md opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                        <div className={`absolute inset-0 ${member.isLeader ? 'bg-yellow-400' : 'bg-blue-400'} blur-md opacity-50 group-hover:opacity-100 transition-opacity`}></div>
                         <img 
                           src={getTwitterAvatar(member.handle)} 
-                          className="relative w-12 h-12 rounded-full border-2 border-blue-400"
+                          className={`relative w-12 h-12 rounded-full border-2 ${member.isLeader ? 'border-yellow-400' : 'border-blue-400'}`}
                           alt={member.handle}
                         />
                       </div>
@@ -240,7 +236,7 @@ export default function TreePage() {
                         <a 
                           href={`https://twitter.com/${member.handle}`} 
                           target="_blank" 
-                          className="text-blue-300 hover:text-blue-100 font-bold text-lg transition-colors"
+                          className={`${member.isLeader ? 'text-yellow-300 hover:text-yellow-100' : 'text-blue-300 hover:text-blue-100'} font-bold text-lg transition-colors`}
                         >
                           @{member.handle}
                         </a>
@@ -248,7 +244,7 @@ export default function TreePage() {
                       
                       <div className="flex items-center gap-3">
                         <span className="text-2xl">{member.accessIcon}</span>
-                        <span className="text-blue-600 text-sm font-mono bg-black/50 px-3 py-1 rounded">
+                        <span className={`${member.isLeader ? 'text-yellow-600' : 'text-blue-600'} text-sm font-mono bg-black/50 px-3 py-1 rounded`}>
                           {member.hours}
                         </span>
                       </div>

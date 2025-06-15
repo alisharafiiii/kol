@@ -7,7 +7,6 @@ import type { Campaign, KOL } from '@/lib/campaign'
 import type { Project } from '@/lib/project'
 import KOLTable from '@/components/KOLTable'
 import AddKOLModal from '@/components/AddKOLModal'
-import CampaignCharts from '@/components/CampaignCharts'
 import CampaignBrief from '@/components/CampaignBrief'
 import EditCampaignModal from '@/components/EditCampaignModal'
 import { ArrowLeft, Users, Calendar, DollarSign, Briefcase, TrendingUp } from '@/components/icons'
@@ -41,7 +40,6 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showAddKOL, setShowAddKOL] = useState(false)
-  const [showCharts, setShowCharts] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [projectDetails, setProjectDetails] = useState<Project[]>([])
   const [allProjects, setAllProjects] = useState<Project[]>([])
@@ -213,18 +211,33 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
       }
       
       const data = await res.json()
-      const result = data.result || data // Handle both nested and direct result
+      console.log('Sync response:', data) // Debug log
+      
+      // Extract result - handle different response structures
+      const result = data.result || data
+      const synced = result.synced ?? 0
+      const failed = result.failed ?? 0
+      const rateLimited = result.rateLimited ?? false
+      const queued = data.queued ?? false
+      
+      // Show appropriate message based on result
+      if (queued) {
+        alert('Campaign queued for sync due to rate limit')
+      } else if (synced === 0 && failed === 0 && !rateLimited) {
+        alert('No new tweets found to sync')
+      } else if (synced > 0) {
+        alert(`Successfully synced ${synced} tweet${synced !== 1 ? 's' : ''}${failed > 0 ? ` (${failed} failed)` : ''}`)
+      } else if (failed > 0) {
+        alert(`Sync completed with ${failed} failed tweet${failed !== 1 ? 's' : ''}`)
+      } else {
+        // Fallback message if we can't determine the exact result
+        alert('Tweet sync completed')
+      }
       
       // Reload campaign to show updated metrics
       await fetchCampaign()
-      
-      // Show appropriate message based on result
-      if (result.synced === 0 && !result.rateLimited) {
-        alert('No tweets with links found to sync')
-      } else {
-        alert(`Synced ${result.synced || 0} tweets, ${result.failed || 0} failed${result.rateLimited ? ' (rate limited)' : ''}`)
-      }
     } catch (err: any) {
+      console.error('Sync error:', err)
       alert(err.message || 'Failed to sync tweets')
     } finally {
       setSyncing(false)
@@ -305,14 +318,6 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
                     >
                       <span>📊</span> Analytics
                     </button>
-                    {campaign.kols && campaign.kols.length > 0 && (
-                      <button
-                        onClick={() => setShowCharts(true)}
-                        className="px-3 py-1 bg-purple-900/50 border border-purple-500 hover:bg-purple-800/50 text-purple-300 text-xs font-medium rounded flex items-center gap-1"
-                      >
-                        <span>📈</span> Charts
-                      </button>
-                    )}
                     <button
                       onClick={syncTweets}
                       disabled={syncing}
@@ -487,14 +492,6 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
               campaign={campaign}
               onClose={() => setShowAddKOL(false)}
               onAdd={handleKOLAdd}
-            />
-          )}
-
-          {/* Campaign Charts Modal */}
-          {showCharts && campaign.kols && campaign.kols.length > 0 && (
-            <CampaignCharts
-              kols={campaign.kols}
-              onClose={() => setShowCharts(false)}
             />
           )}
 
