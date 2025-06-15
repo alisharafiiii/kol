@@ -1,39 +1,150 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+import { getToken } from 'next-auth/jwt'
 
-export function middleware(request: NextRequest) {
-  const path = request.nextUrl.pathname
+// Paths that require authentication
+const protectedPaths = [
+  '/admin',
+  '/profile/edit',
+  '/scout',
+  '/campaigns/create',
+  '/campaigns/*/edit',
+  '/campaigns/*/brief/edit',
+  '/api/admin',
+  '/api/campaigns',
+  '/api/projects',
+  '/api/upload',
+  '/api/discord/bot-reboot',
+  '/api/discord/bot-status',
+  '/discord/share'
+]
+
+// Paths that should be accessible without authentication
+const publicPaths = [
+  '/auth',
+  '/api/auth',
+  '/',
+  '/about',
+  '/terms',
+  '/campaigns',
+  '/contests',
+  '/api/webhook',
+  '/_next',
+  '/favicon.ico',
+  '/api/public'
+]
+
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
   
-  // Add specific handling for Discord share routes
-  if (path.startsWith('/discord/share/')) {
-    const userAgent = request.headers.get('user-agent') || ''
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(userAgent)
-    
-    if (isMobile) {
-      console.log('Middleware: Mobile access to Discord share detected')
-      
-      // Add cache control headers to prevent aggressive caching on mobile
-      const response = NextResponse.next()
-      response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
-      response.headers.set('Pragma', 'no-cache')
-      response.headers.set('Expires', '0')
-      
-      return response
-    }
+  // Log all requests in development
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[Middleware] Request:', pathname)
   }
   
-  // Only apply middleware to /admin and /collab routes
-  if (!path.startsWith('/admin') && !path.startsWith('/collab')) {
+  // CRITICAL: Allow all auth-related paths to proceed without checks
+  if (pathname.startsWith('/api/auth') || pathname.startsWith('/auth')) {
+    console.log('[Middleware] Auth path detected, allowing:', pathname)
     return NextResponse.next()
   }
   
-  console.log('Middleware: Path accessed:', path)
+  // Log OAuth callback handling
+  if (pathname.includes('callback')) {
+    console.log('[Middleware] Callback detected:', pathname)
+    console.log('[Middleware] Callback URL params:', request.nextUrl.searchParams.toString())
+    return NextResponse.next()
+  }
   
-  // WALLET CHECKS DISABLED - Authentication is handled by Twitter sessions in each route
-  // Just pass through all requests
+  // Skip middleware for static files and public paths
+  const isPublicPath = publicPaths.some(path => 
+    pathname === path || pathname.startsWith(path + '/')
+  )
+  
+  if (isPublicPath) {
+    return NextResponse.next()
+  }
+  
+  // Check if path requires authentication
+  const isProtectedPath = protectedPaths.some(path => {
+    if (path.includes('*')) {
+      const regex = new RegExp('^' + path.replace('*', '[^/]+') + '$')
+      return regex.test(pathname)
+    }
+    return pathname === path || pathname.startsWith(path + '/')
+  })
+  
+  if (isProtectedPath) {
+    try {
+      const token = await getToken({ 
+        req: request,
+        secret: process.env.NEXTAUTH_SECRET 
+      })
+      
+      console.log('[Middleware] Protected path:', pathname)
+      console.log('[Middleware] Token exists:', !!token)
+      
+      if (!token) {
+        // Preserve the original URL for callback after login
+        const url = new URL('/auth/signin', request.url)
+        url.searchParams.set('callbackUrl', request.url)
+        
+        console.log('[Middleware] Redirecting to signin with callback:', request.url)
+        return NextResponse.redirect(url)
+      }
+      
+      // For Discord share pages, check role access
+      if (pathname.startsWith('/discord/share')) {
+        const userRole = token.role as string
+        const allowedRoles = ['admin', 'core', 'viewer']
+        
+        // Check for master admin handles
+        const handle = ((token.twitterHandle as string) || (token.name as string) || '').toLowerCase().replace('@', '')
+        const masterAdmins = ['sharafi_eth', 'nabulines', 'alinabu']
+        
+        console.log('[Middleware] Discord share access check - handle:', handle)
+        console.log('[Middleware] Discord share access check - role:', userRole)
+        console.log('[Middleware] Discord share access check - token.twitterHandle:', token.twitterHandle)
+        console.log('[Middleware] Discord share access check - token.name:', token.name)
+        
+        if (!allowedRoles.includes(userRole) && !masterAdmins.includes(handle)) {
+          console.log('[Middleware] Discord share access denied:', { handle, role: userRole })
+          return NextResponse.redirect(new URL('/access-denied', request.url))
+        }
+      }
+      
+      // For admin routes, check admin access
+      if (pathname.startsWith('/admin') || pathname.startsWith('/api/admin')) {
+        const userRole = token.role as string
+        const handle = ((token.twitterHandle as string) || (token.name as string) || '').toLowerCase().replace('@', '')
+        const masterAdmins = ['sharafi_eth', 'nabulines', 'alinabu']
+        
+        if (userRole !== 'admin' && userRole !== 'core' && !masterAdmins.includes(handle)) {
+          console.log('[Middleware] Admin access denied:', { handle, role: userRole })
+          return NextResponse.redirect(new URL('/access-denied', request.url))
+        }
+      }
+    } catch (error) {
+      console.error('[Middleware] Error checking authentication:', error)
+      
+      // On error, redirect to sign in
+      const url = new URL('/auth/signin', request.url)
+      url.searchParams.set('callbackUrl', request.url)
+      return NextResponse.redirect(url)
+    }
+  }
+  
   return NextResponse.next()
 }
 
-// Configure paths that the middleware should run on
 export const config = {
-  matcher: ['/admin/:path*', '/collab/:path*', '/admin', '/collab', '/discord/share/:path*']
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     */
+    '/((?!_next/static|_next/image|favicon.ico|public/).*)',
+  ],
 } 

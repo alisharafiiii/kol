@@ -5,6 +5,8 @@ import { ProfileService } from '@/lib/services/profile-service';
 import type { UnifiedProfile } from '@/lib/types/profile';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getUserStats } from '@/lib/utils/user-stats';
+import { hasAdminAccess, logAdminAccess } from '@/lib/admin-config';
 
 export async function GET(req: NextRequest) {
   console.log('=== USER PROFILE API: Request received ===');
@@ -28,27 +30,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Either wallet address or handle is required' }, { status: 400 });
     }
     
-    // Temporary fix for sharafi_eth while Redis is down
+    // Don't use hardcoded response - fetch actual data from database
     const identifier = (wallet || handle || '').toLowerCase();
     console.log('USER PROFILE API: Checking identifier:', identifier);
-    
-    if (identifier === 'sharafi_eth' || identifier === '@sharafi_eth' || identifier === 'alinabu' || identifier === '@alinabu') {
-      console.log(`USER PROFILE API: Master admin ${identifier} detected - returning admin profile`);
-      const response = { 
-        user: {
-          id: identifier.replace('@', '') + '_admin',
-          name: identifier.replace('@', ''),
-          profileImageUrl: identifier.includes('sharafi') 
-            ? 'https://pbs.twimg.com/profile_images/1911790623893422080/vxsHVWbL_400x400.jpg'
-            : null,
-          twitterHandle: identifier.replace('@', ''),
-          approvalStatus: 'approved',
-          role: 'admin'
-        }
-      };
-      console.log('USER PROFILE API: Returning hardcoded admin response:', JSON.stringify(response, null, 2));
-      return NextResponse.json(response);
-    }
     
     let user = null;
     
@@ -69,6 +53,10 @@ export async function GET(req: NextRequest) {
         const unifiedProfile = await ProfileService.getProfileByHandle(normalizedHandle);
         if (unifiedProfile) {
           console.log('USER PROFILE API: Found unified profile');
+          
+          // Get user stats
+          const stats = await getUserStats(normalizedHandle);
+          
           // Return the complete profile data
           const response = {
             user: {
@@ -78,6 +66,9 @@ export async function GET(req: NextRequest) {
               twitterHandle: unifiedProfile.twitterHandle,
               approvalStatus: unifiedProfile.approvalStatus || 'pending',
               role: unifiedProfile.role || 'user',
+              tier: unifiedProfile.tier || unifiedProfile.currentTier || 'micro',
+              scoutCount: stats.scoutCount,
+              contestCount: stats.contestCount,
               // Complete profile data
               email: unifiedProfile.email,
               phone: unifiedProfile.phone,
@@ -150,6 +141,10 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(defaultResponse);
     }
     
+    // Get user stats for the found user
+    const userHandle = user.twitterHandle || handle || '';
+    const stats = await getUserStats(userHandle);
+    
     // Return the user profile with necessary fields including approval status
     const response = {
       user: {
@@ -159,6 +154,9 @@ export async function GET(req: NextRequest) {
         twitterHandle: user.twitterHandle,
         approvalStatus: user.approvalStatus || 'pending',
         role: user.role || 'user',
+        tier: user.tier || 'micro',
+        scoutCount: stats.scoutCount,
+        contestCount: stats.contestCount,
         // Add direct email, phone, telegram fields (they may exist even if not in type)
         email: (user as any).email,
         phone: (user as any).phone,
@@ -211,37 +209,41 @@ export async function PUT(req: NextRequest) {
     
     console.log('USER PROFILE API: Session handle:', normalizedSessionHandle);
     
-    // Special check for master admins
-    if (normalizedSessionHandle === 'sharafi_eth' || normalizedSessionHandle === 'alinabu') {
-      console.log('USER PROFILE API: Master admin detected, allowing edit');
-    } else {
-      // Check role from session first
-      let userRole = session?.role || session?.user?.role;
-      
-      // If no role in session, fetch from database
-      if (!userRole && normalizedSessionHandle) {
-        try {
-          const userIds = await redis.smembers(`idx:username:${normalizedSessionHandle}`);
-          if (userIds && userIds.length > 0) {
-            const userData = await redis.json.get(`user:${userIds[0]}`) as InfluencerProfile | null;
-            userRole = userData?.role || 'user';
-            console.log('USER PROFILE API: Fetched role from database:', userRole);
-          }
-        } catch (err) {
-          console.error('USER PROFILE API: Error fetching user role:', err);
-          userRole = 'user';
+    // Check role from session first
+    let userRole = session?.role || session?.user?.role;
+    
+    // If no role in session, fetch from database
+    if (!userRole && normalizedSessionHandle) {
+      try {
+        const userIds = await redis.smembers(`idx:username:${normalizedSessionHandle}`);
+        if (userIds && userIds.length > 0) {
+          const userData = await redis.json.get(`user:${userIds[0]}`) as InfluencerProfile | null;
+          userRole = userData?.role || 'user';
+          console.log('USER PROFILE API: Fetched role from database:', userRole);
         }
+      } catch (err) {
+        console.error('USER PROFILE API: Error fetching user role:', err);
+        userRole = 'user';
       }
-      
-      console.log('USER PROFILE API: Final user role:', userRole);
-      
-      if (!['admin', 'core', 'team'].includes(userRole)) {
-        return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
-      }
+    }
+    
+    console.log('USER PROFILE API: Final user role:', userRole);
+    
+    // Check if user has necessary permissions
+    const allowedRoles = ['admin', 'core', 'team'];
+    if (!hasAdminAccess(normalizedSessionHandle, userRole) && !allowedRoles.includes(userRole)) {
+      return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
     }
     
     const data = await req.json();
     const { handle, name, email, phone, telegram, contacts, shippingAddress } = data;
+    
+    // Log admin access for profile updates
+    logAdminAccess(normalizedSessionHandle, 'profile_update', {
+      method: userRole,
+      targetHandle: handle,
+      api: 'user_profile'
+    });
     
     if (!handle) {
       return NextResponse.json({ error: 'Handle is required' }, { status: 400 });

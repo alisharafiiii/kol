@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { findUserByUsername } from '@/lib/user-identity';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { isMasterAdmin, logAdminAccess } from '@/lib/admin-config';
 
 export async function GET(req: NextRequest) {
   console.log('=== USER ROLE API: Request received ===');
@@ -34,9 +35,13 @@ export async function GET(req: NextRequest) {
     const normalizedHandle = checkHandle.replace('@', '').toLowerCase();
     console.log('USER ROLE API: Checking handle:', normalizedHandle);
     
-    // ALWAYS check for sharafi_eth FIRST, before any Redis calls
-    if (normalizedHandle === 'sharafi_eth') {
-      console.log('USER ROLE API: Master admin sharafi_eth detected - returning admin role');
+    // Check for master admin FIRST, before any Redis calls
+    if (isMasterAdmin(normalizedHandle)) {
+      console.log('USER ROLE API: Master admin detected - returning admin role');
+      logAdminAccess(normalizedHandle, 'role_check', { 
+        method: 'master_admin',
+        api: 'user_role'
+      });
       return NextResponse.json({ 
         role: 'admin',
         handle: checkHandle,
@@ -68,9 +73,14 @@ export async function GET(req: NextRequest) {
     } catch (redisError) {
       console.error('USER ROLE API: Redis error in role check:', redisError);
       
-      // Even if Redis is down, still return admin for sharafi_eth
-      if (normalizedHandle === 'sharafi_eth') {
-        console.log('USER ROLE API: Redis down but sharafi_eth detected - returning admin role');
+      // Even if Redis is down, still return admin for master admins
+      if (isMasterAdmin(normalizedHandle)) {
+        console.log('USER ROLE API: Redis down but master admin detected - returning admin role');
+        logAdminAccess(normalizedHandle, 'role_check', { 
+          method: 'redis_fallback',
+          error: 'redis_down',
+          api: 'user_role'
+        });
         return NextResponse.json({ 
           role: 'admin',
           handle: checkHandle,
@@ -91,10 +101,15 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error('USER ROLE API: Error fetching user role:', error);
     
-    // Even in case of complete failure, check for sharafi_eth
+    // Even in case of complete failure, check for master admins
     const session: any = await getServerSession(authOptions as any);
     const sessionHandle = session?.twitterHandle || session?.user?.name;
-    if (sessionHandle && sessionHandle.toLowerCase() === 'sharafi_eth') {
+    if (sessionHandle && isMasterAdmin(sessionHandle)) {
+      logAdminAccess(sessionHandle, 'role_check', { 
+        method: 'error_fallback',
+        error: error instanceof Error ? error.message : 'unknown',
+        api: 'user_role'
+      });
       return NextResponse.json({ 
         role: 'admin',
         handle: sessionHandle,

@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { DiscordService } from '@/lib/services/discord-service'
 import { redis } from '@/lib/redis'
+import { hasAdminAccess, logAdminAccess } from '@/lib/admin-config'
 
 async function checkUserAccess(session: any): Promise<{ hasAccess: boolean; userRole?: string }> {
   if (!session?.user) {
@@ -21,9 +22,13 @@ async function checkUserAccess(session: any): Promise<{ hasAccess: boolean; user
     sessionRole: userRole
   })
   
-  // Check for hardcoded admins first
-  if (normalizedHandle === 'sharafi_eth' || normalizedHandle === 'alinabu') {
-    console.log('[Discord Project] Access granted: Hardcoded admin -', normalizedHandle)
+  // Check for master admins first
+  if (hasAdminAccess(normalizedHandle, null)) {
+    console.log('[Discord Project] Access granted: Master admin -', normalizedHandle)
+    logAdminAccess(normalizedHandle, 'discord_project_access', { 
+      method: 'master_admin',
+      api: 'discord_project'
+    })
     return { hasAccess: true, userRole: 'admin' }
   }
   

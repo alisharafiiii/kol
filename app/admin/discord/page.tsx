@@ -78,6 +78,9 @@ export default function DiscordAdminPage() {
   const [aggregatedStats, setAggregatedStats] = useState<AggregatedStats | null>(null)
   const [statsLoading, setStatsLoading] = useState(true)
   const [selectedTimeframe, setSelectedTimeframe] = useState<'daily' | 'weekly' | 'monthly'>('weekly')
+  const [botStatus, setBotStatus] = useState<any>(null)
+  const [botLoading, setBotLoading] = useState(false)
+  const [rebooting, setRebooting] = useState(false)
 
   // Check admin access
   useEffect(() => {
@@ -108,8 +111,17 @@ export default function DiscordAdminPage() {
       fetchGeminiKey()
       fetchScoutProjects()
       fetchAggregatedStats()
+      fetchBotStatus()
     }
   }, [status, selectedTimeframe])
+
+  // Refresh bot status every 30 seconds
+  useEffect(() => {
+    if (status === 'authenticated') {
+      const interval = setInterval(fetchBotStatus, 30000)
+      return () => clearInterval(interval)
+    }
+  }, [status])
 
   const fetchAggregatedStats = async () => {
     setStatsLoading(true)
@@ -184,6 +196,63 @@ export default function DiscordAdminPage() {
 
   const getProjectStats = (project: DiscordProject) => {
     return project.stats || { totalMessages: 0, totalUsers: 0 }
+  }
+
+  const fetchBotStatus = async () => {
+    setBotLoading(true)
+    try {
+      const res = await fetch('/api/discord/bot-status')
+      if (res.ok) {
+        const data = await res.json()
+        setBotStatus(data)
+      }
+    } catch (error) {
+      console.error('Error fetching bot status:', error)
+    } finally {
+      setBotLoading(false)
+    }
+  }
+
+  const rebootBot = async () => {
+    if (!confirm('Are you sure you want to reboot the Discord bot? This will temporarily disconnect it from all servers.')) {
+      return
+    }
+    
+    setRebooting(true)
+    try {
+      const res = await fetch('/api/discord/bot-reboot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+      
+      const data = await res.json()
+      
+      if (res.ok) {
+        // Show warning if CSRF is disabled
+        if (data.warning) {
+          console.warn('Security warning:', data.warning)
+        }
+        
+        const message = data.success 
+          ? 'Bot restarted successfully!' 
+          : 'Bot command executed but status uncertain. Check logs.'
+        
+        alert(message)
+        
+        // Wait a bit then check status
+        setTimeout(fetchBotStatus, 5000)
+      } else {
+        console.error('Bot reboot failed:', data)
+        alert(data.error || 'Failed to reboot bot. Check console for details.')
+      }
+    } catch (error) {
+      console.error('Bot reboot error:', error)
+      alert('Failed to connect to bot reboot endpoint. Check console for details.')
+    } finally {
+      setRebooting(false)
+    }
   }
 
   // Chart configurations
@@ -453,6 +522,110 @@ export default function DiscordAdminPage() {
         <p className="text-xs text-gray-500 mt-2">
           Used for sentiment analysis of Discord messages
         </p>
+      </div>
+
+      {/* Discord Bot Monitor */}
+      <div className="bg-gray-900 border border-gray-700 rounded-lg p-6 mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Bot className="w-5 h-5 text-blue-400" />
+            <h2 className="text-xl font-semibold text-blue-400">Discord Bot Monitor</h2>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={fetchBotStatus}
+              disabled={botLoading}
+              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded font-medium disabled:opacity-50 flex items-center gap-2"
+            >
+              {botLoading ? (
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              ) : (
+                <Activity className="w-4 h-4" />
+              )}
+              Check Status
+            </button>
+            <button
+              onClick={rebootBot}
+              disabled={rebooting || botLoading}
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded font-medium disabled:opacity-50 flex items-center gap-2"
+            >
+              {rebooting ? (
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              ) : (
+                <Bot className="w-4 h-4" />
+              )}
+              Reboot Bot
+            </button>
+          </div>
+        </div>
+        
+        {botStatus ? (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-black rounded p-4 border border-gray-600">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400">Status</span>
+                  <span className={`font-medium ${botStatus.status === 'running' ? 'text-green-400' : 'text-red-400'}`}>
+                    {botStatus.status === 'running' ? '🟢 Running' : '🔴 Stopped'}
+                  </span>
+                </div>
+              </div>
+              <div className="bg-black rounded p-4 border border-gray-600">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400">Uptime</span>
+                  <span className="font-medium text-white">
+                    {botStatus.uptime || 'N/A'}
+                  </span>
+                </div>
+              </div>
+              <div className="bg-black rounded p-4 border border-gray-600">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400">Token</span>
+                  <span className={`font-medium ${botStatus.hasToken ? 'text-green-400' : 'text-red-400'}`}>
+                    {botStatus.hasToken ? '✓ Configured' : '✗ Missing'}
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            {botStatus.process && (
+              <div className="bg-black rounded p-4 border border-gray-600">
+                <h4 className="text-sm font-medium text-gray-400 mb-2">Process Info</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                  <div>
+                    <span className="text-gray-500">PID:</span> <span className="text-white">{botStatus.process.pid}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">CPU:</span> <span className="text-white">{botStatus.process.cpu}%</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Memory:</span> <span className="text-white">{botStatus.process.memory}%</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Started:</span> <span className="text-white">{botStatus.process.startTime}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {botStatus.lastLogs && botStatus.lastLogs.length > 0 && (
+              <div className="bg-black rounded p-4 border border-gray-600">
+                <h4 className="text-sm font-medium text-gray-400 mb-2">Recent Logs</h4>
+                <div className="space-y-1 text-xs font-mono max-h-32 overflow-y-auto">
+                  {botStatus.lastLogs.map((log: string, index: number) => (
+                    <div key={index} className="text-gray-300">
+                      {log}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="text-center py-8 text-gray-400">
+            {botLoading ? 'Loading bot status...' : 'Click "Check Status" to view bot information'}
+          </div>
+        )}
       </div>
 
       {/* Projects Grid */}

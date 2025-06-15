@@ -107,7 +107,8 @@ export async function PUT(
         }
       }
       if (updates.isKOL !== undefined) updatedProfile.isKOL = updates.isKOL
-      if (updates.currentTier !== undefined) updatedProfile.currentTier = updates.currentTier
+      if (updates.tier !== undefined) updatedProfile.tier = updates.tier
+      if (updates.currentTier !== undefined) updatedProfile.currentTier = updates.currentTier // Legacy support
       if (updates.tags !== undefined) updatedProfile.tags = updates.tags
       
       // Allow admins to update any field

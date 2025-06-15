@@ -142,7 +142,11 @@ export default function LoginModal() {
             setUserProfile({
               approvalStatus: data.user.approvalStatus || 'pending',
               twitterHandle: data.user.twitterHandle || handle,
-              role: data.user.role
+              role: data.user.role,
+              tier: data.user.tier || 'micro',
+              createdAt: data.user.createdAt,
+              scoutCount: data.user.scoutCount || 0,
+              contestCount: data.user.contestCount || 0
             })
           }
         }
@@ -1160,102 +1164,132 @@ export default function LoginModal() {
           <div className="flex flex-col gap-2 sm:gap-3">
             {isLoggedIn && (
               <div className="mb-2 sm:mb-5">
-                {/* Pixel-style Driver's License - Compact and Responsive */}
-                <div className="license-card border-2 border-green-400 p-1.5 sm:p-2 bg-black">
-                  {/* Header Bar */}
-                  <div className="flex justify-between items-center border-b border-green-400 pb-0.5 mb-1">
-                    <div className="text-[7px] sm:text-[9px] uppercase font-bold tracking-wide text-green-300">
-                      CYBERNETIC ACCESS
-                    </div>
-                    <div className={`text-[7px] sm:text-[9px] font-bold ${
-                      userProfile?.approvalStatus === 'approved' ? 'text-green-400' : 
-                      userProfile?.approvalStatus === 'rejected' ? 'text-red-400' : 
-                      'text-yellow-400'
-                    }`}>
-                      {userProfile?.approvalStatus === 'approved' ? '✓ ACTIVE' : 
-                        userProfile?.approvalStatus === 'rejected' ? '✗ DENIED' : 
-                        '⏳ PENDING'}
+                {/* Redesigned Cybernetic Access Pass */}
+                <div className="bg-gradient-to-br from-green-950/20 to-black border-2 border-green-400 rounded-sm overflow-hidden">
+                  {/* Header with gradient background */}
+                  <div className="bg-gradient-to-r from-green-900/40 to-green-900/20 border-b border-green-400 px-2 py-1">
+                    <div className="flex justify-between items-center">
+                      <div className="text-[8px] sm:text-[10px] font-bold text-green-300 tracking-wider">
+                        NABULINES ACCESS CARD
+                      </div>
+                      <div className={`text-[7px] sm:text-[8px] font-mono px-1.5 py-0.5 rounded-sm ${
+                        userProfile?.approvalStatus === 'approved' ? 'bg-green-900/50 text-green-400 border border-green-400' : 
+                        userProfile?.approvalStatus === 'rejected' ? 'bg-red-900/50 text-red-400 border border-red-400' : 
+                        'bg-yellow-900/50 text-yellow-400 border border-yellow-400'
+                      }`}>
+                        {userProfile?.approvalStatus === 'approved' ? 'ACTIVE' : 
+                          userProfile?.approvalStatus === 'rejected' ? 'DENIED' : 
+                          'PENDING'}
+                      </div>
                     </div>
                   </div>
                   
-                  {/* Main Content */}
-                  <div className="flex gap-1.5 sm:gap-2">
-                    {/* Photo Section */}
-                    <div className="flex-shrink-0">
-                      <div className="w-[60px] h-[75px] sm:w-[70px] sm:h-[88px] border border-green-300 overflow-hidden relative bg-green-900/20">
-                        {session?.user?.image ? (
-                          <img 
-                            src={session.user.image.replace('_normal', '_400x400')} 
-                            alt={session.user.name || 'User'} 
-                            className="w-full h-full object-cover"
-                            style={{ imageRendering: 'pixelated' }}
-                          />
-                        ) : (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <span className="text-[8px] sm:text-[9px] text-green-300">NO PHOTO</span>
-                          </div>
-                        )}
+                  {/* Main Body */}
+                  <div className="p-2 sm:p-3">
+                    <div className="flex gap-2 sm:gap-3">
+                      {/* Left: Photo & ID */}
+                      <div className="flex-shrink-0">
+                        <div className="w-[64px] h-[80px] sm:w-[80px] sm:h-[100px] bg-green-950/30 border border-green-400 rounded-sm overflow-hidden">
+                          {session?.user?.image ? (
+                            <img 
+                              src={session.user.image.replace('_normal', '_400x400')} 
+                              alt={session.user.name || 'User'} 
+                              className="w-full h-full object-cover"
+                              style={{ imageRendering: 'crisp-edges' }}
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <span className="text-[9px] sm:text-[10px] text-green-500">NO IMG</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="mt-1 text-center">
+                          <div className="text-[8px] sm:text-[9px] font-mono text-green-400">ID-7734</div>
+                        </div>
                       </div>
-                      <div className="text-center bg-green-900/30 border border-green-300 border-t-0 py-0.5">
-                        <div className="text-[6px] sm:text-[7px] text-green-300 font-bold">ID-7734</div>
+                      
+                      {/* Right: User Info */}
+                      <div className="flex-1 space-y-1.5 sm:space-y-2">
+                        {/* Name/Handle */}
+                        <div className="border-b border-green-400/30 pb-1">
+                          <div className="text-[12px] sm:text-[14px] font-bold text-green-300 leading-tight">
+                            @{userProfile?.twitterHandle?.replace('@', '') || (session as any)?.twitterHandle || session?.user?.name || 'unknown'}
+                          </div>
+                          <div className="text-[8px] sm:text-[9px] text-green-500 flex items-center gap-2">
+                            <span>{userProfile?.role?.toUpperCase() || 'USER'}</span>
+                            <span className="text-green-400">•</span>
+                            <span className="font-mono">
+                              {(() => {
+                                const tier = (userProfile?.tier || 'micro') as 'hero' | 'legend' | 'star' | 'rising' | 'micro';
+                                const tierEmoji = {
+                                  hero: '👑',
+                                  legend: '⚔️',
+                                  star: '⭐',
+                                  rising: '🌟',
+                                  micro: '✨'
+                                }[tier] || '✨';
+                                return `${tierEmoji} ${tier.toUpperCase()}`;
+                              })()}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        {/* Stats Grid */}
+                        <div className="grid grid-cols-2 gap-x-3 gap-y-1">
+                          <div>
+                            <div className="text-[7px] sm:text-[8px] text-green-500 uppercase">Issued</div>
+                            <div className="text-[10px] sm:text-[11px] font-mono text-green-300">
+                              {userProfile?.createdAt 
+                                ? new Date(userProfile.createdAt).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' })
+                                : new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' })
+                              }
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-[7px] sm:text-[8px] text-green-500 uppercase">Expires</div>
+                            <div className="text-[10px] sm:text-[11px] font-mono text-green-300">NEVER</div>
+                          </div>
+                          <div>
+                            <div className="text-[7px] sm:text-[8px] text-green-500 uppercase">Scouts</div>
+                            <div className="text-[10px] sm:text-[11px] font-mono text-green-300">
+                              {String(userProfile?.scoutCount || 0).padStart(3, '0')}
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-[7px] sm:text-[8px] text-green-500 uppercase">Contests</div>
+                            <div className="text-[10px] sm:text-[11px] font-mono text-green-300">
+                              {String(userProfile?.contestCount || 0).padStart(3, '0')}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     
-                    {/* Info Section */}
-                    <div className="flex-1 flex flex-col justify-between min-w-0">
-                      <div className="space-y-1 sm:space-y-1.5">
-                        <div>
-                          <div className="text-[6px] sm:text-[7px] text-green-500 uppercase">Handle</div>
-                          <div className="text-[10px] sm:text-[12px] font-bold text-green-300 truncate">
-                            @{userProfile?.twitterHandle?.replace('@', '') || (session as any)?.twitterHandle || session?.user?.name || 'unknown'}
+                    {/* Security Strip */}
+                    <div className="mt-2 sm:mt-3 bg-green-950/20 rounded-sm p-1 border border-green-400/20">
+                      <div className="flex items-center gap-1">
+                        <div className="text-[6px] text-green-500 font-mono">SEC</div>
+                        <div className="flex-1 h-[10px] sm:h-[12px] bg-gradient-to-r from-green-900/30 via-green-800/20 to-green-900/30 rounded-sm overflow-hidden relative">
+                          <div className="absolute inset-0 flex items-center px-1">
+                            {Array(30).fill(0).map((_, i) => {
+                              const seed = (userProfile?.twitterHandle || 'default').charCodeAt(0) + i;
+                              const height = 3 + ((seed * 13) % 5);
+                              return (
+                                <div 
+                                  key={i} 
+                                  className="bg-green-400" 
+                                  style={{ 
+                                    width: '1px',
+                                    height: `${height}px`,
+                                    marginRight: '2px',
+                                    opacity: 0.3 + ((seed * 7) % 40) / 100
+                                  }}
+                                />
+                              );
+                            })}
                           </div>
                         </div>
-                        
-                        <div>
-                          <div className="text-[6px] sm:text-[7px] text-green-500 uppercase">Level</div>
-                          <div className="text-[10px] sm:text-[12px] font-bold text-green-300">
-                            {userProfile?.role?.toUpperCase() || 'USER'}
-                          </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
-                          <div>
-                            <div className="text-[6px] sm:text-[7px] text-green-500 uppercase">Issued</div>
-                            <div className="text-[9px] sm:text-[10px] font-bold text-green-300">
-                              {new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' })}
-                            </div>
-                          </div>
-                          <div>
-                            <div className="text-[6px] sm:text-[7px] text-green-500 uppercase">Expires</div>
-                            <div className="text-[9px] sm:text-[10px] font-bold text-green-300">
-                              NEVER
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Barcode Section */}
-                  <div className="mt-1 sm:mt-1.5 pt-0.5 sm:pt-1 border-t border-green-400/50">
-                    <div className="flex items-center gap-1 sm:gap-1.5">
-                      <div className="text-[5px] sm:text-[6px] text-green-500 uppercase whitespace-nowrap">AUTH</div>
-                      <div className="flex-1 bg-green-900/20 p-0.5 flex items-center justify-center">
-                        <div className="flex items-center h-[14px] sm:h-[16px]" style={{ gap: '1px' }}>
-                          {Array(40).fill(0).map((_, i) => (
-                            <div 
-                              key={i} 
-                              className="h-full bg-green-300" 
-                              style={{ 
-                                width: Math.random() > 0.7 ? '2px' : '1px',
-                                opacity: Math.random() * 0.5 + 0.5
-                              }}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                      <div className="text-[6px] sm:text-[7px] text-green-300 font-mono">
-                        {userProfile?.approvalStatus === 'approved' ? 'ACTIVE' : 'REVIEW'}
+                        <div className="text-[6px] text-green-400 font-mono">VALID</div>
                       </div>
                     </div>
                   </div>

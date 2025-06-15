@@ -1,50 +1,58 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
-import { redis } from '@/lib/redis'
+import { authOptions } from '@/lib/auth-options'
+import { hasAdminAccess, isMasterAdmin, getMasterAdmins } from '@/lib/admin-config'
 
-export async function GET(req: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    // Get session
     const session = await getServerSession(authOptions)
     
-    // Get various session properties
-    const sessionData = {
-      authenticated: !!session,
-      user: session?.user || null,
-      userId: (session as any)?.userId || (session?.user as any)?.id || null,
-      twitterHandle: (session as any)?.twitterHandle || 
-                      (session as any)?.user?.twitterHandle ||
-                      session?.user?.name || null,
-      role: (session as any)?.role || (session?.user as any)?.role || null,
-      raw: session
+    if (!session) {
+      return NextResponse.json({
+        authenticated: false,
+        message: 'No session found. Please log in.'
+      })
     }
     
-    // Try to get role from Redis if we have a handle
-    if (sessionData.twitterHandle) {
-      const normalizedHandle = sessionData.twitterHandle.toLowerCase().replace('@', '')
-      try {
-        const userIds = await redis.smembers(`idx:username:${normalizedHandle}`)
-        if (userIds && userIds.length > 0) {
-          const userData = await redis.json.get(`user:${userIds[0]}`) as any
-          if (userData) {
-            sessionData.role = userData.role || sessionData.role
-          }
-        }
-      } catch (error) {
-        console.error('Redis error:', error)
-      }
-    }
+    const userRole = (session as any)?.role || (session.user as any)?.role || 'none'
+    const twitterHandle = (session as any)?.twitterHandle || session?.user?.name || 'unknown'
+    const normalizedHandle = twitterHandle.toLowerCase().replace('@', '')
+    
+    const hasAdmin = hasAdminAccess(twitterHandle, userRole)
+    const isMaster = isMasterAdmin(twitterHandle)
     
     return NextResponse.json({
-      success: true,
-      session: sessionData
+      authenticated: true,
+      session: {
+        twitterHandle,
+        normalizedHandle,
+        role: userRole,
+        user: {
+          name: session.user?.name,
+          email: session.user?.email,
+          image: session.user?.image
+        }
+      },
+      adminStatus: {
+        hasAdminAccess: hasAdmin,
+        isMasterAdmin: isMaster,
+        reason: isMaster ? 'Master admin handle' : 
+                userRole === 'admin' ? 'Admin role in database' : 
+                'No admin access'
+      },
+      masterAdmins: getMasterAdmins(),
+      debug: {
+        fullSession: session,
+        checkDetails: {
+          handleCheck: `'${normalizedHandle}' in [${getMasterAdmins().join(', ')}] = ${isMaster}`,
+          roleCheck: `'${userRole}' === 'admin' = ${userRole === 'admin'}`
+        }
+      }
     })
   } catch (error) {
-    console.error('Debug session error:', error)
     return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    })
+      error: 'Failed to check session',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 })
   }
 } 

@@ -187,7 +187,7 @@ export default function Home() {
       </section>
       {/* After the cyberpunk manifesto section, add this new team section */}
       <div className="flex justify-center space-x-6 my-12">
-        <Link href="/team" className="w-48">
+        <Link href="/tree" className="w-48">
           <div className={styles.buttonContainer}>
             <button 
               className={`${styles.buttonGlitch} ${styles.pixelButton}`}

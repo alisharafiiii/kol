@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { FileText } from '@/components/icons'
+import { sanitizeHtml } from '@/lib/sanitize-html'
 
 interface CampaignBriefProps {
   brief?: string
@@ -52,7 +53,7 @@ export default function CampaignBrief({ brief, briefUpdatedAt, briefUpdatedBy }:
         <div className="p-6 pt-0">
           <div className="max-w-none prose prose-invert prose-green">
             <div 
-              dangerouslySetInnerHTML={{ __html: brief }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(brief) }}
               className="campaign-brief"
             />
           </div>

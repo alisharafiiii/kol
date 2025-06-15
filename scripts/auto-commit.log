@@ -175,3 +175,70 @@ After doing this, you may fix the identity used for this commit with:
 fatal: could not read Username for 'https://github.com': Device not configured
 Fri Jun 13 02:00:01 EDT 2025: Backup completed successfully
 Sat Jun 14 02:00:01 EDT 2025: Changes detected, creating backup commit...
+[main 23013f8] Auto-backup: 2025-06-14 02:00:01
+ Committer: nabu <nabu@nabus-MacBook-Pro.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 67 files changed, 9893 insertions(+), 332 deletions(-)
+ create mode 100644 BOT_WORKING_NOW.md
+ create mode 100644 DISCORD_BOT_FIX.md
+ create mode 100644 DISCORD_BOT_STATUS.md
+ create mode 100644 DISCORD_ROLE_SETUP.md
+ create mode 100644 ENGAGEMENT_METRICS_FIX.md
+ create mode 100644 ENGAGEMENT_TRACKER_SETUP.md
+ create mode 100644 FIX_COMMANDS_GUIDE.md
+ create mode 100644 KOL_PROFILE_EDIT_ERROR_FIX.md
+ create mode 100644 KOL_PROFILE_EDIT_FIX.md
+ create mode 100644 KOL_PROFILE_EDIT_GUIDE.md
+ create mode 100644 TIER_UNIFICATION_SUMMARY.md
+ create mode 100644 app/admin/contests/[contestId]/page.tsx
+ create mode 100644 app/admin/contests/page.tsx
+ create mode 100644 app/api/contests/[contestId]/leaderboard/route.ts
+ create mode 100644 app/api/contests/[contestId]/route.ts
+ create mode 100644 app/api/contests/[contestId]/submissions/route.ts
+ create mode 100644 app/api/contests/cleanup/route.ts
+ create mode 100644 app/api/contests/debug-flow/route.ts
+ create mode 100644 app/api/contests/reset-all/route.ts
+ create mode 100644 app/api/contests/route.ts
+ create mode 100644 app/api/contests/simple-check/route.ts
+ create mode 100644 app/api/upload/contest-image/route.ts
+ create mode 100644 app/contests/[contestId]/page.tsx
+ create mode 100644 app/contests/page.tsx
+ create mode 100644 app/favicon.ico/route.ts
+ create mode 100644 bot-debug.log
+ create mode 100644 components/ContestFormModal.tsx
+ create mode 100644 discord-bots/CHANNEL_PERMISSIONS_FIX.md
+ create mode 100644 discord-bots/ENGAGEMENT_BOT_FEATURES.md
+ create mode 100644 discord-bots/MINIMAL_TWEET_PREVIEW.md
+ create mode 100644 discord-bots/TWITTER_API_SETUP.md
+ create mode 100644 discord-bots/bot-output.log
+ create mode 100644 discord-bots/bot-status.log
+ create mode 100644 discord-bots/check-bot-permissions.js
+ create mode 100644 discord-bots/engagement-bot-backup.js
+ create mode 100644 discord-bots/test-channel-permissions.js
+ create mode 100644 discord-bots/test-ping.js
+ create mode 100644 duplicate-cleanup.log
+ create mode 100644 lib/services/contest-service.ts
+ create mode 100644 lib/types/contest.ts
+ create mode 100644 public/manifest.json
+ create mode 100644 register-to-guild-instant.js
+ create mode 100644 scripts/analyze-duplicate-profiles.js
+ create mode 100644 scripts/clean-duplicate-profiles.js
+ create mode 100644 scripts/fix-admin-access.js
+ create mode 100644 scripts/fix-engagement-metrics.js
+ create mode 100644 scripts/test-engagement-api.js
+ create mode 100644 scripts/test-profile-edit.js
+ create mode 100644 scripts/unify-tier-system-v2.js
+fatal: could not read Username for 'https://github.com': Device not configured
+Sat Jun 14 02:00:02 EDT 2025: Backup completed successfully
+Sun Jun 15 02:00:00 EDT 2025: Changes detected, creating backup commit...

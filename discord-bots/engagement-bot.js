@@ -145,11 +145,12 @@ async function updateUserRole(twitterHandle, newRole) {
 // Get tier-based scenarios
 async function getTierScenarios(tier) {
   try {
-    const scenarios = await redis.json.get(`engagement:scenarios:${tier}`)
-    return scenarios || getDefaultScenarios(tier)
+    const safeTier = tier || 'micro' // Default to micro if tier is null/undefined
+    const scenarios = await redis.json.get(`engagement:scenarios:${safeTier}`)
+    return scenarios || getDefaultScenarios(safeTier)
   } catch (error) {
     console.error('Error getting tier scenarios:', error)
-    return getDefaultScenarios(tier)
+    return getDefaultScenarios(tier || 'micro')
   }
 }
 
@@ -559,7 +560,7 @@ client.on('interactionCreate', async (interaction) => {
       const embed = new EmbedBuilder()
         .setColor(0x00FF00)
         .setTitle('📊 Your Engagement Stats')
-        .setDescription(`**Twitter:** @${connection.twitterHandle}\n**Tier:** ${connection.tier.toUpperCase()}\n**Total Points:** ${connection.totalPoints || 0}`)
+        .setDescription(`**Twitter:** @${connection.twitterHandle}\n**Tier:** ${connection.tier ? connection.tier.toUpperCase() : 'MICRO'}\n**Total Points:** ${connection.totalPoints || 0}`)
         .addFields(
           { name: 'Daily Limit', value: `${dailySubmissions}/${scenarios.dailyTweetLimit}`, inline: true },
           { name: 'Bonus Multiplier', value: `${scenarios.bonusMultiplier}x`, inline: true },
@@ -613,7 +614,7 @@ client.on('interactionCreate', async (interaction) => {
           'legend': '🟠',
           'hero': '👑'
         }[entry.tier] || '⚪'
-        return `**${index + 1}.** @${entry.twitterHandle} ${tierEmoji} ${entry.tier.toUpperCase()} - ${entry.totalPoints} points`
+        return `**${index + 1}.** @${entry.twitterHandle} ${tierEmoji} ${entry.tier ? entry.tier.toUpperCase() : 'MICRO'} - ${entry.totalPoints} points`
       }).join('\n')
       
       embed.addFields({ name: 'Rankings', value: top10 || 'No data yet' })
@@ -839,7 +840,7 @@ client.on('messageCreate', async (message) => {
   if (message.author.bot) return
   
   // Simple ping/pong response
-  if (message.content.toLowerCase() === 'ping') {
+  if (message.content.toLowerCase() === 'ping' || message.content.toLowerCase() === '!ping') {
     try {
       await message.reply('pong! 🏓')
       console.log(`Replied to ping from ${message.author.tag}`)

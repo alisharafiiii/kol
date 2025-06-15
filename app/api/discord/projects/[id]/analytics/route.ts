@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { DiscordService } from '@/lib/services/discord-service'
 import { redis } from '@/lib/redis'
+import { hasAdminAccess, logAdminAccess } from '@/lib/admin-config'
 
 export async function GET(
   req: NextRequest,
@@ -31,8 +32,13 @@ export async function GET(
       fullSession: session
     })
     
-    if (normalizedHandle === 'sharafi_eth' || normalizedHandle === 'alinabu') {
-      console.log('Analytics access granted: Hardcoded admin -', normalizedHandle)
+    if (hasAdminAccess(normalizedHandle, userRole)) {
+      console.log('Analytics access granted: Admin user -', normalizedHandle)
+      logAdminAccess(normalizedHandle, 'discord_analytics_access', { 
+        method: 'admin_check',
+        api: 'discord_analytics',
+        projectId: params.id
+      })
       // Continue with admin access
     } else {
       // Then check current role from database for allowed roles

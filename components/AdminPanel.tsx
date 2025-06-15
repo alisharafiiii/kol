@@ -1213,7 +1213,9 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
               // Add role
               role: user.role,
               // Add twitter handle
-              twitterHandle: user.twitterHandle
+              twitterHandle: user.twitterHandle,
+              // Add tier
+              tier: user.tier
             }))
           : generateMockUsers();
         
@@ -1656,7 +1658,8 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                   walletAddresses: user.walletAddresses,
                   bio: user.bio,
                   role: user.role,
-                  twitterHandle: user.twitterHandle
+                  twitterHandle: user.twitterHandle,
+                  tier: user.tier
                 }))
               : [];
             
@@ -2045,7 +2048,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
           </button>
           <button 
             className={`px-4 py-2 whitespace-nowrap ${activeTab === 'discord' ? 'bg-green-800' : ''}`}
-            onClick={() => setActiveTab('discord')}
+            onClick={() => window.location.href = '/admin/discord'}
           >
             Discord
           </button>

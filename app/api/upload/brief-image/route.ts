@@ -3,20 +3,20 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { getCampaign } from '@/lib/campaign'
 import { ProfileService } from '@/lib/services/profile-service'
-import { v4 as uuidv4 } from 'uuid'
-import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
-import { existsSync } from 'fs'
+import { createSecureUploadHandler } from '@/lib/file-upload-security'
+import { logAdminAccess } from '@/lib/admin-config'
 
 // Configure upload directory
 const UPLOAD_DIR = join(process.cwd(), 'public', 'uploads', 'briefs')
 
-// Ensure upload directory exists
-async function ensureUploadDir() {
-  if (!existsSync(UPLOAD_DIR)) {
-    await mkdir(UPLOAD_DIR, { recursive: true })
-  }
-}
+// Create secure upload handler for brief images
+const uploadHandler = createSecureUploadHandler(UPLOAD_DIR, {
+  category: 'image',
+  allowedTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+  processImages: true,
+  scanViruses: false // Enable in production with ClamAV
+})
 
 export async function POST(request: NextRequest) {
   try {
@@ -42,24 +42,6 @@ export async function POST(request: NextRequest) {
     
     console.log('Upload file:', file.name, file.type, file.size, 'bytes')
     
-    // Check file type
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
-    if (!validTypes.includes(file.type)) {
-      console.log('Upload failed: Invalid file type', file.type)
-      return NextResponse.json({ 
-        error: 'Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.' 
-      }, { status: 400 })
-    }
-    
-    // Check file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024 // 5MB
-    if (file.size > maxSize) {
-      console.log('Upload failed: File too large', file.size)
-      return NextResponse.json({ 
-        error: 'File too large. Maximum size is 5MB.' 
-      }, { status: 400 })
-    }
-    
     // If campaignId provided, check permissions
     if (campaignId) {
       console.log('Checking permissions for campaign:', campaignId)
@@ -78,49 +60,36 @@ export async function POST(request: NextRequest) {
         console.log('Upload failed: Permission denied for user', userHandle)
         return NextResponse.json({ error: 'Permission denied' }, { status: 403 })
       }
+      
+      // Log admin action if admin is uploading
+      if (isAdmin) {
+        logAdminAccess(userHandle, 'campaign_brief_image_upload', {
+          campaignId,
+          campaignName: campaign.name,
+          fileName: file.name,
+          fileSize: file.size
+        })
+      }
     }
     
-    // Ensure upload directory exists
-    console.log('Ensuring upload directory exists:', UPLOAD_DIR)
-    await ensureUploadDir()
+    // Process upload using secure handler
+    const result = await uploadHandler(file)
     
-    // Verify directory exists
-    if (!existsSync(UPLOAD_DIR)) {
-      console.error('Upload directory does not exist after creation attempt:', UPLOAD_DIR)
-      return NextResponse.json({ error: 'Upload directory error' }, { status: 500 })
+    if (!result.success) {
+      console.log('Upload failed:', result.error)
+      return NextResponse.json({ error: result.error }, { status: 400 })
     }
     
-    // Read file as array buffer
-    const buffer = await file.arrayBuffer()
-    
-    // Generate unique filename
-    const fileExt = file.name.split('.').pop()
-    const fileName = `${uuidv4()}.${fileExt}`
-    const filePath = join(UPLOAD_DIR, fileName)
-    
-    console.log('Writing file to:', filePath)
-    
-    // Write file to disk
-    await writeFile(filePath, Buffer.from(buffer))
-    
-    // Verify file was written
-    if (!existsSync(filePath)) {
-      console.error('File was not written successfully:', filePath)
-      return NextResponse.json({ error: 'Failed to save file' }, { status: 500 })
-    }
-    
-    // Generate URL for the uploaded file
-    const fileUrl = `/uploads/briefs/${fileName}`
-    
-    console.log(`Brief image uploaded successfully: ${fileUrl} (${file.size} bytes)`)
-    console.log('Full path:', filePath)
+    console.log(`Brief image uploaded successfully: ${result.url} (${file.size} bytes)`)
+    console.log('Upload details:', result.details)
     
     return NextResponse.json({ 
       success: true,
-      url: fileUrl,
-      fileName: file.name,
-      fileSize: file.size,
-      fileType: file.type
+      url: result.url,
+      fileName: result.details.originalName,
+      fileSize: result.details.size,
+      fileType: result.details.type,
+      secureName: result.details.secureName
     })
   } catch (error) {
     console.error('Error uploading brief image:', error)

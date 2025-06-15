@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import AdminPanel from '@/components/AdminPanel'
 import Link from 'next/link'
+import { hasAdminAccess, logAdminAccess } from '@/lib/admin-config'
 
 export default function AdminPage() {
   const router = useRouter()
@@ -59,12 +60,17 @@ export default function AdminPage() {
           return
         }
         
-        // HARDCODED CHECK - normalize handle and check for sharafi_eth
+        // Check for master admin access (emergency bypass)
         const normalizedHandle = twitterHandle.toLowerCase().replace('@', '');
         console.log('ADMIN PAGE: Normalized handle:', normalizedHandle);
         
-        if (normalizedHandle === 'sharafi_eth') {
-          console.log('ADMIN PAGE: HARDCODED BYPASS - sharafi_eth detected - granting immediate access');
+        // Quick check for master admin before API calls
+        if (hasAdminAccess(normalizedHandle, null)) {
+          console.log('ADMIN PAGE: Master admin detected - granting immediate access');
+          logAdminAccess(normalizedHandle, 'admin_panel_access', { 
+            method: 'master_admin',
+            page: 'admin'
+          });
           setIsAuthorized(true);
           setUserRole('admin');
           setLoading(false);
@@ -94,20 +100,30 @@ export default function AdminPage() {
           console.log('ADMIN PAGE: Session role:', sessionRole);
           console.log('ADMIN PAGE: API role:', data.role);
           
-          // Only allow admin role
-          if (data.role === 'admin' || sessionRole === 'admin') {
-            console.log('ADMIN PAGE: User has admin role - granting access');
+          // Check admin access using centralized function
+          if (hasAdminAccess(normalizedHandle, data.role || sessionRole)) {
+            console.log('ADMIN PAGE: User has admin access - granting access');
+            logAdminAccess(normalizedHandle, 'admin_panel_access', { 
+              method: 'role_check',
+              role: data.role || sessionRole,
+              page: 'admin'
+            });
             setIsAuthorized(true)
           } else {
-            console.log('ADMIN PAGE: User does NOT have admin role - denying access');
+            console.log('ADMIN PAGE: User does NOT have admin access - denying access');
             setError(`You don't have admin permissions. Your role: ${data.role || 'none'}`)
             setIsAuthorized(false)
           }
         } catch (apiError) {
           console.error('ADMIN PAGE: API call failed:', apiError);
-          // If API fails but user is sharafi_eth (double check), still grant access
-          if (normalizedHandle === 'sharafi_eth') {
-            console.log('ADMIN PAGE: API failed but sharafi_eth detected - granting access anyway');
+          // If API fails, check if user is a master admin
+          if (hasAdminAccess(normalizedHandle, null)) {
+            console.log('ADMIN PAGE: API failed but master admin detected - granting access anyway');
+            logAdminAccess(normalizedHandle, 'admin_panel_access', { 
+              method: 'api_fallback',
+              error: 'api_failed',
+              page: 'admin'
+            });
             setIsAuthorized(true);
             setUserRole('admin');
           } else {
@@ -118,10 +134,20 @@ export default function AdminPage() {
       } catch (err: any) {
         console.error('ADMIN PAGE: Authorization check failed:', err)
         
-        // Last resort - check if session has sharafi_eth anywhere
+        // Last resort - check if any handle in session is a master admin
         const sessionStr = JSON.stringify(session);
-        if (sessionStr && sessionStr.toLowerCase().includes('sharafi_eth')) {
-          console.log('ADMIN PAGE: Error occurred but sharafi_eth found in session - granting access');
+        const twitterHandle = (session as any)?.twitterHandle || 
+                            (session as any)?.user?.twitterHandle ||
+                            session?.user?.name ||
+                            (session as any)?.user?.username;
+        
+        if (twitterHandle && hasAdminAccess(twitterHandle, null)) {
+          console.log('ADMIN PAGE: Error occurred but master admin found in session - granting access');
+          logAdminAccess(twitterHandle, 'admin_panel_access', { 
+            method: 'error_fallback',
+            error: err.message,
+            page: 'admin'
+          });
           setIsAuthorized(true);
           setUserRole('admin');
         } else {

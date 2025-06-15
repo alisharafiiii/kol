@@ -2,6 +2,7 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import Twitter from "next-auth/providers/twitter";
 import { saveProfileWithDuplicateCheck } from "@/lib/redis";
 import { nanoid } from 'nanoid';
+import { isMasterAdmin, logAdminAccess } from '@/lib/admin-config';
 
 // Enable for debugging
 const DEBUG = true;
@@ -25,34 +26,105 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      log("=== REDIRECT CALLBACK ===");
+      log("URL:", url);
+      log("Base URL:", baseUrl);
+      
+      // If we have a callbackUrl in the URL, extract and use it
+      try {
+        const urlObj = new URL(url, baseUrl);
+        const callbackUrl = urlObj.searchParams.get('callbackUrl');
+        
+        if (callbackUrl) {
+          log("REDIRECT DECISION: Found callbackUrl in params:", callbackUrl);
+          // Decode the URL properly
+          const decodedCallbackUrl = decodeURIComponent(callbackUrl);
+          
+          // For production, ensure we're redirecting to the correct domain
+          if (decodedCallbackUrl.includes('nabulines.com') || decodedCallbackUrl.includes('localhost')) {
+            log("REDIRECT DECISION: Using decoded callbackUrl:", decodedCallbackUrl);
+            return decodedCallbackUrl;
+          }
+          
+          // If it's a relative URL, prepend the base URL
+          if (decodedCallbackUrl.startsWith('/')) {
+            const fullUrl = baseUrl + decodedCallbackUrl;
+            log("REDIRECT DECISION: Using relative callbackUrl:", fullUrl);
+            return fullUrl;
+          }
+        }
+      } catch (e) {
+        log("REDIRECT ERROR: Failed to parse URL:", e);
+      }
+      
+      // Check if the URL is the sign-in page with a callbackUrl
+      if (url.includes('/auth/signin') && url.includes('callbackUrl=')) {
+        log("REDIRECT DECISION: Detected sign-in page with callback, extracting callback URL");
+        try {
+          const urlObj = new URL(url);
+          const callbackUrl = urlObj.searchParams.get('callbackUrl');
+          if (callbackUrl) {
+            const decodedUrl = decodeURIComponent(callbackUrl);
+            log("REDIRECT DECISION: Extracted callback URL:", decodedUrl);
+            return decodedUrl;
+          }
+        } catch (e) {
+          log("REDIRECT ERROR: Failed to extract callback URL:", e);
+        }
+      }
+      
+      // Allow absolute URLs on the same origin
+      if (url.startsWith(baseUrl)) {
+        log("REDIRECT DECISION: Absolute URL on same origin - ALLOWING:", url);
+        return url;
+      }
+      
+      // Allow relative URLs
+      if (url.startsWith("/")) {
+        const fullUrl = baseUrl + url;
+        log("REDIRECT DECISION: Relative URL - ALLOWING:", fullUrl);
+        return fullUrl;
+      }
+      
+      // Default to base URL
+      log("REDIRECT DECISION: Defaulting to base URL:", baseUrl);
+      return baseUrl;
+    },
     async signIn({ user, account, profile }: any) {
       log("=== SIGN IN CALLBACK TRIGGERED ===");
+      log("Timestamp:", new Date().toISOString());
       log("Provider:", account?.provider);
       log("User data:", user);
       log("Account data:", account);
       log("Profile data:", profile);
       
-      if (account.provider !== "twitter") {
+      if (account?.provider !== "twitter") {
         log("Non-Twitter provider, allowing sign in");
         return true;
       }
       
       try {
+        // IMPORTANT: Use the correct Twitter handle from profile data (without @ prefix)
+        const twitterHandle = profile?.data?.username || profile?.username || user?.name || '';
+        log("Extracted Twitter handle:", twitterHandle);
+        
+        // Store Twitter handle for later use in JWT
+        user.twitterHandle = twitterHandle;
+        
+        // Generate a unique ID based on Twitter username to prevent duplicates
+        const profileId = twitterHandle ? `user_${twitterHandle.toLowerCase()}` : `user_${nanoid()}`;
+        
         // Get follower count from Twitter API
         let followerCount = 0;
         
         // Try to get follower data using Twitter API v2
-        // Use Bearer token from environment variable for better access
         const bearerToken = process.env.TWITTER_BEARER_TOKEN || account.access_token;
         
-        if (bearerToken) {
+        if (bearerToken && profile?.data?.id) {
           try {
-            // Fetch user data including public metrics
-            const userId = profile?.data?.id;
-            log("Fetching Twitter user data for ID:", userId);
-            
             const response = await fetch(
-              `https://api.twitter.com/2/users/${userId}?user.fields=public_metrics,profile_image_url`,
+              `https://api.twitter.com/2/users/${profile.data.id}?user.fields=public_metrics,profile_image_url`,
               {
                 headers: {
                   Authorization: `Bearer ${bearerToken}`,
@@ -80,29 +152,21 @@ export const authOptions: NextAuthOptions = {
           }
         }
         
-        // IMPORTANT: Use the correct Twitter handle from profile data (without @ prefix)
-        const twitterHandle = profile?.data?.username || undefined;
-        
-        // Generate a unique ID based on Twitter username to prevent duplicates
-        const profileId = twitterHandle ? `user_${profile.data.username.toLowerCase()}` : `user_${nanoid()}`;
-        
         // Prepare user data from Twitter profile
-        // DON'T set role or approvalStatus - let saveProfileWithDuplicateCheck handle existing users
         const userData = {
-          id: profileId, // Use consistent ID based on Twitter username
+          id: profileId,
           twitterHandle: twitterHandle,
           name: profile?.data?.name || user.name,
           profileImageUrl: profile?.data?.profile_image_url?.replace('_normal', '_400x400') || user.image?.replace('_normal', '_400x400'),
           createdAt: new Date().toISOString(),
-          followerCount: followerCount, // Store follower count at top level
+          followerCount: followerCount,
           socialAccounts: {
             twitter: {
-              handle: profile?.data?.username,
+              handle: twitterHandle,
               followers: followerCount,
             }
           },
-          // Store selected chains if available in session
-          chains: Array.isArray(user.chains) ? user.chains : ["Ethereum", "Base"]
+          chains: ["Ethereum", "Base"] // Default chains
         };
         
         log("Saving user profile:", userData);
@@ -156,12 +220,21 @@ export const authOptions: NextAuthOptions = {
       log("Session after modification:", session);
       return session;
     },
-    async jwt({ token, user, account, profile }: any) {
+    async jwt({ token, user, account, profile, trigger, session }: any) {
       log("=== JWT CALLBACK ===");
       log("Token:", token);
       log("User:", user);
       log("Account:", account);
       log("Profile:", profile);
+      log("Trigger:", trigger);
+      
+      // Preserve the callback URL if it's a new sign in
+      if (trigger === "signIn" && account) {
+        // The callback URL should be preserved in the token
+        if (token.callbackUrl) {
+          log("Preserving callback URL:", token.callbackUrl);
+        }
+      }
       
       // Add Twitter handle to token if available (without @ prefix)
       if (profile?.data?.username) {
@@ -199,10 +272,14 @@ export const authOptions: NextAuthOptions = {
       
       // Fetch user role and approval status
       if (token.twitterHandle) {
-        // HARDCODED CHECK FOR SHARAFI_ETH
+        // Check for master admin
         const normalizedHandle = token.twitterHandle.toLowerCase().replace('@', '');
-        if (normalizedHandle === 'sharafi_eth' || normalizedHandle === 'alinabu') {
+        if (isMasterAdmin(normalizedHandle)) {
           log(`JWT: Master admin ${normalizedHandle} detected - setting admin role`);
+          logAdminAccess(normalizedHandle, 'auth_jwt_admin_role', {
+            method: 'master_admin',
+            context: 'nextauth_jwt'
+          });
           token.role = 'admin';
           token.approvalStatus = 'approved';
         } else {
@@ -235,7 +312,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/api/auth/signin", // Use default NextAuth sign-in page
+    signIn: "/auth/signin", // Use our custom sign-in page that handles callbacks properly
     error: "/auth/error",
     signOut: "/",
   },

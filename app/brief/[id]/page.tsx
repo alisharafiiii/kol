@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useSession, signIn } from 'next-auth/react'
 import { useParams } from 'next/navigation'
+import { sanitizeHtml } from '@/lib/sanitize-html'
 import type { Campaign } from '@/lib/campaign'
 import type { Project } from '@/lib/project'
 
@@ -639,7 +640,7 @@ export default function BriefPage() {
           {campaign.brief && campaign.brief.trim() ? (
             <div 
               className="brief-content prose prose-invert prose-green max-w-none"
-              dangerouslySetInnerHTML={{ __html: campaign.brief }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(campaign.brief) }}
               style={{ color: '#bbf7d0', fontSize: '16px', lineHeight: '1.8' }}
             />
           ) : (

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { ArrowLeft, Save, Eye, Upload } from '@/components/icons'
+import { sanitizeHtml } from '@/lib/sanitize-html'
 import type { Campaign } from '@/lib/campaign'
 
 interface Asset {
@@ -174,9 +175,10 @@ export default function BriefEditPage() {
         
         // Load existing brief content
         if (data.brief) {
-          setContent(data.brief)
+          const sanitizedBrief = sanitizeHtml(data.brief)
+          setContent(sanitizedBrief)
           if (editorRef.current && !showPreview) {
-            editorRef.current.innerHTML = data.brief
+            editorRef.current.innerHTML = sanitizedBrief
           }
         }
       } catch (err) {
@@ -288,9 +290,10 @@ export default function BriefEditPage() {
     const template = BRIEF_TEMPLATES.find(t => t.id === templateId)
     if (template && campaign) {
       const processedContent = template.content.trim().replace('[Campaign Name]', campaign.name)
-      setContent(processedContent)
+      const sanitizedContent = sanitizeHtml(processedContent)
+      setContent(sanitizedContent)
       if (editorRef.current) {
-        editorRef.current.innerHTML = processedContent
+        editorRef.current.innerHTML = sanitizedContent
       }
       setSelectedTemplate(templateId)
     }
@@ -652,7 +655,7 @@ export default function BriefEditPage() {
         {showPreview ? (
           <div 
             className="preview-content prose prose-invert prose-green max-w-none p-6 bg-black/50 rounded-lg border border-green-500/30" 
-            dangerouslySetInnerHTML={{ __html: content }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(content) }}
             style={{ color: '#bbf7d0' }}
           />
         ) : (

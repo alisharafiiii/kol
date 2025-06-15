@@ -59,25 +59,7 @@ export class ProfileService {
       const normalizedHandle = handle.replace('@', '').toLowerCase()
       console.log('ProfileService.getProfileByHandle:', { handle, normalizedHandle })
       
-      // Special handling for master admin
-      if (normalizedHandle === 'sharafi_eth') {
-        console.log('ProfileService: Returning master admin profile')
-        return {
-          id: 'sharafi_eth_admin',
-          name: 'sharafi_eth',
-          email: 'admin@kol.platform',
-          twitterHandle: 'sharafi_eth',
-          profileImageUrl: 'https://pbs.twimg.com/profile_images/1911790623893422080/vxsHVWbL_400x400.jpg',
-          role: 'admin',
-          approvalStatus: 'approved',
-          isKOL: false,
-          contacts: {},
-          socialLinks: {},
-          walletAddresses: {},
-          createdAt: new Date('2024-01-01'),
-          updatedAt: new Date(),
-        } as UnifiedProfile
-      }
+      // Don't use hardcoded profiles - fetch from database
       
       const profileIds = await redis.smembers(`${this.INDEX_PREFIX}handle:${normalizedHandle}`)
       console.log('ProfileService: Found profile IDs:', profileIds)
@@ -391,11 +373,14 @@ export class ProfileService {
     // KOL index
     if (profile.isKOL) {
       pipeline.sadd(`${this.INDEX_PREFIX}kol:true`, profile.id)
-      
-      // Tier index
-      if (profile.currentTier) {
-        pipeline.sadd(`${this.INDEX_PREFIX}tier:${profile.currentTier}`, profile.id)
-      }
+    }
+    
+    // Tier index (for all users, not just KOLs)
+    if (profile.tier) {
+      pipeline.sadd(`${this.INDEX_PREFIX}tier:${profile.tier}`, profile.id)
+    } else if (profile.currentTier) {
+      // Legacy support for currentTier
+      pipeline.sadd(`${this.INDEX_PREFIX}tier:${profile.currentTier}`, profile.id)
     }
     
     // Country index
