@@ -90,6 +90,14 @@ export default function EditProfilePage() {
     try {
       const handle = (session as any)?.twitterHandle || session?.user?.name
       
+      // Debug logging for Atitty
+      if (handle?.toLowerCase().includes('atitty')) {
+        console.log('=== ATITTY PROFILE EDIT DEBUG ===')
+        console.log('Session:', session)
+        console.log('Handle being used:', handle)
+        console.log('Profile handle:', profile?.twitterHandle)
+      }
+      
       const updateData = {
         name: formData.name,
         bio: formData.bio,

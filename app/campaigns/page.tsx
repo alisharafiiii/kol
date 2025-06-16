@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import CampaignModal from '@/components/CampaignModal'
 import CampaignCard from '@/components/CampaignCard'
 import type { Campaign } from '@/lib/campaign'
+import { isMasterAdmin } from '@/lib/admin-config'
 
 export default function CampaignsPage() {
   const { data: session, status } = useSession()
@@ -43,9 +44,9 @@ export default function CampaignsPage() {
       const handle = (session as any)?.twitterHandle || session.user?.name || ''
       console.log('CAMPAIGNS PAGE: User handle:', handle);
       
-      const isMasterAdmin = handle === 'sharafi_eth' || handle === 'nabulines'
+      const isUserMasterAdmin = isMasterAdmin(handle)
       
-      if (isMasterAdmin) {
+      if (isUserMasterAdmin) {
         console.log(`CAMPAIGNS PAGE: Master admin ${handle} detected - granting immediate access`)
         setIsAuthorized(true)
         setUserRole('admin')
@@ -97,8 +98,8 @@ export default function CampaignsPage() {
         } catch (fetchError) {
           console.error('CAMPAIGNS PAGE: Failed to fetch user data:', fetchError)
           // Default to checking if the user is sharafi_eth or nabulines (master admins)
-          const isMasterAdmin = handle === 'sharafi_eth' || handle === 'nabulines'
-          if (isMasterAdmin) {
+          const isUserMasterAdmin = isMasterAdmin(handle)
+          if (isUserMasterAdmin) {
             console.log('CAMPAIGNS PAGE: Master admin detected on error, granting access')
             profileData = { user: { approvalStatus: 'approved' } }
             roleData = { role: 'admin' }

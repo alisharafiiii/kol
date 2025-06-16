@@ -139,22 +139,27 @@ export async function POST(
     // Check if KOL with the same handle already exists
     const existingKOL = campaign.kols.find(k => k.handle.toLowerCase() === kolData.handle.toLowerCase())
     
-    if (existingKOL) {
-      console.log('[DEBUG] Found existing KOL with handle:', kolData.handle, 'ID:', existingKOL.id)
+    // Check if there's an existing entry with the same handle AND product
+    const existingKOLWithSameProduct = campaign.kols.find(k => 
+      k.handle.toLowerCase() === kolData.handle.toLowerCase() && 
+      k.productId === kolData.productId
+    )
+    
+    if (existingKOLWithSameProduct) {
+      // Update the existing entry with the same handle and product
+      console.log('[DEBUG] Found existing KOL with same handle and product, updating:', kolData.handle, 'Product:', kolData.productId)
       
-      // Update existing KOL instead of creating a new one
       const updates = {
         ...kolData,
-        // Preserve existing fields that might not be in the update
-        id: existingKOL.id,
+        id: existingKOLWithSameProduct.id,
         lastUpdated: new Date()
       }
       
       // For admins, bypass the permission check
       if (isAdmin) {
-        const kolIndex = campaign.kols.findIndex(k => k.id === existingKOL.id)
+        const kolIndex = campaign.kols.findIndex(k => k.id === existingKOLWithSameProduct.id)
         if (kolIndex !== -1) {
-          campaign.kols[kolIndex] = { ...existingKOL, ...updates }
+          campaign.kols[kolIndex] = { ...existingKOLWithSameProduct, ...updates }
           campaign.updatedAt = new Date().toISOString()
           
           const { redis } = await import('@/lib/redis')
@@ -164,7 +169,7 @@ export async function POST(
         }
       } else {
         // For non-admins, use the regular function with permission checks
-        const updatedCampaign = await updateKOLInCampaign(campaignId, existingKOL.id, updates, userHandle)
+        const updatedCampaign = await updateKOLInCampaign(campaignId, existingKOLWithSameProduct.id, updates, userHandle, userRole)
         
         if (!updatedCampaign) {
           return NextResponse.json(
@@ -173,12 +178,90 @@ export async function POST(
           )
         }
         
-        const updatedKOL = updatedCampaign.kols.find(k => k.id === existingKOL.id)
+        const updatedKOL = updatedCampaign.kols.find(k => k.id === existingKOLWithSameProduct.id)
         return NextResponse.json(updatedKOL)
       }
+    } else if (existingKOL && !kolData.productId) {
+      // If no product is specified and there's an existing KOL, update the first entry without a product
+      const existingKOLWithoutProduct = campaign.kols.find(k => 
+        k.handle.toLowerCase() === kolData.handle.toLowerCase() && 
+        !k.productId
+      )
+      
+      if (existingKOLWithoutProduct) {
+        console.log('[DEBUG] Found existing KOL without product, updating:', kolData.handle)
+        
+        const updates = {
+          ...kolData,
+          id: existingKOLWithoutProduct.id,
+          lastUpdated: new Date()
+        }
+        
+        // For admins, bypass the permission check
+        if (isAdmin) {
+          const kolIndex = campaign.kols.findIndex(k => k.id === existingKOLWithoutProduct.id)
+          if (kolIndex !== -1) {
+            campaign.kols[kolIndex] = { ...existingKOLWithoutProduct, ...updates }
+            campaign.updatedAt = new Date().toISOString()
+            
+            const { redis } = await import('@/lib/redis')
+            await redis.json.set(campaignId, '$', campaign as any)
+            
+            return NextResponse.json(campaign.kols[kolIndex])
+          }
+        } else {
+          // For non-admins, use the regular function with permission checks
+          const updatedCampaign = await updateKOLInCampaign(campaignId, existingKOLWithoutProduct.id, updates, userHandle, userRole)
+          
+          if (!updatedCampaign) {
+            return NextResponse.json(
+              { error: 'Failed to update existing KOL' },
+              { status: 500 }
+            )
+          }
+          
+          const updatedKOL = updatedCampaign.kols.find(k => k.id === existingKOLWithoutProduct.id)
+          return NextResponse.json(updatedKOL)
+        }
+      } else {
+        // Create new entry
+        console.log('[DEBUG] Creating new KOL entry without product for handle:', kolData.handle)
+        
+        // For admins, bypass the permission check by updating the campaign directly
+        if (isAdmin) {
+          const { nanoid } = await import('nanoid')
+          const newKOL = {
+            ...kolData,
+            id: nanoid(),
+            lastUpdated: new Date(),
+          }
+          
+          campaign.kols.push(newKOL)
+          campaign.updatedAt = new Date().toISOString()
+          
+          const { redis } = await import('@/lib/redis')
+          await redis.json.set(campaignId, '$', campaign as any)
+          
+          return NextResponse.json(newKOL)
+        } else {
+          // For non-admins, use the regular function with permission checks
+          const updatedCampaign = await addKOLToCampaign(campaignId, kolData, userHandle, userRole)
+          
+          if (!updatedCampaign) {
+            return NextResponse.json(
+              { error: 'Campaign not found' },
+              { status: 404 }
+            )
+          }
+          
+          // Return the newly added KOL from the campaign
+          const newKOL = updatedCampaign.kols[updatedCampaign.kols.length - 1]
+          return NextResponse.json(newKOL)
+        }
+      }
     } else {
-      // No existing KOL found, create a new one
-      console.log('[DEBUG] Creating new KOL with handle:', kolData.handle)
+      // No existing KOL with this handle, or new product for existing KOL - create new entry
+      console.log('[DEBUG] Creating new KOL entry with handle:', kolData.handle, 'Product:', kolData.productId)
       
       // For admins, bypass the permission check by updating the campaign directly
       if (isAdmin) {
@@ -198,7 +281,7 @@ export async function POST(
         return NextResponse.json(newKOL)
       } else {
         // For non-admins, use the regular function with permission checks
-        const updatedCampaign = await addKOLToCampaign(campaignId, kolData, userHandle)
+        const updatedCampaign = await addKOLToCampaign(campaignId, kolData, userHandle, userRole)
         
         if (!updatedCampaign) {
           return NextResponse.json(
@@ -342,7 +425,7 @@ export async function PUT(
       return NextResponse.json(campaign.kols[kolIndex])
     } else {
       // For non-admins, use the regular function with permission checks
-      const updatedCampaign = await updateKOLInCampaign(campaignId, kolId, cleanedUpdates, userHandle)
+      const updatedCampaign = await updateKOLInCampaign(campaignId, kolId, cleanedUpdates, userHandle, userRole)
       
       if (!updatedCampaign) {
         return NextResponse.json(
@@ -428,7 +511,7 @@ export async function DELETE(
     } else {
       // For non-admins, use the regular function with permission checks
       const { removeKOLFromCampaign } = await import('@/lib/campaign')
-      const updatedCampaign = await removeKOLFromCampaign(campaignId, kolId, userHandle)
+      const updatedCampaign = await removeKOLFromCampaign(campaignId, kolId, userHandle, userRole)
       
       if (!updatedCampaign) {
         return NextResponse.json(

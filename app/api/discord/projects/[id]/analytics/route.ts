@@ -10,6 +10,46 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Get query parameters
+    const { searchParams } = new URL(req.url)
+    const isPublicRequest = searchParams.get('public') === 'true'
+    const timeframe = searchParams.get('timeframe') as 'daily' | 'weekly' | 'monthly' | 'allTime' || 'weekly'
+    
+    // Convert back from URL-safe format
+    const projectId = params.id.replace(/--/g, ':')
+    
+    console.log('[Discord Analytics] Request for project:', projectId)
+    console.log('[Discord Analytics] Is public request:', isPublicRequest)
+    console.log('[Discord Analytics] Timeframe:', timeframe)
+    
+    // For public requests, check if the project ID matches the public share pattern
+    if (isPublicRequest && projectId.startsWith('project:discord:')) {
+      console.log('[Discord Analytics] Public share link detected, allowing public access')
+      
+      // Get the project
+      const project = await DiscordService.getProject(projectId)
+      if (!project) {
+        return NextResponse.json({ error: 'Project not found' }, { status: 404 })
+      }
+      
+      // Get analytics
+      const analytics = await DiscordService.getProjectAnalytics(projectId, timeframe)
+      
+      console.log(`✅ Public analytics fetched: ${analytics.metrics.totalMessages} messages, ${analytics.metrics.uniqueUsers} users`)
+      
+      return NextResponse.json({ 
+        project: {
+          id: project.id,
+          name: project.name,
+          serverId: project.serverId,
+          serverName: project.serverName,
+          iconUrl: project.iconUrl,
+        },
+        analytics 
+      })
+    }
+    
+    // For non-public requests, require authentication
     // Check authentication
     const session = await getServerSession(authOptions)
     if (!session) {
@@ -96,15 +136,6 @@ export async function GET(
       }
     }
 
-    // Convert back from URL-safe format
-    const projectId = params.id.replace(/--/g, ':')
-    
-    // Get timeframe from query params
-    const { searchParams } = new URL(req.url)
-    const timeframe = searchParams.get('timeframe') as 'daily' | 'weekly' | 'monthly' | 'allTime' || 'weekly'
-    
-    console.log(`📊 Fetching analytics for project ${projectId}, timeframe: ${timeframe}`)
-    
     // Get the project
     const project = await DiscordService.getProject(projectId)
     if (!project) {

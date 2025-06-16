@@ -117,7 +117,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
   const userRole = (session as any)?.role || (session as any)?.user?.role || 'user'
   const canEditByRole = ['admin', 'core', 'team'].includes(userRole)
   const canEdit = !!(isOwner || isTeamMember || canEditByRole)
-  const canManage = ['admin', 'core'].includes(userRole)
+  const canManage = !!(isOwner || isTeamMember || ['admin', 'core'].includes(userRole))
 
   const handleKOLUpdate = async (kolId: string, updates: Partial<KOL>) => {
     if (!campaign || !canEdit) return
@@ -175,6 +175,8 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
   const handleCampaignUpdate = async (updates: Partial<Campaign>) => {
     if (!campaign) return
 
+    console.log('CampaignPage: Updating campaign with:', updates)
+
     const res = await fetch(`/api/campaigns/${campaign.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -183,10 +185,12 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
 
     if (!res.ok) {
       const error = await res.json()
+      console.error('CampaignPage: Update failed:', error)
       throw new Error(error.error || 'Failed to update campaign')
     }
 
     const updatedCampaign = await res.json()
+    console.log('CampaignPage: Campaign updated successfully:', updatedCampaign)
     setCampaign(updatedCampaign)
     
     // Refresh project details if projects were updated
@@ -194,6 +198,9 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
       const filtered = allProjects.filter((p: Project) => updates.projects!.includes(p.id))
       setProjectDetails(filtered)
     }
+    
+    // Close the modal after successful update
+    setShowEditModal(false)
   }
 
   const syncTweets = async () => {
@@ -437,9 +444,12 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
                 <h3 className="text-xs font-medium text-green-400/80 uppercase">Cash Budget</h3>
                 <p className="text-lg font-bold text-green-300 mt-1">
                   ${campaign.kols.reduce((sum, kol) => {
+                    // Only count entries with non-zero budget to avoid duplication
                     const budgetNum = typeof kol.budget === 'number' 
                       ? kol.budget 
                       : parseFloat(kol.budget?.replace(/[^0-9.-]+/g, '') || '0') || 0
+                    // Skip entries with "0" budget (these are product-only entries)
+                    if (kol.budget === "0" || budgetNum === 0) return sum
                     return sum + budgetNum
                   }, 0).toLocaleString()}
                 </p>

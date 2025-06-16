@@ -193,17 +193,65 @@ export async function getUserCampaigns(userHandle: string): Promise<Campaign[]> 
 export async function updateCampaign(
   id: string, 
   updates: Partial<Campaign>,
-  userHandle: string
+  userHandle: string,
+  sessionRole?: string
 ): Promise<Campaign | null> {
   const campaign = await getCampaign(id)
   if (!campaign) return null
   
-  // Check if user is admin
-  const profile = await ProfileService.getProfileByHandle(userHandle)
-  const isAdmin = profile?.role === 'admin' || profile?.role === 'core'
+  console.log('Updating campaign:', {
+    id,
+    userHandle,
+    sessionRole,
+    currentCampaign: {
+      createdBy: campaign.createdBy,
+      teamMembers: campaign.teamMembers,
+      chains: campaign.chains
+    },
+    updates: {
+      chains: updates.chains,
+      teamMembers: updates.teamMembers
+    }
+  })
+  
+  // Check if user is admin based on session role
+  const isSessionAdmin = sessionRole === 'admin' || sessionRole === 'core'
+  
+  // Also check profile service for backwards compatibility
+  const normalizedHandle = userHandle.replace('@', '').toLowerCase()
+  const profile = await ProfileService.getProfileByHandle(normalizedHandle)
+  console.log('User profile lookup:', {
+    userHandle,
+    normalizedHandle,
+    profileFound: !!profile,
+    profileRole: profile?.role,
+    sessionRole,
+    isSessionAdmin
+  })
+  
+  const isAdmin = isSessionAdmin || profile?.role === 'admin' || profile?.role === 'core'
+  const isCreator = campaign.createdBy === userHandle || campaign.createdBy === normalizedHandle
+  const isTeamMember = campaign.teamMembers.includes(userHandle) || campaign.teamMembers.includes(normalizedHandle)
+  
+  console.log('Authorization check:', {
+    isAdmin,
+    isSessionAdmin,
+    isCreator,
+    isTeamMember,
+    authorized: isAdmin || isCreator || isTeamMember
+  })
   
   // Check if user has permission to edit
-  if (!isAdmin && campaign.createdBy !== userHandle && !campaign.teamMembers.includes(userHandle)) {
+  if (!isAdmin && !isCreator && !isTeamMember) {
+    console.error('Unauthorized update attempt:', {
+      userHandle,
+      normalizedHandle,
+      campaignId: id,
+      profileRole: profile?.role,
+      sessionRole,
+      createdBy: campaign.createdBy,
+      teamMembers: campaign.teamMembers
+    })
     throw new Error('Unauthorized')
   }
   
@@ -233,6 +281,11 @@ export async function updateCampaign(
     updatedAt: new Date().toISOString()
   }
   
+  console.log('Saving updated campaign:', {
+    chains: updatedCampaign.chains,
+    teamMembers: updatedCampaign.teamMembers
+  })
+  
   await redis.json.set(id, '$', updatedCampaign as any)
   return updatedCampaign
 }
@@ -241,17 +294,25 @@ export async function updateCampaign(
 export async function addKOLToCampaign(
   campaignId: string,
   kol: Omit<KOL, 'id' | 'lastUpdated'>,
-  userHandle: string
+  userHandle: string,
+  sessionRole?: string
 ): Promise<Campaign | null> {
   const campaign = await getCampaign(campaignId)
   if (!campaign) return null
   
-  // Check if user is admin
-  const profile = await ProfileService.getProfileByHandle(userHandle)
-  const isAdmin = profile?.role === 'admin' || profile?.role === 'core'
+  // Check if user is admin based on session role
+  const isSessionAdmin = sessionRole === 'admin' || sessionRole === 'core'
+  
+  // Also check profile service
+  const normalizedHandle = userHandle.replace('@', '').toLowerCase()
+  const profile = await ProfileService.getProfileByHandle(normalizedHandle)
+  const isAdmin = isSessionAdmin || profile?.role === 'admin' || profile?.role === 'core'
   
   // Check permissions
-  if (!isAdmin && campaign.createdBy !== userHandle && !campaign.teamMembers.includes(userHandle)) {
+  const isCreator = campaign.createdBy === userHandle || campaign.createdBy === normalizedHandle
+  const isTeamMember = campaign.teamMembers.includes(userHandle) || campaign.teamMembers.includes(normalizedHandle)
+  
+  if (!isAdmin && !isCreator && !isTeamMember) {
     throw new Error('Unauthorized')
   }
   
@@ -276,17 +337,25 @@ export async function updateKOLInCampaign(
   campaignId: string,
   kolId: string,
   updates: Partial<KOL>,
-  userHandle: string
+  userHandle: string,
+  sessionRole?: string
 ): Promise<Campaign | null> {
   const campaign = await getCampaign(campaignId)
   if (!campaign) return null
   
-  // Check if user is admin
-  const profile = await ProfileService.getProfileByHandle(userHandle)
-  const isAdmin = profile?.role === 'admin' || profile?.role === 'core'
+  // Check if user is admin based on session role
+  const isSessionAdmin = sessionRole === 'admin' || sessionRole === 'core'
+  
+  // Also check profile service
+  const normalizedHandle = userHandle.replace('@', '').toLowerCase()
+  const profile = await ProfileService.getProfileByHandle(normalizedHandle)
+  const isAdmin = isSessionAdmin || profile?.role === 'admin' || profile?.role === 'core'
   
   // Check permissions
-  if (!isAdmin && campaign.createdBy !== userHandle && !campaign.teamMembers.includes(userHandle)) {
+  const isCreator = campaign.createdBy === userHandle || campaign.createdBy === normalizedHandle
+  const isTeamMember = campaign.teamMembers.includes(userHandle) || campaign.teamMembers.includes(normalizedHandle)
+  
+  if (!isAdmin && !isCreator && !isTeamMember) {
     throw new Error('Unauthorized')
   }
   
@@ -309,17 +378,25 @@ export async function updateKOLInCampaign(
 export async function removeKOLFromCampaign(
   campaignId: string,
   kolId: string,
-  userHandle: string
+  userHandle: string,
+  sessionRole?: string
 ): Promise<Campaign | null> {
   const campaign = await getCampaign(campaignId)
   if (!campaign) return null
   
-  // Check if user is admin
-  const profile = await ProfileService.getProfileByHandle(userHandle)
-  const isAdmin = profile?.role === 'admin' || profile?.role === 'core'
+  // Check if user is admin based on session role
+  const isSessionAdmin = sessionRole === 'admin' || sessionRole === 'core'
+  
+  // Also check profile service
+  const normalizedHandle = userHandle.replace('@', '').toLowerCase()
+  const profile = await ProfileService.getProfileByHandle(normalizedHandle)
+  const isAdmin = isSessionAdmin || profile?.role === 'admin' || profile?.role === 'core'
   
   // Check permissions
-  if (!isAdmin && campaign.createdBy !== userHandle && !campaign.teamMembers.includes(userHandle)) {
+  const isCreator = campaign.createdBy === userHandle || campaign.createdBy === normalizedHandle
+  const isTeamMember = campaign.teamMembers.includes(userHandle) || campaign.teamMembers.includes(normalizedHandle)
+  
+  if (!isAdmin && !isCreator && !isTeamMember) {
     throw new Error('Unauthorized')
   }
   
@@ -340,7 +417,8 @@ export async function updateCampaignBrief(
   if (!campaign) return null
   
   // Check if user is admin
-  const profile = await ProfileService.getProfileByHandle(userHandle)
+  const normalizedHandle = userHandle.replace('@', '').toLowerCase()
+  const profile = await ProfileService.getProfileByHandle(normalizedHandle)
   const isAdmin = profile?.role === 'admin' || profile?.role === 'core'
   
   // Check permissions - allow admin, creator, or team member

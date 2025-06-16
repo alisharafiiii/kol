@@ -235,7 +235,7 @@ export class TwitterSyncService {
             tier: kol.tier as any,
             stage: kol.stage as any,
             deviceStatus: kol.device as any,
-            budget: typeof kol.budget === 'string' ? parseFloat(kol.budget) || 0 : kol.budget,
+            budget: typeof kol.budget === 'string' ? parseFloat(kol.budget) || 0 : kol.budget || 0,
             paymentStatus: kol.payment as any,
             links: kol.links || [],
             platform: Array.isArray(kol.platform) ? kol.platform[0] as any : kol.platform as any,
@@ -250,29 +250,35 @@ export class TwitterSyncService {
         }
       }
       
-      // Collect all tweet IDs
-      const tweetIdMap = new Map<string, string>() // tweetId -> kolId
+      // Collect all tweet IDs grouped by KOL
+      const kolTweetMap = new Map<string, string[]>() // kolId -> tweetIds[]
+      const allTweetIds = new Set<string>()
       
       for (const kol of kols) {
+        const tweetIds: string[] = []
         for (const link of kol.links) {
           const tweetId = this.extractTweetId(link)
           if (tweetId) {
-            tweetIdMap.set(tweetId, kol.id)
+            tweetIds.push(tweetId)
+            allTweetIds.add(tweetId)
           }
+        }
+        if (tweetIds.length > 0) {
+          kolTweetMap.set(kol.id, tweetIds)
         }
       }
       
-      if (tweetIdMap.size === 0) {
+      if (allTweetIds.size === 0) {
         console.log('No tweets to sync for campaign', campaignId)
         return result
       }
       
-      console.log(`Found ${tweetIdMap.size} tweets to sync`)
+      console.log(`Found ${allTweetIds.size} tweets to sync`)
       
       // Check rate limit
       const rateLimit = await this.getRateLimitStatus()
-      if (rateLimit.remaining < tweetIdMap.size) {
-        console.log(`Need ${tweetIdMap.size} requests but only ${rateLimit.remaining} remaining`)
+      if (rateLimit.remaining < allTweetIds.size) {
+        console.log(`Need ${allTweetIds.size} requests but only ${rateLimit.remaining} remaining`)
         result.rateLimited = true
         
         // Queue for later processing
@@ -281,18 +287,45 @@ export class TwitterSyncService {
       }
       
       // Batch fetch tweets
-      const tweetIds = Array.from(tweetIdMap.keys())
+      const tweetIds = Array.from(allTweetIds)
       const tweets = await this.batchFetchTweets(tweetIds)
       
-      // Update KOL metrics
-      for (const [tweetId, tweet] of Array.from(tweets)) {
-        const kolId = tweetIdMap.get(tweetId)
-        if (!kolId) continue
-        
+      // Update KOL metrics - aggregate all tweets for each KOL
+      for (const [kolId, kolTweetIds] of Array.from(kolTweetMap)) {
         try {
           // Find the original KOL to update
           const kol = kols.find(k => k.id === kolId)
           if (!kol) continue
+          
+          // Aggregate metrics from all tweets for this KOL
+          let totalViews = 0
+          let totalLikes = 0
+          let totalRetweets = 0
+          let totalComments = 0
+          let tweetsFound = 0
+          
+          for (const tweetId of kolTweetIds) {
+            const tweet = tweets.get(tweetId)
+            if (tweet) {
+              totalViews += tweet.public_metrics.impression_count
+              totalLikes += tweet.public_metrics.like_count
+              totalRetweets += tweet.public_metrics.retweet_count
+              totalComments += tweet.public_metrics.reply_count
+              tweetsFound++
+            }
+          }
+          
+          if (tweetsFound === 0) {
+            console.log(`No tweets found for KOL ${kol.kolHandle}`)
+            continue
+          }
+          
+          console.log(`Updating KOL ${kol.kolHandle} with aggregated metrics from ${tweetsFound} tweets:`, {
+            totalViews,
+            totalLikes,
+            totalRetweets,
+            totalComments
+          })
           
           // If it's from old format, update the campaign directly
           if (kols.length > 0 && !await CampaignKOLService.getCampaignKOLs(campaignId).then(k => k.length)) {
@@ -302,10 +335,10 @@ export class TwitterSyncService {
               const campaignData = campaign[0]
               const kolIndex = campaignData.kols.findIndex((k: any) => k.id === kolId)
               if (kolIndex >= 0) {
-                campaignData.kols[kolIndex].views = tweet.public_metrics.impression_count
-                campaignData.kols[kolIndex].likes = tweet.public_metrics.like_count
-                campaignData.kols[kolIndex].retweets = tweet.public_metrics.retweet_count
-                campaignData.kols[kolIndex].comments = tweet.public_metrics.reply_count
+                campaignData.kols[kolIndex].views = totalViews
+                campaignData.kols[kolIndex].likes = totalLikes
+                campaignData.kols[kolIndex].retweets = totalRetweets
+                campaignData.kols[kolIndex].comments = totalComments
                 campaignData.kols[kolIndex].lastUpdated = new Date()
                 
                 await redis.json.set(campaignId, '$', campaignData)
@@ -314,14 +347,14 @@ export class TwitterSyncService {
           } else {
             // Update using CampaignKOLService
             await CampaignKOLService.updateKOLMetrics(kolId, {
-              views: tweet.public_metrics.impression_count,
-              likes: tweet.public_metrics.like_count,
-              retweets: tweet.public_metrics.retweet_count,
-              replies: tweet.public_metrics.reply_count,
+              views: totalViews,
+              likes: totalLikes,
+              retweets: totalRetweets,
+              replies: totalComments,
             })
           }
           
-          result.synced++
+          result.synced += tweetsFound
         } catch (error) {
           console.error(`Error updating metrics for KOL ${kolId}:`, error)
           result.failed++

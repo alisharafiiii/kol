@@ -12,15 +12,21 @@ interface EditCampaignModalProps {
   onSave: (updates: Partial<Campaign>) => Promise<void>
 }
 
+interface ApprovedUser {
+  handle: string
+  name: string
+  profileImageUrl: string
+}
+
 export default function EditCampaignModal({ campaign, projects, onClose, onSave }: EditCampaignModalProps) {
   const [formData, setFormData] = useState({
     name: campaign.name,
     startDate: campaign.startDate.split('T')[0],
     endDate: campaign.endDate.split('T')[0],
     status: campaign.status,
-    chains: campaign.chains || ['Solana'],
-    projects: campaign.projects,
-    teamMembers: campaign.teamMembers,
+    chains: campaign.chains || [],
+    projects: campaign.projects || [],
+    teamMembers: campaign.teamMembers || [],
   })
   
   const [newTeamMember, setNewTeamMember] = useState('')
@@ -28,17 +34,48 @@ export default function EditCampaignModal({ campaign, projects, onClose, onSave 
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   
+  // Team member autocomplete
+  const [approvedUsers, setApprovedUsers] = useState<ApprovedUser[]>([])
+  const [showTeamMemberDropdown, setShowTeamMemberDropdown] = useState(false)
+  const [loadingUsers, setLoadingUsers] = useState(false)
+  
   // Project search
   const [projectSearch, setProjectSearch] = useState('')
   const [showProjectDropdown, setShowProjectDropdown] = useState(false)
   
+  // Fetch approved users for team member autocomplete
+  useEffect(() => {
+    const fetchApprovedUsers = async () => {
+      setLoadingUsers(true)
+      try {
+        const res = await fetch('/api/profiles/approved')
+        if (res.ok) {
+          const data = await res.json()
+          setApprovedUsers(data.profiles || [])
+        }
+      } catch (error) {
+        console.error('Error fetching approved users:', error)
+      } finally {
+        setLoadingUsers(false)
+      }
+    }
+    fetchApprovedUsers()
+  }, [])
+  
   const filteredProjects = projects.filter(p => 
     !formData.projects.includes(p.id) &&
-    (p.twitterHandle.toLowerCase().includes(projectSearch.toLowerCase()) ||
-     p.notes?.toLowerCase().includes(projectSearch.toLowerCase()))
+    ((p.twitterHandle?.toLowerCase().includes(projectSearch.toLowerCase()) || false) ||
+     (p.notes?.toLowerCase().includes(projectSearch.toLowerCase()) || false))
   )
   
   const selectedProjects = projects.filter(p => formData.projects.includes(p.id))
+  
+  // Filter approved users for team member suggestions
+  const filteredUsers = approvedUsers.filter(user => 
+    !formData.teamMembers.includes(user.handle) &&
+    (user.handle.toLowerCase().includes(newTeamMember.toLowerCase()) ||
+     user.name?.toLowerCase().includes(newTeamMember.toLowerCase()))
+  )
   
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -58,7 +95,7 @@ export default function EditCampaignModal({ campaign, projects, onClose, onSave 
     
     setSaving(true)
     try {
-      await onSave({
+      const updateData = {
         name: formData.name.trim(),
         startDate: new Date(formData.startDate).toISOString(),
         endDate: new Date(formData.endDate).toISOString(),
@@ -66,36 +103,45 @@ export default function EditCampaignModal({ campaign, projects, onClose, onSave 
         chains: formData.chains,
         projects: formData.projects,
         teamMembers: formData.teamMembers,
-      })
-      onClose()
+      }
+      
+      console.log('EditCampaignModal: Saving campaign updates:', updateData)
+      
+      await onSave(updateData)
+      
+      console.log('EditCampaignModal: Save completed successfully')
+      setSaving(false)
+      // Don't close here - let the parent handle it after successful save
     } catch (err: any) {
+      console.error('EditCampaignModal: Save error:', err)
       setError(err.message || 'Failed to save campaign')
-    } finally {
       setSaving(false)
     }
   }
   
   // Add team member
-  const addTeamMember = () => {
-    if (!newTeamMember.trim()) return
+  const addTeamMember = (handle?: string) => {
+    const memberToAdd = handle || newTeamMember.trim()
+    if (!memberToAdd) return
     
     // Clean up handle
-    let handle = newTeamMember.trim()
-    if (handle.startsWith('@')) {
-      handle = handle.substring(1)
+    let cleanHandle = memberToAdd
+    if (cleanHandle.startsWith('@')) {
+      cleanHandle = cleanHandle.substring(1)
     }
     
     // Check if already exists
-    if (formData.teamMembers.includes(handle)) {
+    if (formData.teamMembers.includes(cleanHandle)) {
       setError('Team member already added')
       return
     }
     
     setFormData({
       ...formData,
-      teamMembers: [...formData.teamMembers, handle]
+      teamMembers: [...formData.teamMembers, cleanHandle]
     })
     setNewTeamMember('')
+    setShowTeamMemberDropdown(false)
     setError(null)
   }
   
@@ -310,22 +356,67 @@ export default function EditCampaignModal({ campaign, projects, onClose, onSave 
               Team Members
             </label>
             
-            <div className="flex gap-2 mb-3">
-              <input
-                type="text"
-                value={newTeamMember}
-                onChange={(e) => setNewTeamMember(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTeamMember())}
-                placeholder="@handle"
-                className="flex-1 px-3 py-2 bg-black border border-green-500 rounded text-green-300 placeholder-green-700 focus:outline-none focus:border-green-400"
-              />
-              <button
-                type="button"
-                onClick={addTeamMember}
-                className="px-4 py-2 bg-green-900 text-green-100 rounded hover:bg-green-800 transition-colors"
-              >
-                Add
-              </button>
+            <div className="relative">
+              <div className="flex gap-2 mb-3">
+                <input
+                  type="text"
+                  value={newTeamMember}
+                  onChange={(e) => {
+                    setNewTeamMember(e.target.value)
+                    setShowTeamMemberDropdown(e.target.value.length > 0)
+                  }}
+                  onFocus={() => setShowTeamMemberDropdown(newTeamMember.length > 0)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      addTeamMember()
+                    }
+                  }}
+                  placeholder="@handle or search by name"
+                  className="flex-1 px-3 py-2 bg-black border border-green-500 rounded text-green-300 placeholder-green-700 focus:outline-none focus:border-green-400"
+                />
+                <button
+                  type="button"
+                  onClick={() => addTeamMember()}
+                  className="px-4 py-2 bg-green-900 text-green-100 rounded hover:bg-green-800 transition-colors"
+                >
+                  Add
+                </button>
+              </div>
+              
+              {/* Team member dropdown */}
+              {showTeamMemberDropdown && newTeamMember && (
+                <div className="absolute top-full mt-1 w-full bg-black border border-green-500 rounded-lg max-h-48 overflow-y-auto z-10">
+                  {loadingUsers ? (
+                    <div className="p-3 text-center text-green-400 text-sm">Loading users...</div>
+                  ) : filteredUsers.length > 0 ? (
+                    filteredUsers.slice(0, 10).map(user => (
+                      <button
+                        key={user.handle}
+                        type="button"
+                        onClick={() => addTeamMember(user.handle)}
+                        className="w-full px-3 py-2 text-left hover:bg-green-900/30 transition-colors flex items-center gap-3"
+                      >
+                        <img
+                          src={user.profileImageUrl || `https://unavatar.io/twitter/${user.handle}`}
+                          alt={user.handle}
+                          className="w-8 h-8 rounded-full"
+                        />
+                        <div className="flex-1">
+                          <div className="text-sm text-green-300">@{user.handle}</div>
+                          {user.name && (
+                            <div className="text-xs text-green-500">{user.name}</div>
+                          )}
+                        </div>
+                      </button>
+                    ))
+                  ) : (
+                    <div className="p-3 text-center text-green-500 text-sm">
+                      No approved users found. You can still add any handle manually.
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
             
             <div className="flex flex-wrap gap-2">
@@ -457,11 +548,14 @@ export default function EditCampaignModal({ campaign, projects, onClose, onSave 
         </div>
       </div>
       
-      {/* Click outside to close dropdown */}
-      {showProjectDropdown && (
+      {/* Click outside to close dropdowns */}
+      {(showProjectDropdown || showTeamMemberDropdown) && (
         <div
           className="fixed inset-0 z-0"
-          onClick={() => setShowProjectDropdown(false)}
+          onClick={() => {
+            setShowProjectDropdown(false)
+            setShowTeamMemberDropdown(false)
+          }}
         />
       )}
     </div>

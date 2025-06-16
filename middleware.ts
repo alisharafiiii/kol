@@ -16,7 +16,6 @@ const protectedPaths = [
   '/api/upload',
   '/api/discord/bot-reboot',
   '/api/discord/bot-status',
-  '/discord/share'
 ]
 
 // Paths that should be accessible without authentication
@@ -31,7 +30,8 @@ const publicPaths = [
   '/api/webhook',
   '/_next',
   '/favicon.ico',
-  '/api/public'
+  '/api/public',
+  '/discord/share/project--',
 ]
 
 export async function middleware(request: NextRequest) {
@@ -59,6 +59,12 @@ export async function middleware(request: NextRequest) {
   const isPublicPath = publicPaths.some(path => 
     pathname === path || pathname.startsWith(path + '/')
   )
+  
+  // Special handling for Discord share links
+  if (pathname.startsWith('/discord/share/project--')) {
+    console.log('[Middleware] Public Discord share link detected:', pathname)
+    return NextResponse.next()
+  }
   
   if (isPublicPath) {
     return NextResponse.next()
@@ -95,7 +101,7 @@ export async function middleware(request: NextRequest) {
       // For Discord share pages, check role access
       if (pathname.startsWith('/discord/share')) {
         const userRole = token.role as string
-        const allowedRoles = ['admin', 'core', 'viewer']
+        const allowedRoles = ['admin', 'core', 'viewer', 'scout']
         
         // Check for master admin handles
         const handle = ((token.twitterHandle as string) || (token.name as string) || '').toLowerCase().replace('@', '')

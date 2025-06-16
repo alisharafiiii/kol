@@ -69,6 +69,38 @@ export async function GET(
   try {
     console.log('Discord Project API: Request for project:', params.id)
     
+    // Check if this is a public access request
+    const { searchParams } = new URL(request.url)
+    const isPublicRequest = searchParams.get('public') === 'true'
+    
+    // Handle URL-encoded colons in project ID
+    const projectId = decodeURIComponent(params.id).replace(/--/g, ':')
+    console.log('Discord Project API: Looking for project:', projectId)
+    console.log('Discord Project API: Is public request:', isPublicRequest)
+    
+    // For public requests, check if the project ID matches the public share pattern
+    if (isPublicRequest && projectId.startsWith('project:discord:')) {
+      console.log('Discord Project API: Public share link detected, allowing public access')
+      
+      const project = await DiscordService.getProject(projectId)
+      if (!project) {
+        console.log('Discord Project API: Project not found')
+        return NextResponse.json({ error: 'Project not found' }, { status: 404 })
+      }
+      
+      // Return limited project data for public access
+      console.log('Discord Project API: Returning public project data:', project.name)
+      return NextResponse.json({
+        id: project.id,
+        name: project.name,
+        serverId: project.serverId,
+        serverName: project.serverName,
+        iconUrl: project.iconUrl,
+        // Don't include sensitive data like webhook URLs
+      })
+    }
+    
+    // For non-public requests, require authentication
     const session = await getServerSession(authOptions)
     console.log('Discord Project API: Session exists:', !!session)
     console.log('Discord Project API: Session user:', session?.user?.name)
@@ -83,10 +115,6 @@ export async function GET(
         requiredRoles: ['admin', 'core', 'viewer']
       }, { status: 403 })
     }
-
-    // Handle URL-encoded colons in project ID
-    const projectId = decodeURIComponent(params.id).replace(/--/g, ':')
-    console.log('Discord Project API: Looking for project:', projectId)
     
     const project = await DiscordService.getProject(projectId)
     if (!project) {

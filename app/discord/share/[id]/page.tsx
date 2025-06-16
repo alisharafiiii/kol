@@ -98,7 +98,7 @@ class ErrorBoundary extends React.Component<
   }
 }
 
-// This page requires authentication and proper role
+// This page can be accessed publicly if it's a valid project share link
 function DiscordSharePageContent() {
   const params = useParams()
   const router = useRouter()
@@ -109,6 +109,7 @@ function DiscordSharePageContent() {
   const [analytics, setAnalytics] = useState<DiscordAnalytics | null>(null)
   const [scoutProject, setScoutProject] = useState<any>(null)
   const [checkingAccess, setCheckingAccess] = useState(true)
+  const [isPublicShare, setIsPublicShare] = useState(false)
   const searchParams = useSearchParams()
   const timeframe = searchParams.get('timeframe') || 'weekly'
   
@@ -125,6 +126,15 @@ function DiscordSharePageContent() {
   console.log('Discord Share: Session status:', status)
   console.log('Discord Share: Session data:', session)
   console.log('Discord Share: Current URL:', typeof window !== 'undefined' ? window.location.href : 'SSR')
+  
+  // Check if this is a public share link
+  useEffect(() => {
+    // Check if the project ID matches the public share pattern
+    if (projectId.startsWith('project:discord:')) {
+      console.log('Discord Share: Detected public share link pattern')
+      setIsPublicShare(true)
+    }
+  }, [projectId])
   
   // Add a catch-all error handler
   useEffect(() => {
@@ -159,7 +169,69 @@ function DiscordSharePageContent() {
       console.log('Discord Share: CheckingAccess:', checkingAccess)
       console.log('Discord Share: Loading:', loading)
       console.log('Discord Share: Error:', error)
+      console.log('Discord Share: Is Public Share:', isPublicShare)
       
+      // For public share links, skip authentication check
+      if (isPublicShare) {
+        console.log('Discord Share: Public share link detected, skipping auth check')
+        setCheckingAccess(false)
+        
+        try {
+          // Fetch project data with public flag
+          const projectRes = await fetch(`/api/discord/projects/${encodeURIComponent(projectId)}?public=true`, {
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          })
+          
+          console.log('Discord Share: Public project fetch status:', projectRes.status)
+          
+          if (!projectRes.ok) {
+            const errorText = await projectRes.text()
+            console.error('Discord Share: Project fetch error:', errorText)
+            
+            if (projectRes.status === 404) {
+              setError('Discord project not found')
+            } else if (projectRes.status === 403) {
+              setError('This project is not publicly shared')
+            } else {
+              setError(`Failed to load Discord project (${projectRes.status})`)
+            }
+            setLoading(false)
+            return
+          }
+          
+          const projectData = await projectRes.json()
+          setProject(projectData)
+          console.log('Discord Share: Public project loaded:', projectData.name)
+          
+          // Fetch analytics with public flag
+          const analyticsRes = await fetch(`/api/discord/projects/${encodeURIComponent(projectId)}/analytics?timeframe=${timeframe}&public=true`, {
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          })
+          
+          if (!analyticsRes.ok) {
+            console.error('Discord Share: Failed to fetch public analytics:', analyticsRes.status)
+            // Don't show error for analytics, just continue without them
+          } else {
+            const analyticsData = await analyticsRes.json()
+            console.log('Discord Share: Public analytics loaded')
+            setAnalytics(analyticsData.analytics || analyticsData)
+          }
+          
+          setLoading(false)
+          return
+        } catch (err) {
+          console.error('Discord Share: Error loading public project:', err)
+          setError('Error loading project data')
+          setLoading(false)
+          return
+        }
+      }
+      
+      // For non-public links, continue with authentication check
       // Skip if we're still checking access
       if (checkingAccess && status === 'loading') {
         console.log('Discord Share: Waiting for session status...')
@@ -236,7 +308,7 @@ function DiscordSharePageContent() {
           console.log('Discord Share: User handle from profile:', profile?.twitterHandle)
           
           // Check access based on role
-          const allowedRoles = ['admin', 'core', 'viewer']
+          const allowedRoles = ['admin', 'core', 'viewer', 'scout']
           const userRole = profile?.role || 'user'  // Default to 'user' if no role
           
           // Use session username for admin check
@@ -421,6 +493,7 @@ function DiscordSharePageContent() {
                 <span className="px-3 py-1 bg-green-900/20 border border-green-900 rounded-full text-green-400">admin</span>
                 <span className="px-3 py-1 bg-blue-900/20 border border-blue-900 rounded-full text-blue-400">core</span>
                 <span className="px-3 py-1 bg-purple-900/20 border border-purple-900 rounded-full text-purple-400">viewer</span>
+                <span className="px-3 py-1 bg-yellow-900/20 border border-yellow-900 rounded-full text-yellow-400">scout</span>
               </div>
             </div>
             

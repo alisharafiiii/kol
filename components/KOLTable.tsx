@@ -17,10 +17,10 @@ interface KOLTableProps {
 export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit }: KOLTableProps) {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editingField, setEditingField] = useState<string | null>(null)
-  const [editValue, setEditValue] = useState<string | string[]>('')
+  const [editValue, setEditValue] = useState<any>(null)
   const [selectedKOL, setSelectedKOL] = useState<{ handle: string; name: string } | null>(null)
   const [products, setProducts] = useState<Product[]>([])
-  const [loadingProducts, setLoadingProducts] = useState(true)
+  const [loadingProducts, setLoadingProducts] = useState(false)
   const [showProductModal, setShowProductModal] = useState<string | null>(null)
   const [updatingProduct, setUpdatingProduct] = useState<string | null>(null)
   const [selectedProducts, setSelectedProducts] = useState<string[]>([])
@@ -31,40 +31,31 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
   const payments: KOL['payment'][] = ['pending', 'approved', 'paid', 'rejected']
   const tiers: KOL['tier'][] = ['hero', 'legend', 'star', 'rising', 'micro']
 
-  // Fetch products on mount
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const fetchedProducts = await ProductServiceClient.getActiveProducts()
-        setProducts(fetchedProducts)
+        setLoadingProducts(true)
+        const activeProducts = await ProductServiceClient.getActiveProducts()
+        setProducts(activeProducts)
       } catch (error) {
-        console.error('Failed to fetch products:', error)
+        console.error('Error fetching products:', error)
       } finally {
         setLoadingProducts(false)
       }
     }
     fetchProducts()
   }, [])
-
-  // Get all products assigned to a KOL (by handle)
+  
+  // Get all products for a specific KOL handle
   const getKOLProducts = (handle: string) => {
-    return kols
-      .filter(k => k.handle === handle && k.productId)
-      .map(k => {
-        const product = products.find(p => p.id === k.productId)
-        return product ? { ...product, kolEntryId: k.id, productCost: k.productCost } : null
-      })
-      .filter(Boolean) as (Product & { kolEntryId: string; productCost?: number })[]
+    return kols.filter(k => k.handle === handle)
   }
 
   const startEdit = (kolId: string, field: string, value: any) => {
+    if (!canEdit) return
     setEditingId(kolId)
     setEditingField(field)
-    if (field === 'links') {
-      setEditValue(value || [])
-    } else {
-      setEditValue(Array.isArray(value) ? value.join(', ') : String(value || ''))
-    }
+    setEditValue(value)
   }
 
   const saveEdit = async (kolId: string, field: string) => {
@@ -335,7 +326,9 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
                         className="font-medium cursor-pointer hover:text-green-400 transition-colors"
                         onClick={() => setSelectedKOL({ handle: kol.handle, name: kol.name })}
                       >
-                        {kol.name}
+                        <span title={kol.name}>
+                          {kol.name}
+                        </span>
                       </div>
                       <div className="text-xs text-gray-500">@{kol.handle}</div>
                     </div>
@@ -531,12 +524,30 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
                                       <button
                                         onClick={async () => {
                                           try {
-                                            await onDelete(p.kolEntryId)
-                                            // Close and reopen modal to refresh data
+                                            // Confirm before removing
+                                            if (!confirm(`Remove ${p.name} from @${kol.handle}?`)) {
+                                              return
+                                            }
+                                            
+                                            // Check if this is the only product for this KOL
+                                            if (kolProducts.length === 1) {
+                                              // This is the only product, so we update the KOL to remove product fields
+                                              await onUpdate(p.kolEntryId, {
+                                                productId: '',
+                                                productCost: 0,
+                                                productQuantity: 1
+                                              })
+                                            } else {
+                                              // Multiple products exist, so we need to delete this specific entry
+                                              await onDelete(p.kolEntryId)
+                                            }
+                                            
+                                            // Trigger parent refresh
+                                            if ((window as any).refreshCampaignData) {
+                                              await (window as any).refreshCampaignData()
+                                            }
+                                            // Close modal after refresh
                                             setShowProductModal(null)
-                                            setTimeout(() => {
-                                              setShowProductModal(kol.id)
-                                            }, 100)
                                           } catch (error) {
                                             console.error('Error removing product:', error)
                                             alert('Failed to remove product')
@@ -589,7 +600,7 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
                                               tier: kol.tier,
                                               stage: kol.stage,
                                               device: kol.device,
-                                              budget: kol.budget,
+                                              budget: "0",
                                               payment: kol.payment,
                                               platform: kol.platform || ['x'],
                                               contact: kol.contact || '',
@@ -701,12 +712,12 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
                                 </div>
                               ))
                             })()}
-                    </div>
-                  ) : (
+                          </div>
+                        ) : (
                           <div className="text-xs text-gray-500 hover:text-green-400">
                             {canEdit ? '+ Add' : '-'}
                           </div>
-                  )}
+                        )}
                       </div>
                     )
                   })()}
@@ -1042,14 +1053,13 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
                       onClick={async () => {
                         if (!confirm(`Are you sure you want to remove ${kol.name} completely from this campaign?`)) return
                         
-                        // Delete all entries for this KOL
+                        // Delete all entries for this KOL (including product entries)
                         try {
-                          for (const entry of kolProductEntries) {
-                            await onDelete(entry.kolEntryId)
-                          }
-                          // Also delete the main entry if it has no product
-                          if (!kol.productId) {
-                            await onDelete(kol.id)
+                          // Get all entries for this KOL handle
+                          const allKolEntries = kols.filter(k => k.handle === kol.handle)
+                          
+                          for (const entry of allKolEntries) {
+                            await onDelete(entry.id)
                           }
                         } catch (error) {
                           console.error('Error removing KOL:', error)

@@ -21,6 +21,11 @@ export class ProfileService {
         profile.twitterHandle = profile.twitterHandle.replace('@', '').toLowerCase()
       }
       
+      // Ensure name field has a value
+      if (!profile.name && profile.twitterHandle) {
+        profile.name = profile.twitterHandle
+      }
+      
       // Save to Redis
       await redis.json.set(
         `${this.PREFIX}${profile.id}`,
@@ -84,7 +89,7 @@ export class ProfileService {
     country?: string
     isKOL?: boolean
     searchTerm?: string
-  }): Promise<UnifiedProfile[]> {
+  } = {}): Promise<UnifiedProfile[]> {
     try {
       let profileIds: string[] = []
       
@@ -124,9 +129,28 @@ export class ProfileService {
       }
       
       // Start with all profiles if no specific filters
-      if (!filters.role && !filters.approvalStatus && !filters.tier) {
+      if (!filters.role && !filters.approvalStatus && !filters.tier && !filters.country && filters.isKOL === undefined) {
+        console.log('[ProfileService] No filters provided, getting all profiles')
         const keys = await redis.keys(`${this.PREFIX}*`)
-        profileIds = keys.map((key: string) => key.replace(this.PREFIX, ''))
+        console.log('[ProfileService] Found profile keys:', keys.length)
+        
+        // Get all profiles
+        const profiles = await Promise.all(
+          keys.map(async (key: string) => {
+            try {
+              const profile = await redis.json.get(key)
+              return profile ? this.deserializeProfile(profile) : null
+            } catch (error) {
+              console.error(`[ProfileService] Error getting profile ${key}:`, error)
+              return null
+            }
+          })
+        )
+        
+        // Filter out nulls
+        const validProfiles = profiles.filter((p): p is UnifiedProfile => p !== null)
+        console.log('[ProfileService] Valid profiles:', validProfiles.length)
+        return validProfiles
       } else {
         // Use indexes for filtering
         const setsToIntersect: string[][] = []
@@ -152,27 +176,27 @@ export class ProfileService {
             acc.length === 0 ? set : acc.filter(id => set.includes(id))
           )
         }
+        
+        // Get all profiles
+        const profiles = await Promise.all(
+          profileIds.map(id => this.getProfileById(id))
+        )
+        
+        // Filter nulls and apply additional filters
+        return profiles.filter((profile): profile is UnifiedProfile => {
+          if (!profile) return false
+          
+          if (filters.isKOL !== undefined && profile.isKOL !== filters.isKOL) {
+            return false
+          }
+          
+          if (filters.country && profile.country !== filters.country) {
+            return false
+          }
+          
+          return true
+        })
       }
-      
-      // Get all profiles
-      const profiles = await Promise.all(
-        profileIds.map(id => this.getProfileById(id))
-      )
-      
-      // Filter nulls and apply additional filters
-      return profiles.filter((profile): profile is UnifiedProfile => {
-        if (!profile) return false
-        
-        if (filters.isKOL !== undefined && profile.isKOL !== filters.isKOL) {
-          return false
-        }
-        
-        if (filters.country && profile.country !== filters.country) {
-          return false
-        }
-        
-        return true
-      })
     } catch (error) {
       console.error('Error searching profiles:', error)
       return []

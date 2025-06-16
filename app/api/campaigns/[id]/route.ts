@@ -28,13 +28,29 @@ export async function PUT(
   try {
     const session = await getServerSession(authOptions)
     
+    console.log('Campaign API - Session data:', {
+      hasSession: !!session,
+      userName: session?.user?.name,
+      userEmail: session?.user?.email,
+      userRole: (session as any)?.role || (session as any)?.user?.role
+    })
+    
     if (!session?.user?.name) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized - No session' }, { status: 401 })
     }
     
     const updates = await request.json()
     
-    const campaign = await updateCampaign(params.id, updates, session.user.name)
+    console.log('Campaign update request:', {
+      campaignId: params.id,
+      updates,
+      user: session.user.name
+    })
+    
+    // Extract role from session
+    const sessionRole = (session as any)?.role || (session as any)?.user?.role
+    
+    const campaign = await updateCampaign(params.id, updates, session.user.name, sessionRole)
     
     if (!campaign) {
       return NextResponse.json({ error: 'Campaign not found' }, { status: 404 })
@@ -45,7 +61,7 @@ export async function PUT(
     console.error('Error updating campaign:', error)
     
     if (error.message === 'Unauthorized') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+      return NextResponse.json({ error: 'Unauthorized - Permission denied' }, { status: 403 })
     }
     
     return NextResponse.json({ error: 'Failed to update campaign' }, { status: 500 })

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { authOptions } from '@/lib/auth-config'
 import { ProfileService } from '@/lib/services/profile-service'
 import { ProfileMigrationService } from '@/lib/services/profile-migration'
 import { UnifiedProfile } from '@/lib/types/profile'
@@ -61,10 +61,61 @@ export async function PUT(
     // Check permissions
     const userHandle = (session as any).twitterHandle || (session as any).user?.name
     const userRole = (session as any).role
-    const isOwner = userHandle === handle
-    const isAdmin = userRole === 'admin' || userRole === 'core'
+    
+    // Normalize handles for comparison (remove @ and lowercase, but keep underscores)
+    const normalizedUserHandle = userHandle?.replace('@', '').toLowerCase()
+    const normalizedParamHandle = handle?.replace('@', '').toLowerCase()
+    const normalizedProfileHandle = profile.twitterHandle?.replace('@', '').toLowerCase()
+    
+    // Special logging for Atitty case
+    if (normalizedParamHandle === 'atitty_' || normalizedProfileHandle === 'atitty_') {
+      console.log('=== ATITTY PROFILE UPDATE DEBUG ===')
+      console.log('Session:', JSON.stringify(session, null, 2))
+      console.log('User handle from session:', userHandle)
+      console.log('Normalized user handle:', normalizedUserHandle)
+      console.log('Param handle:', handle)
+      console.log('Normalized param handle:', normalizedParamHandle)
+      console.log('Profile handle:', profile.twitterHandle)
+      console.log('Normalized profile handle:', normalizedProfileHandle)
+      console.log('User role:', userRole)
+      console.log('Is owner check:', normalizedUserHandle === normalizedParamHandle || normalizedUserHandle === normalizedProfileHandle)
+      console.log('Comparison details:')
+      console.log('  normalizedUserHandle === normalizedParamHandle:', normalizedUserHandle === normalizedParamHandle)
+      console.log('  normalizedUserHandle === normalizedProfileHandle:', normalizedUserHandle === normalizedProfileHandle)
+    }
+    
+    console.log('Profile update permission check:', {
+      userHandle,
+      normalizedUserHandle,
+      paramHandle: handle,
+      normalizedParamHandle,
+      profileHandle: profile.twitterHandle,
+      normalizedProfileHandle,
+      userRole,
+      sessionData: {
+        twitterHandle: (session as any).twitterHandle,
+        userName: (session as any).user?.name,
+      }
+    })
+    
+    const isOwner = normalizedUserHandle === normalizedParamHandle || 
+                    normalizedUserHandle === normalizedProfileHandle ||
+                    // Additional check: if the session user's name matches the profile handle
+                    ((session as any)?.user?.name && (session as any).user.name.toLowerCase().replace('@', '') === normalizedProfileHandle) ||
+                    // Check if it's the same user by comparing various possible handle formats
+                    (normalizedUserHandle && normalizedProfileHandle && (
+                      normalizedUserHandle === normalizedProfileHandle ||
+                      normalizedUserHandle.replace('_', '') === normalizedProfileHandle.replace('_', '') ||
+                      normalizedUserHandle.replace('-', '') === normalizedProfileHandle.replace('-', '')
+                    ))
+    const isAdmin = userRole === 'admin' || userRole === 'core' || 
+                    // Special admin users
+                    normalizedUserHandle === 'nabulines' || 
+                    normalizedUserHandle === 'sharafi_eth' ||
+                    normalizedUserHandle === 'alinabu'
     
     if (!isOwner && !isAdmin) {
+      console.log('Permission denied:', { isOwner, isAdmin, normalizedUserHandle, normalizedParamHandle })
       return NextResponse.json(
         { error: 'Forbidden' },
         { status: 403 }
@@ -118,6 +169,13 @@ export async function PUT(
         }
       })
     }
+    
+    console.log('Saving profile update:', {
+      handle: profile.twitterHandle,
+      isOwner,
+      isAdmin,
+      fieldsUpdated: Object.keys(updates)
+    })
     
     // Save updated profile
     const saved = await ProfileService.saveProfile(updatedProfile)

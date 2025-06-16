@@ -159,7 +159,18 @@ export default function CampaignAnalyticsPage({ params }: { params: { slug: stri
   const analytics = {
     // Basic stats
     totalKOLs: kols.length,
-    totalBudget: kols.reduce((sum, kol) => sum + kol.budget, 0),
+    totalBudget: campaign?.kols?.reduce((sum, kol) => {
+      // Skip if no budget
+      if (!kol.budget) return sum
+      
+      // Parse budget string to number
+      const budgetNum = parseFloat(kol.budget.replace(/[^0-9.-]+/g, '') || '0') || 0
+      
+      // Skip entries with "0" budget (these are product-only entries)
+      if (kol.budget === "0" || budgetNum === 0) return sum
+      
+      return sum + budgetNum
+    }, 0) || 0,
     totalProductCost: campaign?.kols?.reduce((sum, kol) => sum + ((kol.productCost || 0) * (kol.productQuantity || 1)), 0) || 0,
     totalCost: 0, // Will be calculated below
     totalViews: kols.reduce((sum, kol) => sum + (kol.totalViews || 0), 0),

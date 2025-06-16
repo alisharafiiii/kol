@@ -61,7 +61,7 @@ export async function GET(req: NextRequest) {
           const response = {
             user: {
               id: unifiedProfile.id,
-              name: unifiedProfile.name,
+              name: unifiedProfile.name || unifiedProfile.twitterHandle || 'Unknown User',
               profileImageUrl: unifiedProfile.profileImageUrl?.replace('_normal', '_400x400'),
               twitterHandle: unifiedProfile.twitterHandle,
               approvalStatus: unifiedProfile.approvalStatus || 'pending',

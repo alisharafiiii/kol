@@ -13,7 +13,7 @@ export class ProfileMigrationService {
       // Core fields
       id: oldProfile.id,
       twitterHandle: oldProfile.twitterHandle ? oldProfile.twitterHandle.replace('@', '').toLowerCase() : '',
-      name: oldProfile.name,
+      name: oldProfile.name || oldProfile.twitterHandle || 'Unknown User',
       profileImageUrl: oldProfile.profileImageUrl,
       bio: oldProfile.bio,
       
@@ -28,6 +28,7 @@ export class ProfileMigrationService {
       // KOL fields - check if they have any campaign data
       isKOL: Boolean(oldProfile.campaigns && oldProfile.campaigns.length > 0),
       currentTier: undefined,
+      tier: oldProfile.tier || 'micro',
       campaigns: [], // Will need to convert old campaign format
       
       // Contact info
