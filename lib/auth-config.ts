@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid';
 import { isMasterAdmin, logAdminAccess } from '@/lib/admin-config';
 
 // Enable for debugging
-const DEBUG = true;
+const DEBUG = false;
 
 // Basic log function
 const log = (message: string, data?: any) => {

@@ -22,4 +22,20 @@ export async function ensureUploadDirectories() {
 }
 
 // Run on import
-ensureUploadDirectories().catch(console.error) 
+ensureUploadDirectories().catch(console.error)
+
+// Ensure upload directories exist
+async function ensureUploadDirs() {
+  try {
+    const uploadDir = join(process.cwd(), 'public', 'uploads')
+    await mkdir(uploadDir, { recursive: true })
+    console.log('Upload directory ensured:', uploadDir)
+  } catch (error) {
+    console.error('Error creating upload directory:', error)
+  }
+}
+
+// Run on module load
+if (typeof window === 'undefined') {
+  ensureUploadDirs()
+} 

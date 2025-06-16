@@ -10,12 +10,14 @@ const protectedPaths = [
   '/campaigns/create',
   '/campaigns/*/edit',
   '/campaigns/*/brief/edit',
+  '/contracts-admin',
   '/api/admin',
   '/api/campaigns',
   '/api/projects',
   '/api/upload',
   '/api/discord/bot-reboot',
   '/api/discord/bot-status',
+  '/api/contracts',
 ]
 
 // Paths that should be accessible without authentication
@@ -27,11 +29,15 @@ const publicPaths = [
   '/terms',
   '/campaigns',
   '/contests',
+  '/contracts',
   '/api/webhook',
   '/_next',
   '/favicon.ico',
   '/api/public',
   '/discord/share/project--',
+  '/sign',
+  '/api/contracts/*/sign',
+  '/api/contracts/*', // Allow public access to individual contracts for signing page
 ]
 
 export async function middleware(request: NextRequest) {
