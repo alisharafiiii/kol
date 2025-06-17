@@ -54,7 +54,7 @@ export default function NavigationHeader() {
         <div className="flex items-center justify-between h-12 sm:h-14">
           {/* Logo */}
           <div 
-            className="flex items-center gap-2 cursor-pointer"
+            className="flex items-center gap-2 cursor-pointer flex-shrink-0"
             onClick={() => router.push('/')}
           >
             <div className="relative w-8 h-8 sm:w-10 sm:h-10">
@@ -68,8 +68,8 @@ export default function NavigationHeader() {
             </div>
           </div>
           
-          {/* Navigation */}
-          <nav className="flex items-center gap-2 sm:gap-4">
+          {/* Navigation - Updated for better mobile alignment */}
+          <nav className="flex items-center gap-1 sm:gap-4">
             {navItems.map(item => {
               // Check if user has permission to see this item
               if (item.requiresAdmin && !isAdmin) return null
@@ -79,7 +79,7 @@ export default function NavigationHeader() {
                 <button
                   key={item.path}
                   onClick={() => router.push(item.path)}
-                  className={`px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-mono transition-colors relative ${
+                  className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-sm font-mono transition-colors relative whitespace-nowrap ${
                     isActive(item.path)
                       ? 'text-green-300'
                       : 'text-green-300/70 hover:text-green-300'
@@ -96,7 +96,7 @@ export default function NavigationHeader() {
             {/* Home link */}
             <button
               onClick={() => router.push('/')}
-              className="px-3 py-1.5 text-xs sm:text-sm font-mono text-green-300/70 hover:text-green-300 transition-colors"
+              className="px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-sm font-mono text-green-300/70 hover:text-green-300 transition-colors whitespace-nowrap"
             >
               Home
             </button>
