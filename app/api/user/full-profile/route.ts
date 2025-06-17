@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { redis } from '@/lib/redis';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { ProfileService } from '@/lib/services/profile-service';
+import { logAdminAccess } from '@/lib/admin-config';
 
 export async function GET(req: NextRequest) {
   try {
@@ -14,6 +16,14 @@ export async function GET(req: NextRequest) {
     
     const normalizedHandle = handle.replace('@', '').toLowerCase();
     
+    // First try ProfileService (new system)
+    const profile = await ProfileService.getProfileByHandle(normalizedHandle);
+    
+    if (profile) {
+      return NextResponse.json(profile);
+    }
+    
+    // Fall back to old Redis system
     // Get user IDs by handle
     const userIds = await redis.smembers(`idx:username:${normalizedHandle}`);
     
@@ -22,20 +32,20 @@ export async function GET(req: NextRequest) {
     }
     
     // Get the full profile
-    let profile = null;
+    let oldProfile = null;
     for (const userId of userIds) {
       const userProfile = await redis.json.get(`user:${userId}`);
       if (userProfile) {
-        profile = userProfile;
+        oldProfile = userProfile;
         break;
       }
     }
     
-    if (!profile) {
+    if (!oldProfile) {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
     }
     
-    return NextResponse.json(profile);
+    return NextResponse.json(oldProfile);
     
   } catch (error) {
     console.error('Error fetching full user profile:', error);
@@ -71,6 +81,36 @@ export async function PUT(req: NextRequest) {
     }
     
     const normalizedHandle = handle.replace('@', '').toLowerCase();
+    
+    // Log admin access
+    logAdminAccess(normalizedSessionHandle, 'full_profile_update', {
+      method: userRole,
+      targetHandle: handle,
+      updates: Object.keys(updates),
+      api: 'full_profile'
+    });
+    
+    // First try ProfileService (new system)
+    let profile = await ProfileService.getProfileByHandle(normalizedHandle);
+    
+    if (profile) {
+      console.log('[FULL-PROFILE PUT] Found profile in ProfileService');
+      
+      // Apply updates to profile
+      Object.keys(updates).forEach(key => {
+        (profile as any)[key] = updates[key];
+      });
+      
+      // Save updated profile
+      await ProfileService.saveProfile(profile);
+      
+      console.log('[FULL-PROFILE PUT] Profile updated successfully in ProfileService');
+      
+      return NextResponse.json(profile);
+    }
+    
+    // Fall back to old Redis system
+    console.log('[FULL-PROFILE PUT] Profile not found in ProfileService, checking old Redis system...');
     
     // Get user IDs by handle
     const userIds = await redis.smembers(`idx:username:${normalizedHandle}`);
