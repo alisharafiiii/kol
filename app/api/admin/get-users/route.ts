@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { redis, InfluencerProfile } from '@/lib/redis'
+import { ProfileService } from '@/lib/services/profile-service'
 
 export async function GET(req: NextRequest) {
   try {
@@ -31,18 +32,70 @@ export async function GET(req: NextRequest) {
     
     console.log('[ADMIN GET-USERS] Access granted, fetching users...')
     
-    // Try to get users from Redis
+    // Try to get users from both systems
     try {
-      // Get all user keys from Redis
-      const userKeys = await redis.keys('user:*')
+      const allUsers: any[] = []
+      const seenHandles = new Set<string>()
       
-      // Fetch all user profiles
-      const users = await Promise.all(
+      // 1. Get users from NEW ProfileService system
+      console.log('[ADMIN GET-USERS] Fetching from ProfileService...')
+      const profiles = await ProfileService.searchProfiles({})
+      console.log(`[ADMIN GET-USERS] Found ${profiles.length} profiles in ProfileService`)
+      
+      profiles.forEach(profile => {
+        const handle = profile.twitterHandle?.toLowerCase()
+        if (handle) {
+          seenHandles.add(handle)
+        }
+        
+        // Convert to the format expected by AdminPanel
+        allUsers.push({
+          id: profile.id,
+          name: profile.name || profile.twitterHandle || 'Unknown',
+          handle: profile.twitterHandle ? `@${profile.twitterHandle}` : '',
+          twitterHandle: profile.twitterHandle,
+          profileImageUrl: profile.profileImageUrl,
+          role: profile.role,
+          approvalStatus: profile.approvalStatus,
+          tier: profile.tier || profile.currentTier,
+          isKOL: profile.isKOL,
+          email: profile.email,
+          phone: profile.phone,
+          telegram: (profile as any).telegram,
+          country: profile.country,
+          followerCount: (profile as any).followerCount || 0,
+          totalFollowers: (profile as any).followerCount || 0,
+          createdAt: profile.createdAt,
+          updatedAt: profile.updatedAt,
+          // Include other fields that AdminPanel might need
+          shippingInfo: (profile as any).shippingInfo,
+          socialAccounts: (profile as any).socialAccounts || { twitter: { handle: profile.twitterHandle, followers: (profile as any).followerCount || 0 } },
+          audienceTypes: (profile as any).audienceTypes,
+          chains: (profile as any).chains,
+          postPricePerPost: (profile as any).postPricePerPost,
+          monthlySupportBudget: (profile as any).monthlySupportBudget
+        })
+      })
+      
+      // 2. Get users from OLD Redis system (to catch any that haven't migrated)
+      console.log('[ADMIN GET-USERS] Fetching from old Redis system...')
+      const userKeys = await redis.keys('user:*')
+      console.log(`[ADMIN GET-USERS] Found ${userKeys.length} user keys in old system`)
+      
+      // Fetch all user profiles from old system
+      const oldUsers = await Promise.all(
         userKeys.map(async (key: string) => {
           const userId = key.replace('user:', '')
           const profile = await redis.json.get(key) as InfluencerProfile | null
           
           if (!profile) return null
+          
+          // Skip if we already have this user from ProfileService
+          const profileHandle = profile.twitterHandle?.toLowerCase()?.replace('@', '')
+          if (profileHandle && seenHandles.has(profileHandle)) {
+            console.log(`[ADMIN GET-USERS] Skipping duplicate from old system: ${profileHandle}`)
+            return null
+          }
           
           // Calculate total follower count from all social profiles
           let totalFollowers = profile.followerCount || 0
@@ -92,43 +145,16 @@ export async function GET(req: NextRequest) {
         })
       )
       
-      // Filter out any null entries
-      const validUsers = users.filter(Boolean) as any[]
-      
-      // Deduplicate by Twitter handle
-      const uniqueUsersMap = new Map()
-      
-      validUsers.forEach(user => {
-        const twitterHandle = user.handle?.toLowerCase() || user.twitterHandle?.toLowerCase()
-        const key = twitterHandle || user.id
-        
-        if (!key) return
-        
-        if (uniqueUsersMap.has(key)) {
-          const existing = uniqueUsersMap.get(key)
-          
-          if ((!existing.handle && user.handle) || 
-              (user.totalFollowers > (existing.totalFollowers || 0))) {
-            
-            const mergedUser = {
-              ...existing,
-              ...user,
-              totalFollowers: Math.max(user.totalFollowers || 0, existing.totalFollowers || 0),
-              handle: user.handle || existing.handle,
-              twitterHandle: user.twitterHandle || existing.twitterHandle
-            }
-            
-            uniqueUsersMap.set(key, mergedUser)
-          }
-        } else {
-          uniqueUsersMap.set(key, user)
+      // Add valid old users to the list
+      oldUsers.forEach(user => {
+        if (user) {
+          allUsers.push(user)
         }
       })
       
-      const uniqueUsers = Array.from(uniqueUsersMap.values())
-      
-      console.log(`[ADMIN GET-USERS] Returning ${uniqueUsers.length} users`)
-      return NextResponse.json({ users: uniqueUsers })
+      console.log(`[ADMIN GET-USERS] Total users from both systems: ${allUsers.length}`)
+      console.log(`[ADMIN GET-USERS] Returning ${allUsers.length} users`)
+      return NextResponse.json({ users: allUsers })
       
     } catch (redisError) {
       console.error('[ADMIN GET-USERS] Redis error:', redisError)

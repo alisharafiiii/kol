@@ -248,6 +248,51 @@ function createTweetEmbed(tweet, submitterName, includeButtons = true) {
 client.on('ready', async () => {
   console.log(`✅ Engagement bot logged in as ${client.user.tag}`)
   
+  // Start checking for channel info requests
+  setInterval(async () => {
+    try {
+      // Look for any channel info requests
+      const keys = await redis.keys('discord:channel-info-request:*')
+      
+      for (const key of keys) {
+        const request = await redis.get(key)
+        if (!request) continue
+        
+        const { channelId, serverId } = JSON.parse(request)
+        
+        // Try to fetch the channel
+        try {
+          const guild = client.guilds.cache.get(serverId)
+          if (!guild) {
+            console.log(`Guild ${serverId} not found in cache`)
+            continue
+          }
+          
+          const channel = guild.channels.cache.get(channelId)
+          if (channel) {
+            // Store the response
+            const responseKey = `discord:channel-info-response:${channelId}`
+            await redis.setex(responseKey, 60, JSON.stringify({
+              id: channelId,
+              name: channel.name,
+              type: channel.type === 0 ? 'text' : 'voice'
+            }))
+            console.log(`✅ Fetched channel info: #${channel.name} (${channelId})`)
+          } else {
+            console.log(`Channel ${channelId} not found in guild ${serverId}`)
+          }
+        } catch (error) {
+          console.error(`Error fetching channel ${channelId}:`, error)
+        }
+        
+        // Delete the request
+        await redis.del(key)
+      }
+    } catch (error) {
+      console.error('Error processing channel info requests:', error)
+    }
+  }, 2000) // Check every 2 seconds
+  
   // Register slash commands
   const commands = [
     {

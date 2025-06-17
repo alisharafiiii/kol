@@ -1,13 +1,9 @@
+import { ProfileService } from '@/lib/services/profile-service'
 import { NextResponse } from 'next/server'
-import { searchProfiles } from '@/lib/redis'
 
 export async function GET() {
-  // test filtering for our sample
-  const results = await searchProfiles({
-    country: 'Canada',
-    minFollowers: 500,
-    chains: ['base'],
-    approvalStatus: 'pending',
+  const results = await ProfileService.searchProfiles({
+    approvalStatus: 'approved'
   })
   return NextResponse.json(results)
 } 

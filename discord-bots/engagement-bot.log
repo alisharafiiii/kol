@@ -1,0 +1,149 @@
+🔍 Loading environment from: /Users/nabu/kol/.env.local
+✅ AI model initialized for sentiment analysis
+🚀 Engagement bot starting...
+✅ Engagement bot logged in as nabulines_bot#8452
+✅ Slash commands registered
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error processing channel info requests: SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:261:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)

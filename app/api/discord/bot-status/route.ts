@@ -30,14 +30,16 @@ export async function GET(request: NextRequest) {
     // Check if bot process is running
     let isRunning = false
     let processInfo = null
+    let analyticsRunning = false
+    let analyticsProcessInfo = null
     
     try {
-      // Check for any node process running bot files
-      const { stdout } = await execAsync('ps aux | grep -E "node.*(engagement-bot\\.js|bot\\.js|bot-enhanced)" | grep -v grep')
+      // Check for engagement bot
+      const { stdout: engagementStdout } = await execAsync('ps aux | grep -E "node.*(engagement-bot\\.js|bot\\.js|bot-enhanced)" | grep -v grep')
       
-      if (stdout.trim()) {
+      if (engagementStdout.trim()) {
         isRunning = true
-        const lines = stdout.trim().split('\n')
+        const lines = engagementStdout.trim().split('\n')
         const firstProcess = lines[0].split(/\s+/)
         processInfo = {
           pid: firstProcess[1],
@@ -52,12 +54,42 @@ export async function GET(request: NextRequest) {
       isRunning = false
     }
     
+    try {
+      // Check for analytics bot
+      const { stdout: analyticsStdout } = await execAsync('ps aux | grep -E "node.*analytics-bot\\.js" | grep -v grep')
+      
+      if (analyticsStdout.trim()) {
+        analyticsRunning = true
+        const lines = analyticsStdout.trim().split('\n')
+        const firstProcess = lines[0].split(/\s+/)
+        analyticsProcessInfo = {
+          pid: firstProcess[1],
+          cpu: firstProcess[2],
+          memory: firstProcess[3],
+          startTime: firstProcess[8],
+          command: lines[0].substring(lines[0].indexOf('node'))
+        }
+      }
+    } catch (error) {
+      // Analytics bot not found
+      analyticsRunning = false
+    }
+    
     // Check last log entries
     let lastLogs: string[] = []
+    let analyticsLogs: string[] = []
     try {
       // Check bot-debug.log in root directory (where it's created)
       const { stdout: logs } = await execAsync('tail -n 20 bot-debug.log 2>/dev/null || echo "No logs found"')
       lastLogs = logs.trim().split('\n').filter(line => line && line !== 'No logs found')
+    } catch (error) {
+      // Ignore log errors
+    }
+    
+    try {
+      // Check analytics bot logs
+      const { stdout: logs } = await execAsync('tail -n 20 analytics-bot-debug.log 2>/dev/null || echo "No logs found"')
+      analyticsLogs = logs.trim().split('\n').filter(line => line && line !== 'No logs found')
     } catch (error) {
       // Ignore log errors
     }
@@ -67,6 +99,7 @@ export async function GET(request: NextRequest) {
     
     // Get uptime if running
     let uptime = null
+    let analyticsUptime = null
     if (isRunning && processInfo) {
       try {
         // Sanitize PID to prevent command injection
@@ -80,12 +113,28 @@ export async function GET(request: NextRequest) {
       }
     }
     
+    if (analyticsRunning && analyticsProcessInfo) {
+      try {
+        const pid = parseInt(analyticsProcessInfo.pid, 10)
+        if (!isNaN(pid) && pid > 0) {
+          const { stdout } = await execAsync(`ps -o etime= -p ${pid}`)
+          analyticsUptime = stdout.trim()
+        }
+      } catch (error) {
+        // Ignore uptime errors
+      }
+    }
+    
     return NextResponse.json({
       status: isRunning ? 'running' : 'stopped',
+      analyticsStatus: analyticsRunning ? 'running' : 'stopped',
       hasToken,
       process: processInfo,
+      analyticsProcess: analyticsProcessInfo,
       uptime,
+      analyticsUptime,
       lastLogs: lastLogs.slice(-10), // Last 10 log entries
+      analyticsLogs: analyticsLogs.slice(-10), // Last 10 analytics log entries
       timestamp: new Date().toISOString()
     })
   } catch (error) {

@@ -561,65 +561,133 @@ export default function DiscordAdminPage() {
         
         {botStatus ? (
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-black rounded p-4 border border-gray-600">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Status</span>
-                  <span className={`font-medium ${botStatus.status === 'running' ? 'text-green-400' : 'text-red-400'}`}>
-                    {botStatus.status === 'running' ? '🟢 Running' : '🔴 Stopped'}
-                  </span>
-                </div>
-              </div>
-              <div className="bg-black rounded p-4 border border-gray-600">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Uptime</span>
-                  <span className="font-medium text-white">
-                    {botStatus.uptime || 'N/A'}
-                  </span>
-                </div>
-              </div>
-              <div className="bg-black rounded p-4 border border-gray-600">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Token</span>
-                  <span className={`font-medium ${botStatus.hasToken ? 'text-green-400' : 'text-red-400'}`}>
-                    {botStatus.hasToken ? '✓ Configured' : '✗ Missing'}
-                  </span>
-                </div>
-              </div>
-            </div>
-            
-            {botStatus.process && (
-              <div className="bg-black rounded p-4 border border-gray-600">
-                <h4 className="text-sm font-medium text-gray-400 mb-2">Process Info</h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
-                  <div>
-                    <span className="text-gray-500">PID:</span> <span className="text-white">{botStatus.process.pid}</span>
+            {/* Engagement Bot Status */}
+            <div className="border border-gray-700 rounded-lg p-4 bg-black/50">
+              <h3 className="text-lg font-medium text-green-400 mb-3">Engagement Bot</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div className="bg-black rounded p-4 border border-gray-600">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400">Status</span>
+                    <span className={`font-medium ${botStatus.status === 'running' ? 'text-green-400' : 'text-red-400'}`}>
+                      {botStatus.status === 'running' ? '🟢 Running' : '🔴 Stopped'}
+                    </span>
                   </div>
-                  <div>
-                    <span className="text-gray-500">CPU:</span> <span className="text-white">{botStatus.process.cpu}%</span>
+                </div>
+                <div className="bg-black rounded p-4 border border-gray-600">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400">Uptime</span>
+                    <span className="font-medium text-white">
+                      {botStatus.uptime || 'N/A'}
+                    </span>
                   </div>
-                  <div>
-                    <span className="text-gray-500">Memory:</span> <span className="text-white">{botStatus.process.memory}%</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-500">Started:</span> <span className="text-white">{botStatus.process.startTime}</span>
+                </div>
+                <div className="bg-black rounded p-4 border border-gray-600">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400">Token</span>
+                    <span className={`font-medium ${botStatus.hasToken ? 'text-green-400' : 'text-red-400'}`}>
+                      {botStatus.hasToken ? '✓ Configured' : '✗ Missing'}
+                    </span>
                   </div>
                 </div>
               </div>
-            )}
-            
-            {botStatus.lastLogs && botStatus.lastLogs.length > 0 && (
-              <div className="bg-black rounded p-4 border border-gray-600">
-                <h4 className="text-sm font-medium text-gray-400 mb-2">Recent Logs</h4>
-                <div className="space-y-1 text-xs font-mono max-h-32 overflow-y-auto">
-                  {botStatus.lastLogs.map((log: string, index: number) => (
-                    <div key={index} className="text-gray-300">
-                      {log}
+              
+              {botStatus.process && (
+                <div className="bg-black rounded p-4 border border-gray-600 mb-4">
+                  <h4 className="text-sm font-medium text-gray-400 mb-2">Process Info</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                    <div>
+                      <span className="text-gray-500">PID:</span> <span className="text-white">{botStatus.process.pid}</span>
                     </div>
-                  ))}
+                    <div>
+                      <span className="text-gray-500">CPU:</span> <span className="text-white">{botStatus.process.cpu}%</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Memory:</span> <span className="text-white">{botStatus.process.memory}%</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Started:</span> <span className="text-white">{botStatus.process.startTime}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {botStatus.lastLogs && botStatus.lastLogs.length > 0 && (
+                <div className="bg-black rounded p-4 border border-gray-600">
+                  <h4 className="text-sm font-medium text-gray-400 mb-2">Recent Logs</h4>
+                  <div className="space-y-1 text-xs font-mono max-h-32 overflow-y-auto">
+                    {botStatus.lastLogs.map((log: string, index: number) => (
+                      <div key={index} className="text-gray-300">
+                        {log}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Analytics Bot Status */}
+            <div className="border border-gray-700 rounded-lg p-4 bg-black/50">
+              <h3 className="text-lg font-medium text-purple-400 mb-3">Analytics Bot</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div className="bg-black rounded p-4 border border-gray-600">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400">Status</span>
+                    <span className={`font-medium ${botStatus.analyticsStatus === 'running' ? 'text-green-400' : 'text-red-400'}`}>
+                      {botStatus.analyticsStatus === 'running' ? '🟢 Running' : '🔴 Stopped'}
+                    </span>
+                  </div>
+                </div>
+                <div className="bg-black rounded p-4 border border-gray-600">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400">Uptime</span>
+                    <span className="font-medium text-white">
+                      {botStatus.analyticsUptime || 'N/A'}
+                    </span>
+                  </div>
+                </div>
+                <div className="bg-black rounded p-4 border border-gray-600">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400">Function</span>
+                    <span className="font-medium text-purple-400">
+                      Message Tracking
+                    </span>
+                  </div>
                 </div>
               </div>
-            )}
+              
+              {botStatus.analyticsProcess && (
+                <div className="bg-black rounded p-4 border border-gray-600 mb-4">
+                  <h4 className="text-sm font-medium text-gray-400 mb-2">Process Info</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                    <div>
+                      <span className="text-gray-500">PID:</span> <span className="text-white">{botStatus.analyticsProcess.pid}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">CPU:</span> <span className="text-white">{botStatus.analyticsProcess.cpu}%</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Memory:</span> <span className="text-white">{botStatus.analyticsProcess.memory}%</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Started:</span> <span className="text-white">{botStatus.analyticsProcess.startTime}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {botStatus.analyticsLogs && botStatus.analyticsLogs.length > 0 && (
+                <div className="bg-black rounded p-4 border border-gray-600">
+                  <h4 className="text-sm font-medium text-gray-400 mb-2">Recent Analytics Logs</h4>
+                  <div className="space-y-1 text-xs font-mono max-h-32 overflow-y-auto">
+                    {botStatus.analyticsLogs.map((log: string, index: number) => (
+                      <div key={index} className="text-gray-300">
+                        {log}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         ) : (
           <div className="text-center py-8 text-gray-400">

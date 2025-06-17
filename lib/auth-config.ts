@@ -1,6 +1,6 @@
 import { NextAuthOptions } from "next-auth";
 import Twitter from "next-auth/providers/twitter";
-import { saveProfileWithDuplicateCheck } from "@/lib/redis";
+import { ProfileService } from "@/lib/services/profile-service";
 import { nanoid } from 'nanoid';
 import { isMasterAdmin, logAdminAccess } from '@/lib/admin-config';
 
@@ -152,27 +152,47 @@ export const authOptions: NextAuthOptions = {
           }
         }
         
-        // Prepare user data from Twitter profile
-        const userData = {
-          id: profileId,
-          twitterHandle: twitterHandle,
-          name: profile?.data?.name || user.name,
-          profileImageUrl: profile?.data?.profile_image_url?.replace('_normal', '_400x400') || user.image?.replace('_normal', '_400x400'),
-          createdAt: new Date().toISOString(),
-          followerCount: followerCount,
-          socialAccounts: {
-            twitter: {
-              handle: twitterHandle,
-              followers: followerCount,
-            }
-          },
-          chains: ["Ethereum", "Base"] // Default chains
-        };
+        // Check if profile already exists in new system
+        let existingProfile = await ProfileService.getProfileByHandle(twitterHandle);
         
-        log("Saving user profile:", userData);
-        
-        // Save or update user profile
-        await saveProfileWithDuplicateCheck(userData as any);
+        if (existingProfile) {
+          log("Found existing profile, updating...");
+          // Update existing profile with latest data
+          existingProfile.profileImageUrl = profile?.data?.profile_image_url?.replace('_normal', '_400x400') || user.image?.replace('_normal', '_400x400') || existingProfile.profileImageUrl;
+          if (!existingProfile.socialLinks) {
+            existingProfile.socialLinks = {};
+          }
+          existingProfile.socialLinks.twitter = `https://twitter.com/${twitterHandle}`;
+          existingProfile.lastLoginAt = new Date();
+          
+          await ProfileService.saveProfile(existingProfile);
+        } else {
+          log("Creating new profile...");
+          // Create new profile in the new system
+          const newProfile = {
+            id: profileId,
+            twitterHandle: twitterHandle,
+            name: profile?.data?.name || user.name || twitterHandle,
+            profileImageUrl: profile?.data?.profile_image_url?.replace('_normal', '_400x400') || user.image?.replace('_normal', '_400x400'),
+            role: 'user' as const, // Default role for new users
+            approvalStatus: 'pending' as const,
+            isKOL: false,
+            tier: 'micro' as const, // Default tier
+            socialLinks: {
+              twitter: `https://twitter.com/${twitterHandle}`,
+            },
+            chains: ["Ethereum", "Base"], // Default chains
+            tags: [],
+            campaigns: [],
+            notes: [],
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            lastLoginAt: new Date(),
+          };
+          
+          await ProfileService.saveProfile(newProfile);
+          log("Profile saved successfully");
+        }
         
         log("Sign in successful");
         return true;

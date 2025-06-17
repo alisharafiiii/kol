@@ -11,6 +11,8 @@ export class ProfileService {
    */
   static async saveProfile(profile: UnifiedProfile): Promise<UnifiedProfile> {
     try {
+      console.log('[ProfileService.saveProfile] Starting save for:', profile.twitterHandle || profile.id)
+      
       // Ensure required fields
       if (!profile.id) profile.id = uuidv4()
       if (!profile.createdAt) profile.createdAt = new Date()
@@ -26,19 +28,34 @@ export class ProfileService {
         profile.name = profile.twitterHandle
       }
       
+      console.log('[ProfileService.saveProfile] Saving profile:', {
+        id: profile.id,
+        handle: profile.twitterHandle,
+        name: profile.name,
+        role: profile.role,
+        approvalStatus: profile.approvalStatus
+      })
+      
       // Save to Redis
+      const key = `${this.PREFIX}${profile.id}`
+      console.log('[ProfileService.saveProfile] Saving to Redis key:', key)
+      
       await redis.json.set(
-        `${this.PREFIX}${profile.id}`,
+        key,
         '$',
         JSON.parse(JSON.stringify(profile))
       )
       
+      console.log('[ProfileService.saveProfile] Profile saved to Redis successfully')
+      
       // Update indexes
       await this.updateIndexes(profile)
       
+      console.log('[ProfileService.saveProfile] Indexes updated successfully')
+      
       return profile
     } catch (error) {
-      console.error('Error saving profile:', error)
+      console.error('[ProfileService.saveProfile] Error saving profile:', error)
       throw error
     }
   }
@@ -378,41 +395,59 @@ export class ProfileService {
    * Update Redis indexes for efficient searching
    */
   private static async updateIndexes(profile: UnifiedProfile): Promise<void> {
+    console.log('[ProfileService.updateIndexes] Starting index update for:', profile.twitterHandle || profile.id)
+    
     const pipeline = redis.pipeline()
     
     // Handle index
     if (profile.twitterHandle) {
+      const handleKey = `${this.INDEX_PREFIX}handle:${profile.twitterHandle}`
+      console.log('[ProfileService.updateIndexes] Adding to handle index:', handleKey, 'value:', profile.id)
       pipeline.sadd(
-        `${this.INDEX_PREFIX}handle:${profile.twitterHandle}`,
+        handleKey,
         profile.id
       )
     }
     
     // Role index
-    pipeline.sadd(`${this.INDEX_PREFIX}role:${profile.role}`, profile.id)
+    const roleKey = `${this.INDEX_PREFIX}role:${profile.role}`
+    console.log('[ProfileService.updateIndexes] Adding to role index:', roleKey, 'value:', profile.id)
+    pipeline.sadd(roleKey, profile.id)
     
     // Status index
-    pipeline.sadd(`${this.INDEX_PREFIX}status:${profile.approvalStatus}`, profile.id)
+    const statusKey = `${this.INDEX_PREFIX}status:${profile.approvalStatus}`
+    console.log('[ProfileService.updateIndexes] Adding to status index:', statusKey, 'value:', profile.id)
+    pipeline.sadd(statusKey, profile.id)
     
     // KOL index
     if (profile.isKOL) {
-      pipeline.sadd(`${this.INDEX_PREFIX}kol:true`, profile.id)
+      const kolKey = `${this.INDEX_PREFIX}kol:true`
+      console.log('[ProfileService.updateIndexes] Adding to KOL index:', kolKey, 'value:', profile.id)
+      pipeline.sadd(kolKey, profile.id)
     }
     
     // Tier index (for all users, not just KOLs)
     if (profile.tier) {
-      pipeline.sadd(`${this.INDEX_PREFIX}tier:${profile.tier}`, profile.id)
+      const tierKey = `${this.INDEX_PREFIX}tier:${profile.tier}`
+      console.log('[ProfileService.updateIndexes] Adding to tier index:', tierKey, 'value:', profile.id)
+      pipeline.sadd(tierKey, profile.id)
     } else if (profile.currentTier) {
       // Legacy support for currentTier
-      pipeline.sadd(`${this.INDEX_PREFIX}tier:${profile.currentTier}`, profile.id)
+      const tierKey = `${this.INDEX_PREFIX}tier:${profile.currentTier}`
+      console.log('[ProfileService.updateIndexes] Adding to currentTier index:', tierKey, 'value:', profile.id)
+      pipeline.sadd(tierKey, profile.id)
     }
     
     // Country index
     if (profile.country) {
-      pipeline.sadd(`${this.INDEX_PREFIX}country:${profile.country}`, profile.id)
+      const countryKey = `${this.INDEX_PREFIX}country:${profile.country}`
+      console.log('[ProfileService.updateIndexes] Adding to country index:', countryKey, 'value:', profile.id)
+      pipeline.sadd(countryKey, profile.id)
     }
     
-    await pipeline.exec()
+    console.log('[ProfileService.updateIndexes] Executing pipeline...')
+    const results = await pipeline.exec()
+    console.log('[ProfileService.updateIndexes] Pipeline results:', results)
   }
   
   /**
