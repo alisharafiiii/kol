@@ -8,7 +8,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "discord-bot": "tsx discord-bot/bot.ts"
+    "discord-bot": "tsx discord-bot/bot.ts",
+    "fix-kol-profile": "tsx scripts/fix-kol-profile.ts",
+    "update-handle": "tsx scripts/update-twitter-handle.ts"
   },
   "dependencies": {
     "@coinbase/onchainkit": "latest",

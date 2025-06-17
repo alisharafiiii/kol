@@ -285,3 +285,48 @@ After doing this, you may fix the identity used for this commit with:
 fatal: could not read Username for 'https://github.com': Device not configured
 Sun Jun 15 02:00:01 EDT 2025: Backup completed successfully
 Mon Jun 16 02:00:00 EDT 2025: Changes detected, creating backup commit...
+[main 8b8c72f] Auto-backup: 2025-06-16 02:00:00
+ Committer: nabu <nabu@nabus-MacBook-Pro.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 34 files changed, 3562 insertions(+), 175 deletions(-)
+ create mode 100644 app/api/contracts/[id]/route.ts
+ create mode 100644 app/api/contracts/[id]/sign/route.ts
+ create mode 100644 app/api/contracts/create/route.ts
+ create mode 100644 app/api/contracts/profile-update/route.ts
+ create mode 100644 app/api/contracts/route.ts
+ create mode 100644 app/contracts-admin/page.tsx
+ create mode 100644 app/contracts/[id]/completed/page.tsx
+ create mode 100644 app/contracts/[id]/created/page.tsx
+ create mode 100644 app/contracts/[id]/sign/page.tsx
+ create mode 100644 app/contracts/page.tsx
+ create mode 100644 app/sign/[id]/page.tsx
+ create mode 100644 app/sign/page.tsx
+ create mode 100644 app/sign/test/page.tsx
+ delete mode 100644 app/test-auth/page.tsx
+ create mode 100644 modules/onchain-contracts/IMPLEMENTATION_SUMMARY.md
+ create mode 100644 modules/onchain-contracts/README.md
+ create mode 100644 modules/onchain-contracts/components/ContractSigner.tsx
+ create mode 100644 modules/onchain-contracts/components/ContractsFeatureGuard.tsx
+ create mode 100644 modules/onchain-contracts/components/MiniKitWalletButton.tsx
+ create mode 100644 modules/onchain-contracts/components/TwitterSigningFlow.tsx
+ create mode 100644 modules/onchain-contracts/components/WalletConnectButton.tsx
+ create mode 100644 modules/onchain-contracts/components/index.ts
+ create mode 100644 modules/onchain-contracts/core/index.ts
+ create mode 100644 prisma/migrations/add_oc_contracts.sql
+ create mode 100644 prisma/schema.prisma
+ create mode 100644 scripts/create-test-contract.js
+ create mode 100644 scripts/create-test-contract.mjs
+ create mode 100755 setup-contracts.sh
+fatal: could not read Username for 'https://github.com': Device not configured
+Mon Jun 16 02:00:00 EDT 2025: Backup completed successfully

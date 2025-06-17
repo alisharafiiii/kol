@@ -114,6 +114,32 @@ export async function POST(
       productQuantity: data.productQuantity || 1
     }
     
+    // Create or ensure user profile exists for this KOL
+    const { ProfileService } = await import('@/lib/services/profile-service')
+    let profile = await ProfileService.getProfileByHandle(kolData.handle)
+    
+    if (!profile) {
+      console.log('[KOL POST] Creating new user profile for:', kolData.handle)
+      // Create a basic profile for the KOL
+      const { v4: uuidv4 } = await import('uuid')
+      profile = await ProfileService.saveProfile({
+        id: uuidv4(),
+        twitterHandle: kolData.handle,
+        name: kolData.name,
+        profileImageUrl: kolData.pfp,
+        role: 'kol',
+        approvalStatus: 'approved', // Auto-approve KOLs added to campaigns
+        isKOL: true,
+        tier: kolData.tier as any,
+        currentTier: kolData.tier as any,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      console.log('[KOL POST] Created profile with ID:', profile.id)
+    } else {
+      console.log('[KOL POST] Found existing profile for:', kolData.handle, 'ID:', profile.id)
+    }
+    
     // Use the campaign library's function which properly updates the embedded KOL array
     const { addKOLToCampaign, updateKOLInCampaign, getCampaign } = await import('@/lib/campaign')
     const userHandle = auth.user?.twitterHandle || auth.user?.name || 'unknown'

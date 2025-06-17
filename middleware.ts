@@ -30,6 +30,7 @@ const publicPaths = [
   '/campaigns',
   '/contests',
   '/contracts',
+  '/contracts/sign',
   '/api/webhook',
   '/_next',
   '/favicon.ico',
@@ -38,6 +39,7 @@ const publicPaths = [
   '/sign',
   '/api/contracts/*/sign',
   '/api/contracts/*', // Allow public access to individual contracts for signing page
+  '/test-contract-sign', // Test page for debugging
 ]
 
 export async function middleware(request: NextRequest) {
@@ -58,6 +60,14 @@ export async function middleware(request: NextRequest) {
   if (pathname.includes('callback')) {
     console.log('[Middleware] Callback detected:', pathname)
     console.log('[Middleware] Callback URL params:', request.nextUrl.searchParams.toString())
+    return NextResponse.next()
+  }
+  
+  // Special handling for individual contract viewing and signing
+  // This must come BEFORE the protected path check
+  if (pathname.match(/^\/api\/contracts\/[^\/]+$/) || 
+      pathname.match(/^\/api\/contracts\/[^\/]+\/sign$/)) {
+    console.log('[Middleware] Individual contract endpoint, allowing:', pathname)
     return NextResponse.next()
   }
   

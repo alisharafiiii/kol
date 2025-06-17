@@ -50,6 +50,10 @@ interface DiscordAnalytics {
     dailyTrend: Array<{ date: string; messages: number }>
     channelActivity: Array<{ channelId: string; channelName: string; messageCount: number }>
     topUsers: Array<{ userId: string; username: string; messageCount: number; avgSentiment: number }>
+    hourlyActivity?: number[]
+    weeklyTrend?: Array<{ date: string; messages: number; sentiment: number }>
+    totalChannels?: number
+    avgSentiment?: number
   }
 }
 
@@ -571,14 +575,25 @@ function DiscordSharePageContent() {
     }]
   }
 
-  const activityChartData = {
-    labels: analytics?.metrics?.dailyTrend?.map(d => new Date(d.date).toLocaleDateString()) || [],
+  // Enhanced activity chart with sentiment overlay (like main page)
+  const activityTrendData = {
+    labels: analytics?.metrics?.weeklyTrend?.map(d => new Date(d.date).toLocaleDateString()) || 
+            analytics?.metrics?.dailyTrend?.map(d => new Date(d.date).toLocaleDateString()) || [],
     datasets: [{
       label: 'Messages',
-      data: analytics?.metrics?.dailyTrend?.map(d => d.messages) || [],
+      data: analytics?.metrics?.weeklyTrend?.map(d => d.messages) || 
+            analytics?.metrics?.dailyTrend?.map(d => d.messages) || [],
       borderColor: '#10b981',
       backgroundColor: 'rgba(16, 185, 129, 0.1)',
-      fill: true
+      fill: true,
+      yAxisID: 'y',
+    }, {
+      label: 'Avg Sentiment',
+      data: analytics?.metrics?.weeklyTrend?.map(d => d.sentiment) || [],
+      borderColor: '#8b5cf6',
+      backgroundColor: 'rgba(139, 92, 246, 0.1)',
+      fill: false,
+      yAxisID: 'y1',
     }]
   }
 
@@ -588,6 +603,18 @@ function DiscordSharePageContent() {
       label: 'Messages',
       data: analytics?.metrics?.channelActivity?.map(c => c.messageCount) || [],
       backgroundColor: '#10b981'
+    }]
+  }
+
+  // Hourly activity pattern chart (new)
+  const hourlyActivityData = {
+    labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
+    datasets: [{
+      label: 'Messages by Hour',
+      data: analytics?.metrics?.hourlyActivity || Array(24).fill(0),
+      backgroundColor: '#3b82f6',
+      borderColor: '#3b82f6',
+      borderWidth: 1
     }]
   }
 
@@ -686,24 +713,37 @@ function DiscordSharePageContent() {
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8 mb-8">
-          {/* Activity Trend */}
+          {/* Activity & Sentiment Trend */}
           <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 sm:p-6">
-            <h3 className="text-lg text-green-400 mb-4">Activity Trend</h3>
+            <h3 className="text-lg text-green-400 mb-4">Activity & Sentiment Trend</h3>
             <div className="h-64">
               {analytics && (
                 <Line
-                  data={activityChartData}
+                  data={activityTrendData}
                   options={{
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                      legend: { display: false }
+                      legend: { position: 'bottom' as const }
                     },
                     scales: {
                       y: {
-                        beginAtZero: true,
+                        type: 'linear' as const,
+                        display: true,
+                        position: 'left' as const,
+                        title: { display: true, text: 'Messages' },
                         grid: { color: 'rgba(107, 114, 128, 0.2)' },
                         ticks: { color: '#9ca3af' }
+                      },
+                      y1: {
+                        type: 'linear' as const,
+                        display: true,
+                        position: 'right' as const,
+                        title: { display: true, text: 'Sentiment Score' },
+                        grid: { drawOnChartArea: false },
+                        ticks: { color: '#9ca3af' },
+                        min: -1,
+                        max: 1
                       },
                       x: {
                         grid: { color: 'rgba(107, 114, 128, 0.2)' },

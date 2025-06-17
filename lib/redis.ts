@@ -127,6 +127,11 @@ export interface InfluencerProfile {
   }
   roiRank?: 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond'
   role: 'viewer' | 'scout' | 'core' | 'admin' | 'user' | 'intern'
+  contracts?: Array<{                 // contracts linked to this profile
+    id: string
+    role: 'creator' | 'recipient'
+    linkedAt: string
+  }>
   createdAt: string                   // ISO timestamp
   updatedAt?: string
   updatedBy?: string                  // admin who made the last change

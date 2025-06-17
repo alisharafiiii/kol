@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { UnifiedProfile, CampaignParticipation } from '@/lib/types/profile'
+import { UserContracts } from '@/components/UserContracts'
 
 export default function ProfilePage({ params }: { params: { handle: string } }) {
   const { data: session } = useSession()
@@ -12,7 +13,7 @@ export default function ProfilePage({ params }: { params: { handle: string } }) 
   const [profile, setProfile] = useState<UnifiedProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<'overview' | 'campaigns' | 'metrics'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'campaigns' | 'metrics' | 'contracts'>('overview')
   
   // Check if viewing own profile
   const isOwnProfile = session?.user?.name === params.handle || 
@@ -228,6 +229,16 @@ export default function ProfilePage({ params }: { params: { handle: string } }) 
                 </button>
               </>
             )}
+            <button
+              onClick={() => setActiveTab('contracts')}
+              className={`pb-4 px-1 transition-colors ${
+                activeTab === 'contracts' 
+                  ? 'text-green-300 border-b-2 border-green-300' 
+                  : 'text-green-600 hover:text-green-400'
+              }`}
+            >
+              Contracts
+            </button>
           </div>
         </div>
         
@@ -515,6 +526,13 @@ export default function ProfilePage({ params }: { params: { handle: string } }) 
                 </div>
               )}
             </div>
+          )}
+          
+          {activeTab === 'contracts' && (
+            <UserContracts 
+              twitterHandle={profile.twitterHandle} 
+              isOwnProfile={isOwnProfile}
+            />
           )}
         </div>
       </div>

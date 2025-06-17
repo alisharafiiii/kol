@@ -20,10 +20,12 @@ export default function ContractsAdminPage() {
   const [contracts, setContracts] = useState<Contract[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     title: '',
     role: '',
     walletAddress: '',
+    recipientTwitterHandle: '',
     startDate: '',
     endDate: '',
     terms: '',
@@ -55,9 +57,17 @@ export default function ContractsAdminPage() {
       if (res.ok) {
         const data = await res.json()
         setContracts(data)
+      } else {
+        const errorData = await res.json()
+        if (errorData.error === 'Contracts feature is disabled') {
+          setError('Contracts feature is disabled. Please set ENABLE_CONTRACTS=true in environment variables.')
+        } else {
+          setError(errorData.error || 'Failed to fetch contracts')
+        }
       }
     } catch (error) {
       console.error('Error fetching contracts:', error)
+      setError('Failed to fetch contracts')
     } finally {
       setLoading(false)
     }
@@ -87,6 +97,7 @@ export default function ContractsAdminPage() {
           title: '',
           role: '',
           walletAddress: '',
+          recipientTwitterHandle: '',
           startDate: '',
           endDate: '',
           terms: '',
@@ -94,8 +105,13 @@ export default function ContractsAdminPage() {
           deliverables: ['']
         })
       } else {
-        const error = await res.json()
-        alert(`Error: ${error.error}`)
+        const errorData = await res.json()
+        console.error('Contract creation error:', errorData)
+        if (errorData.error === 'Contracts feature is disabled') {
+          alert('Contracts feature is disabled. Please contact the administrator to enable it.')
+        } else {
+          alert(`Error: ${errorData.error || 'Failed to create contract'}`)
+        }
       }
     } catch (error) {
       console.error('Error creating contract:', error)
@@ -138,6 +154,17 @@ export default function ContractsAdminPage() {
       <div className="max-w-6xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">Contracts Admin</h1>
 
+        {error && (
+          <div className="mb-6 p-4 bg-red-900/20 border border-red-500 rounded-lg">
+            <p className="text-red-400">{error}</p>
+            {error.includes('disabled') && (
+              <p className="text-sm text-red-300 mt-2">
+                To enable contracts, set ENABLE_CONTRACTS=true in your environment variables and restart the application.
+              </p>
+            )}
+          </div>
+        )}
+
         {!showForm ? (
           <>
             <button
@@ -166,12 +193,12 @@ export default function ContractsAdminPage() {
                     <p className="text-sm mt-2">
                       Signing URL: 
                       <a
-                        href={`/sign/${contract.id}`}
+                        href={`/sign/${contract.id.replace('contract:', '')}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="ml-2 text-blue-400 hover:underline"
                       >
-                        {window.location.origin}/sign/{contract.id}
+                        {window.location.origin}/sign/{contract.id.replace('contract:', '')}
                       </a>
                     </p>
                   </div>
@@ -214,6 +241,17 @@ export default function ContractsAdminPage() {
                 placeholder="0x..."
                 pattern="^0x[a-fA-F0-9]{40}$"
                 required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm mb-1">Recipient Twitter Handle</label>
+              <input
+                type="text"
+                value={formData.recipientTwitterHandle}
+                onChange={(e) => setFormData({ ...formData, recipientTwitterHandle: e.target.value })}
+                className="w-full px-3 py-2 bg-black border border-green-500 rounded focus:outline-none focus:border-green-400"
+                placeholder="@username (optional)"
               />
             </div>
 

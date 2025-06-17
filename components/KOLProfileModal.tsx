@@ -66,6 +66,7 @@ export default function KOLProfileModal({ kolHandle, kolName, isOpen, onClose }:
   const { data: session } = useSession()
   const [profile, setProfile] = useState<KOLProfile | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [newNote, setNewNote] = useState('')
   const [addingNote, setAddingNote] = useState(false)
   const [showCopySuccess, setShowCopySuccess] = useState(false)
@@ -73,10 +74,11 @@ export default function KOLProfileModal({ kolHandle, kolName, isOpen, onClose }:
   const [isEditing, setIsEditing] = useState(false)
   const [editedProfile, setEditedProfile] = useState<any>(null)
   const [savingProfile, setSavingProfile] = useState(false)
+  const [hasUserAccount, setHasUserAccount] = useState(false)
   
   const userRole = (session as any)?.role || (session as any)?.user?.role || 'user'
   const canAddNotes = ['admin', 'core'].includes(userRole)
-  const canEditProfile = ['admin', 'core', 'team'].includes(userRole)
+  const canEdit = ['admin', 'core'].includes(userRole)
   
   useEffect(() => {
     if (isOpen) {
@@ -85,62 +87,92 @@ export default function KOLProfileModal({ kolHandle, kolName, isOpen, onClose }:
   }, [isOpen, kolHandle])
   
   const loadProfile = async () => {
+    if (!kolHandle) return
+    
+    setLoading(true)
+    setError(null)
+    
     try {
-      setLoading(true)
+      const cleanHandle = kolHandle.replace('@', '')
+      
+      // Check if user exists in the system
+      const profileRes = await fetch(`/api/user/profile?handle=${cleanHandle}`)
+      const profileCheckData = await profileRes.json()
+      
+      // Check if this is a real user account or just a default response
+      const userExists = profileCheckData.user && 
+                        profileCheckData.user.id && 
+                        profileCheckData.user.id !== cleanHandle.substring(0, 8) &&
+                        profileCheckData.user.approvalStatus
+      setHasUserAccount(userExists)
+      
       // Fetch KOL data from all campaigns
       const campaignsRes = await fetch('/api/campaigns')
-      if (!campaignsRes.ok) throw new Error('Failed to load campaigns')
       const campaigns = await campaignsRes.json()
       
       // Find all campaigns where this KOL participates
-      const participations: CampaignParticipation[] = []
-      let kolData: any = null
+      const kolCampaigns: CampaignParticipation[] = []
+      let totalViews = 0
+      let totalBudget = 0
+      let kolInfo: Partial<KOLProfile> = {
+        handle: kolHandle,
+        name: kolName
+      }
       
       campaigns.forEach((campaign: any) => {
-        const kol = campaign.kols?.find((k: any) => k.handle === kolHandle)
+        const kol = campaign.kols?.find((k: any) => 
+          k.handle?.toLowerCase() === kolHandle.toLowerCase() ||
+          k.kolHandle?.toLowerCase() === kolHandle.toLowerCase()
+        )
+        
         if (kol) {
-          if (!kolData) kolData = kol
-          participations.push({
+          // Extract KOL info from first found instance
+          if (!kolInfo.pfp && (kol.pfp || kol.kolImage)) {
+            kolInfo.pfp = kol.pfp || kol.kolImage
+          }
+          if (!kolInfo.tier && kol.tier) {
+            kolInfo.tier = kol.tier
+          }
+          
+          const views = kol.views || kol.totalViews || 0
+          const budget = typeof kol.budget === 'string' 
+            ? parseInt(kol.budget.replace(/[^0-9]/g, '')) || 0
+            : kol.budget || 0
+          
+          totalViews += views
+          totalBudget += budget
+          
+          kolCampaigns.push({
             id: campaign.id,
             name: campaign.name,
             slug: campaign.slug,
-            stage: kol.stage,
-            payment: kol.payment,
-            views: kol.views || 0,
-            budget: kol.budget,
-            device: kol.device,
-            platform: kol.platform,
-            links: kol.links,
+            stage: kol.stage || 'reached out',
+            payment: kol.payment || kol.paymentStatus || 'pending',
+            views: views,
+            budget: typeof kol.budget === 'string' ? kol.budget : `$${budget}`,
+            device: kol.device || kol.deviceStatus || 'na',
+            platform: kol.platform || ['twitter'],
+            links: kol.links || [],
             addedBy: kol.addedBy,
-            lastUpdated: kol.lastUpdated,
+            lastUpdated: kol.lastUpdated
           })
         }
       })
       
-      // Try to get profile data
+      // Try to get additional profile data from user profile
       let profileData = null
       try {
-        // Ensure handle doesn't have @ symbol for the API call
-        const cleanHandle = kolHandle.replace('@', '')
         console.log('Fetching profile for handle:', cleanHandle)
         
-        const profileRes = await fetch(`/api/user/profile?handle=${cleanHandle}`)
-        if (profileRes.ok) {
-          profileData = await profileRes.json()
+        if (userExists) {
+          profileData = profileCheckData
           console.log('KOL Profile Data for', cleanHandle, ':', {
-            hasUser: !!profileData?.user,
-            hasNotes: !!profileData?.user?.notes,
-            notesCount: profileData?.user?.notes?.length || 0,
-            notes: profileData?.user?.notes,
-            hasAdminNotes: !!profileData?.user?.adminNotes,
-            adminNotes: profileData?.user?.adminNotes,
-            fullData: profileData
+            hasUser: !!profileData.user,
+            userData: profileData.user
           })
-        } else {
-          console.log('Profile API returned error:', profileRes.status, profileRes.statusText)
         }
       } catch (err) {
-        console.log('Error fetching user profile:', err)
+        console.error('Error fetching user profile:', err)
       }
       
       // Parse contact information from KOL data
@@ -150,8 +182,8 @@ export default function KOLProfileModal({ kolHandle, kolName, isOpen, onClose }:
       
       // Parse contact field which can contain multiple values
       // Only use this as fallback if we don't already have the data from the API
-      if (kolData?.contact) {
-        const contacts = kolData.contact.split(',').map((c: string) => c.trim())
+      if (kolInfo.pfp) {
+        const contacts = kolInfo.pfp.split(',').map((c: string) => c.trim())
         contacts.forEach((contact: string) => {
           if (contact.includes('@') && contact.includes('.')) {
             // It's an email - only use if we don't have one
@@ -231,14 +263,14 @@ export default function KOLProfileModal({ kolHandle, kolName, isOpen, onClose }:
       setProfile({
         handle: kolHandle,
         name: profileData?.user?.name || kolName,
-        pfp: kolData?.pfp || profileData?.user?.profileImageUrl,
+        pfp: kolInfo.pfp,
         role: profileData?.user?.role || 'kol',
-        tier: kolData?.tier,
-        status: kolData?.device,
+        tier: kolInfo.tier,
+        status: profileData?.user?.device || 'na',
         email: parsedEmail,
         phone: parsedPhone,
         telegram: parsedTelegram,
-        telegramGroup: kolData?.telegramGroup,
+        telegramGroup: profileData?.user?.telegramGroup,
         shippingAddress: (() => {
           // Try shippingAddress first
           if (profileData?.user?.shippingAddress) {
@@ -268,14 +300,11 @@ export default function KOLProfileModal({ kolHandle, kolName, isOpen, onClose }:
           }
           return undefined
         })(),
-        campaigns: participations,
+        campaigns: kolCampaigns,
         notes: notes,
-        addedBy: kolData?.addedBy,
-        totalViews: participations.reduce((sum, p) => sum + (p.views || 0), 0),
-        totalBudget: participations.reduce((sum, p) => {
-          const budget = p.budget.replace(/[$,]/g, '')
-          return sum + (parseFloat(budget) || 0)
-        }, 0),
+        addedBy: profileData?.user?.addedBy,
+        totalViews: totalViews,
+        totalBudget: totalBudget,
         joinDate: profileData?.user?.createdAt || profileData?.user?.joinDate,
       })
       
@@ -285,7 +314,7 @@ export default function KOLProfileModal({ kolHandle, kolName, isOpen, onClose }:
         const enrichedNotes = notes.map((note: any) => {
           if (note.campaignId && !note.campaignName) {
             // Find the campaign this note belongs to
-            const campaign = participations.find(p => p.id === note.campaignId)
+            const campaign = kolCampaigns.find(p => p.id === note.campaignId)
             if (campaign) {
               return {
                 ...note,
@@ -446,7 +475,7 @@ export default function KOLProfileModal({ kolHandle, kolName, isOpen, onClose }:
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-green-300">KOL Profile</h2>
           <div className="flex items-center gap-2">
-            {canEditProfile && !isEditing && !loading && (
+            {canEdit && !isEditing && !loading && (
               <button
                 onClick={() => {
                   setIsEditing(true)
@@ -598,18 +627,25 @@ export default function KOLProfileModal({ kolHandle, kolName, isOpen, onClose }:
             <div>
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-sm font-bold uppercase">Contact Information</h4>
-                {!isEditing && (
-                  <button
-                    onClick={copyAllContactInfo}
-                    className={`text-xs px-3 py-1 border transition-all duration-200 rounded ${
-                      showCopySuccess 
-                        ? 'border-green-400 bg-green-900 text-green-100' 
-                        : 'border-green-500 hover:bg-green-900/30'
-                    }`}
-                    id="copy-contact-btn"
-                  >
-                    {showCopySuccess ? '✓ Copied!' : '📋 Copy All'}
-                  </button>
+                {!isEditing && canEdit && (
+                  <div className="flex gap-2">
+                    {!hasUserAccount && (
+                      <span className="text-xs text-yellow-500 px-2 py-1 border border-yellow-500 rounded">
+                        No User Account
+                      </span>
+                    )}
+                    <button
+                      onClick={copyAllContactInfo}
+                      className={`text-xs px-3 py-1 border transition-all duration-200 rounded ${
+                        showCopySuccess 
+                          ? 'border-green-400 bg-green-900 text-green-100' 
+                          : 'border-green-500 hover:bg-green-900/30'
+                      }`}
+                      id="copy-contact-btn"
+                    >
+                      {showCopySuccess ? '✓ Copied!' : '📋 Copy All'}
+                    </button>
+                  </div>
                 )}
               </div>
               
@@ -718,6 +754,18 @@ export default function KOLProfileModal({ kolHandle, kolName, isOpen, onClose }:
                         setSavingProfile(true)
                         try {
                           const cleanHandle = profile!.handle.replace('@', '')
+                          
+                          // First check if this user exists in the system
+                          const checkRes = await fetch(`/api/user/profile?handle=${cleanHandle}`)
+                          const checkData = await checkRes.json()
+                          
+                          // If user doesn't exist (no user ID or user not found), we can't update their profile
+                          if (!checkData.user || !checkData.user.id || checkData.user.id === cleanHandle.substring(0, 8)) {
+                            alert('This KOL does not have a user account in the system. Profile editing is only available for registered users.')
+                            setSavingProfile(false)
+                            return
+                          }
+                          
                           const res = await fetch(`/api/user/profile`, {
                             method: 'PUT',
                             headers: { 'Content-Type': 'application/json' },
@@ -764,8 +812,9 @@ export default function KOLProfileModal({ kolHandle, kolName, isOpen, onClose }:
                             setIsEditing(false)
                             setEditedProfile(null)
                           } else {
-                            const error = await res.text()
-                            alert(`Failed to update profile: ${error}`)
+                            const errorData = await res.json()
+                            console.error('Failed to update profile:', errorData)
+                            alert(`Failed to update profile: ${errorData.error || 'Unknown error'}`)
                           }
                         } catch (error) {
                           console.error('Error updating profile:', error)
@@ -848,6 +897,31 @@ export default function KOLProfileModal({ kolHandle, kolName, isOpen, onClose }:
                       )}
                     </span>
                   </div>
+                  
+                  {/* Edit Button - Only show for admin/core and if user has account */}
+                  {canEdit && hasUserAccount && (
+                    <div className="mt-3 flex justify-end">
+                      <button
+                        onClick={() => {
+                          setIsEditing(true)
+                          setEditedProfile({
+                            name: profile.name || '',
+                            email: profile.email || '',
+                            phone: profile.phone || '',
+                            telegram: profile.telegram || '',
+                            addressLine1: profile.shippingAddress?.addressLine1 || '',
+                            addressLine2: profile.shippingAddress?.addressLine2 || '',
+                            city: profile.shippingAddress?.city || '',
+                            postalCode: profile.shippingAddress?.postalCode || '',
+                            country: profile.shippingAddress?.country || ''
+                          })
+                        }}
+                        className="text-xs px-3 py-1 border border-green-500 text-green-300 hover:bg-green-900/30 transition-colors"
+                      >
+                        Edit Info
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

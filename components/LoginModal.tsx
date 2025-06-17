@@ -124,34 +124,34 @@ export default function LoginModal() {
   // Fetch user profile when session changes
   useEffect(() => {
     const fetchUserProfile = async () => {
-      if (!session?.user?.name) {
-        setUserProfile(null)
-        return
+      if (!session) return;
+      
+      // Use the Twitter handle from session, not the display name
+      const twitterHandle = (session as any)?.twitterHandle || session?.user?.twitterHandle;
+      
+      if (!twitterHandle) {
+        console.log('[LoginModal] No Twitter handle found in session');
+        return;
       }
       
       try {
-        const handle = (session as any)?.twitterHandle || session.user.name
-        const normalizedHandle = handle.replace('@', '')
-        const res = await fetch(`/api/user/profile?handle=${encodeURIComponent(normalizedHandle)}`)
-        
+        console.log('[LoginModal] Fetching profile for handle:', twitterHandle);
+        const res = await fetch(`/api/user/profile?handle=${encodeURIComponent(twitterHandle)}`);
         if (res.ok) {
-          const data = await res.json()
-          console.log('User profile data:', data) // Debug log
-          
+          const data = await res.json();
+          console.log('[LoginModal] Profile response:', data);
           if (data.user) {
-            setUserProfile({
-              approvalStatus: data.user.approvalStatus || 'pending',
-              twitterHandle: data.user.twitterHandle || handle,
-              role: data.user.role,
-              tier: data.user.tier || 'micro',
-              createdAt: data.user.createdAt,
-              scoutCount: data.user.scoutCount || 0,
-              contestCount: data.user.contestCount || 0
-            })
+            setUserProfile(data.user);
+            setHasProfile(true);
+          } else if (data) {
+            setUserProfile(data);
+            setHasProfile(true);
           }
+        } else {
+          console.error('[LoginModal] Profile fetch failed:', res.status);
         }
       } catch (error) {
-        console.error('Error fetching user profile:', error)
+        console.error('[LoginModal] Error fetching user profile:', error);
       }
     }
     
@@ -400,10 +400,12 @@ export default function LoginModal() {
       
       // Check if we're on a mobile device
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
       const isBrave = navigator.userAgent.includes('Brave') || (window.navigator as any).brave;
       
       console.log('Connecting Phantom wallet on:', 
         isMobile ? 'mobile' : 'desktop', 
+        isIOS ? '(iOS)' : '',
         isBrave ? '(Brave browser)' : ''
       );
       
@@ -413,24 +415,58 @@ export default function LoginModal() {
       // Check if we're in Phantom's in-app browser (mobile)
       const isPhantomMobileBrowser = isMobile && window.solana && (window.solana as any).isPhantom;
       
-      if (!isPhantomInstalled && !isPhantomMobileBrowser) {
+      // On iOS, also check for the Phantom app using a different method
+      const isPhantomApp = isIOS && (
+        window.location.href.includes('phantom.app') || 
+        (window as any).phantom?.solana?.isPhantom ||
+        (window as any).solana?.isPhantom
+      );
+      
+      if (!isPhantomInstalled && !isPhantomMobileBrowser && !isPhantomApp) {
         console.error('Phantom wallet not detected or not properly installed');
         
         // Different message based on device
         if (isMobile) {
-          setErrorMessage('Please open this site in the Phantom app browser to connect your wallet.');
+          if (isIOS) {
+            setErrorMessage('To connect Phantom on iOS:\n1. Open the Phantom app\n2. Tap the browser icon at the bottom\n3. Navigate to this website\n4. Try connecting again');
+          } else {
+            setErrorMessage('Please open this site in the Phantom app browser to connect your wallet.');
+          }
           setWalletConnectionPending(false);
           
           // Create deep link to open in Phantom app
           const currentUrl = window.location.href;
           const encodedUrl = encodeURIComponent(currentUrl);
           const ref = encodeURIComponent(window.location.origin);
-          // Use the correct Phantom deep link format that opens in their browser
-          const phantomDeepLink = `https://phantom.app/ul/v1/browse/${encodedUrl}?ref=${ref}`;
+          
+          // Use different deep link format for iOS
+          const phantomDeepLink = isIOS 
+            ? `phantom://browse/${encodedUrl}?ref=${ref}`
+            : `https://phantom.app/ul/v1/browse/${encodedUrl}?ref=${ref}`;
           
           // Offer to open in Phantom app
-          if (confirm('Would you like to open this site in the Phantom app browser?')) {
-            window.location.href = phantomDeepLink;
+          const confirmMessage = isIOS 
+            ? 'Would you like to open this site in the Phantom app? Make sure Phantom is installed first.'
+            : 'Would you like to open this site in the Phantom app browser?';
+            
+          if (confirm(confirmMessage)) {
+            // For iOS, try the deep link first, then fallback to App Store
+            if (isIOS) {
+              // Try to open the app
+              window.location.href = phantomDeepLink;
+              
+              // Set a timeout to redirect to App Store if the app doesn't open
+              setTimeout(() => {
+                if (document.hasFocus()) {
+                  // If we still have focus, the app probably isn't installed
+                  if (confirm('Phantom app not found. Would you like to install it from the App Store?')) {
+                    window.location.href = 'https://apps.apple.com/app/phantom-solana-wallet/id1598432977';
+                  }
+                }
+              }, 2500);
+            } else {
+              window.location.href = phantomDeepLink;
+            }
           }
           return;
         } else {
@@ -446,7 +482,7 @@ export default function LoginModal() {
       }
       
       // Get the correct wallet reference (mobile or desktop)
-      const phantomWallet = isPhantomMobileBrowser ? 
+      const phantomWallet = isPhantomMobileBrowser || isPhantomApp ? 
         (window.solana as any) : 
         window.phantom?.solana;
       

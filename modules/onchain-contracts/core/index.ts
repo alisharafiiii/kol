@@ -10,6 +10,7 @@ export interface ContractData {
   terms: string
   compensation?: string
   deliverables?: string[]
+  recipientTwitterHandle?: string
 }
 
 export interface SignatureData {
@@ -30,6 +31,8 @@ export interface OcContract {
   status: 'draft' | 'pending' | 'signed' | 'published'
   createdAt: Date
   updatedAt: Date
+  creatorTwitterHandle?: string
+  recipientTwitterHandle?: string
 }
 
 // EIP-712 Domain
@@ -55,7 +58,10 @@ const TYPES = {
 /**
  * Create a new contract draft
  */
-export async function createContract(data: ContractData): Promise<OcContract> {
+export async function createContract(
+  data: ContractData,
+  creatorTwitterHandle?: string
+): Promise<OcContract> {
   if (process.env.ENABLE_CONTRACTS !== 'true') {
     throw new Error('Contracts feature is disabled')
   }
@@ -72,6 +78,8 @@ export async function createContract(data: ContractData): Promise<OcContract> {
       relayUsed: false,
       createdAt: now,
       updatedAt: now,
+      creatorTwitterHandle,
+      recipientTwitterHandle: data.recipientTwitterHandle
     }
 
     await redis.json.set(id, '$', contract as any)

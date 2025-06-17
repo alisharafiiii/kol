@@ -20,10 +20,10 @@ export default function EditKOLModal({ kol, campaignId, onClose, onUpdate }: Edi
     name: kol.name || '',
     pfp: kol.pfp || '',
     tier: kol.tier || 'micro' as KOL['tier'],
-    stage: kol.stage || 'reached out',
+    stage: (kol.stage || 'reached out') as KOL['stage'],
     device: kol.device || 'na',
     budget: kol.budget || '',
-    payment: kol.payment || 'pending',
+    payment: (kol.payment || 'pending') as KOL['payment'],
     views: kol.views || 0,
     likes: kol.likes || 0,
     retweets: kol.retweets || 0,
@@ -72,7 +72,7 @@ export default function EditKOLModal({ kol, campaignId, onClose, onUpdate }: Edi
       ...kolData,
       productId,
       productCost: product?.price || 0,
-      device: product ? 'owned' : 'na'
+      device: product ? 'owns' : 'na'
     })
   }
   
@@ -105,14 +105,17 @@ export default function EditKOLModal({ kol, campaignId, onClose, onUpdate }: Edi
       })
       
       if (!res.ok) {
-        throw new Error('Failed to update KOL')
+        const errorData = await res.json()
+        console.error('KOL update error:', errorData)
+        throw new Error(errorData.error || `Failed to update KOL (${res.status})`)
       }
       
       const updatedKol = await res.json()
       onUpdate(updatedKol)
       onClose()
-    } catch (err) {
-      setError('Failed to update KOL. Please try again.')
+    } catch (err: any) {
+      console.error('Error updating KOL:', err)
+      setError(err.message || 'Failed to update KOL. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -228,7 +231,7 @@ export default function EditKOLModal({ kol, campaignId, onClose, onUpdate }: Edi
                       ...kolData,
                       productId: e.target.value,
                       productCost: product?.price || 0,
-                      device: product ? 'owned' : 'na'
+                      device: product ? 'owns' : 'na'
                     })
                   }}
                   className="w-full px-3 py-2 bg-black border border-green-500 rounded text-green-300 focus:outline-none focus:border-green-400 cursor-pointer"
