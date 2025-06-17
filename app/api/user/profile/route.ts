@@ -236,7 +236,7 @@ export async function PUT(req: NextRequest) {
     }
     
     const data = await req.json();
-    const { handle, name, email, phone, telegram, contacts, shippingAddress } = data;
+    const { handle, name, email, phone, telegram, contacts, shippingAddress, role, approvalStatus } = data;
     
     // Log admin access for profile updates
     logAdminAccess(normalizedSessionHandle, 'profile_update', {
@@ -247,6 +247,16 @@ export async function PUT(req: NextRequest) {
     
     if (!handle) {
       return NextResponse.json({ error: 'Handle is required' }, { status: 400 });
+    }
+    
+    // Role updates require admin permissions
+    if (role !== undefined && userRole !== 'admin' && userRole !== 'core') {
+      return NextResponse.json({ error: 'Only admin or core users can update roles' }, { status: 403 });
+    }
+    
+    // Approval status updates require admin permissions
+    if (approvalStatus !== undefined && userRole !== 'admin' && userRole !== 'core') {
+      return NextResponse.json({ error: 'Only admin or core users can update approval status' }, { status: 403 });
     }
     
     const normalizedHandle = handle.replace('@', '').toLowerCase();
