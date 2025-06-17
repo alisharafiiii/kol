@@ -252,6 +252,56 @@ export async function PUT(req: NextRequest) {
     const normalizedHandle = handle.replace('@', '').toLowerCase();
     console.log('USER PROFILE API: Updating profile for handle:', normalizedHandle);
     
+    // First try to find in ProfileService (new system)
+    let profile = await ProfileService.getProfileByHandle(normalizedHandle);
+    
+    if (profile) {
+      console.log('USER PROFILE API: Found profile in ProfileService, updating...');
+      
+      // Update profile fields
+      if (name !== undefined) profile.name = name;
+      if (email !== undefined) profile.email = email;
+      if (phone !== undefined) profile.phone = phone;
+      
+      // Update contacts
+      if (telegram !== undefined || contacts?.telegram !== undefined) {
+        if (!profile.contacts) profile.contacts = {};
+        profile.contacts.telegram = telegram || contacts?.telegram;
+      }
+      
+      // Update shipping address if provided
+      if (shippingAddress) {
+        profile.shippingAddress = {
+          street: shippingAddress.addressLine1 || '',
+          city: shippingAddress.city || '',
+          state: shippingAddress.state,
+          postalCode: shippingAddress.postalCode || '',
+          country: shippingAddress.country || '',
+          phone: shippingAddress.phone
+        };
+      }
+      
+      // Save updated profile
+      await ProfileService.saveProfile(profile);
+      
+      console.log('USER PROFILE API: Profile updated successfully in ProfileService');
+      
+      return NextResponse.json({ 
+        success: true,
+        message: 'Profile updated successfully',
+        updates: {
+          name: profile.name,
+          email: profile.email,
+          phone: profile.phone,
+          contacts: profile.contacts,
+          shippingAddress: profile.shippingAddress
+        }
+      });
+    }
+    
+    // Fall back to old Redis system
+    console.log('USER PROFILE API: Profile not found in ProfileService, checking old Redis system...');
+    
     // Try to find the user by handle
     const userIds = await redis.smembers(`idx:username:${normalizedHandle}`);
     if (!userIds || userIds.length === 0) {
