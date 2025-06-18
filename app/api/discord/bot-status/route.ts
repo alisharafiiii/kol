@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     
     try {
       // Check for engagement bot
-      const { stdout: engagementStdout } = await execAsync('ps aux | grep -E "node.*(engagement-bot\\.js|bot\\.js|bot-enhanced)" | grep -v grep')
+      const { stdout: engagementStdout } = await execAsync('ps aux | grep -E "node.*engagement-bot" | grep -v grep')
       
       if (engagementStdout.trim()) {
         isRunning = true
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
     
     try {
       // Check for analytics bot
-      const { stdout: analyticsStdout } = await execAsync('ps aux | grep -E "node.*analytics-bot\\.js" | grep -v grep')
+      const { stdout: analyticsStdout } = await execAsync('ps aux | grep -E "node.*analytics-bot" | grep -v grep')
       
       if (analyticsStdout.trim()) {
         analyticsRunning = true

@@ -45,52 +45,13 @@ const client = new Client({
 // Cache for tracked channels per project
 const projectChannelsCache = new Map()
 
-// Cache for sentiment settings per project
-const sentimentSettingsCache = new Map()
-
-// Load sentiment settings for a project
-async function loadSentimentSettings(projectId) {
-  try {
-    const settingsKey = `discord:sentiment:${projectId}`
-    const settings = await redis.json.get(settingsKey)
-    
-    if (settings) {
-      sentimentSettingsCache.set(projectId, {
-        bullishKeywords: (settings.bullishKeywords || '').split(',').map(k => k.trim().toLowerCase()).filter(k => k),
-        bearishKeywords: (settings.bearishKeywords || '').split(',').map(k => k.trim().toLowerCase()).filter(k => k),
-        bullishEmojis: (settings.bullishEmojis || '').split(',').map(e => e.trim()).filter(e => e),
-        bearishEmojis: (settings.bearishEmojis || '').split(',').map(e => e.trim()).filter(e => e),
-        ignoredChannels: settings.ignoredChannels || [],
-        minimumMessageLength: settings.minimumMessageLength || 3
-      })
-      console.log(`📊 Loaded sentiment settings for project: ${projectId}`)
-    }
-  } catch (error) {
-    console.error('Error loading sentiment settings:', error)
-  }
-}
-
-// Check for sentiment settings reload requests
-async function checkSentimentReloads() {
-  for (const projectId of projectChannelsCache.keys()) {
-    const reloadKey = `discord:sentiment:reload:${projectId}`
-    const shouldReload = await redis.get(reloadKey)
-    
-    if (shouldReload) {
-      console.log(`🔄 Reloading sentiment settings for project: ${projectId}`)
-      await loadSentimentSettings(projectId)
-      await redis.del(reloadKey)
-    }
-  }
-}
-
 // Load tracked channels for all projects
 async function loadTrackedChannels() {
   try {
     console.log('📊 Loading tracked channels...')
     
-    // Get all Discord projects - Using correct key pattern
-    const projectKeys = await redis.keys('project:discord:*')
+    // Get all Discord projects - FIX: Use correct key pattern
+    const projectKeys = await redis.keys('discord:project:*')
     
     for (const key of projectKeys) {
       const project = await redis.json.get(key)
@@ -101,9 +62,6 @@ async function loadTrackedChannels() {
           serverId: project.serverId
         })
         console.log(`📌 Tracking ${project.trackedChannels.length} channels for project: ${project.name}`)
-        
-        // Load sentiment settings for this project
-        await loadSentimentSettings(project.id)
       }
     }
     
@@ -113,47 +71,8 @@ async function loadTrackedChannels() {
   }
 }
 
-// Analyze sentiment using custom settings and Gemini
-async function analyzeSentiment(content, projectId) {
-  // Check minimum message length
-  const settings = sentimentSettingsCache.get(projectId)
-  if (settings && content.length < settings.minimumMessageLength) {
-    return { score: 'neutral', confidence: 0.5 }
-  }
-  
-  // First check custom keywords and emojis
-  if (settings) {
-    const lowerContent = content.toLowerCase()
-    
-    // Count bullish and bearish indicators
-    let bullishCount = 0
-    let bearishCount = 0
-    
-    // Check keywords
-    for (const keyword of settings.bullishKeywords) {
-      if (lowerContent.includes(keyword)) bullishCount++
-    }
-    for (const keyword of settings.bearishKeywords) {
-      if (lowerContent.includes(keyword)) bearishCount++
-    }
-    
-    // Check emojis
-    for (const emoji of settings.bullishEmojis) {
-      if (content.includes(emoji)) bullishCount++
-    }
-    for (const emoji of settings.bearishEmojis) {
-      if (content.includes(emoji)) bearishCount++
-    }
-    
-    // If we have clear indicators, use them
-    if (bullishCount > bearishCount && bullishCount > 0) {
-      return { score: 'positive', confidence: Math.min(0.9, 0.6 + (bullishCount * 0.1)) }
-    } else if (bearishCount > bullishCount && bearishCount > 0) {
-      return { score: 'negative', confidence: Math.min(0.9, 0.6 + (bearishCount * 0.1)) }
-    }
-  }
-  
-  // Fall back to AI analysis if no clear custom indicators
+// Analyze sentiment using Gemini
+async function analyzeSentiment(content) {
   if (!model || !content || content.length < 3) {
     return { score: 'neutral', confidence: 0.5 }
   }
@@ -180,17 +99,10 @@ async function analyzeSentiment(content, projectId) {
 // Save message to Redis using the same structure as DiscordService
 async function saveMessage(message, projectId, projectData) {
   try {
-    // Check if channel is ignored for sentiment analysis
-    const settings = sentimentSettingsCache.get(projectId)
-    if (settings && settings.ignoredChannels.includes(message.channel.id)) {
-      console.log(`⏭️ Skipping ignored channel: #${message.channel.name}`)
-      return
-    }
-    
     const messageId = `message:discord:${projectId}:${message.id}`
     
-    // Analyze sentiment with project ID
-    const sentiment = await analyzeSentiment(message.content, projectId)
+    // Analyze sentiment
+    const sentiment = await analyzeSentiment(message.content)
     
     const messageData = {
       id: messageId,
@@ -333,9 +245,6 @@ client.on('ready', async () => {
   
   // Reload tracked channels every 5 minutes
   setInterval(loadTrackedChannels, 5 * 60 * 1000)
-  
-  // Check for sentiment settings reloads every 30 seconds
-  setInterval(checkSentimentReloads, 30 * 1000)
 })
 
 // Handle new messages

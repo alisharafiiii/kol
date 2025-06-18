@@ -5,6 +5,10 @@ import { DiscordService } from '@/lib/services/discord-service'
 import { redis } from '@/lib/redis'
 import { hasAdminAccess, logAdminAccess } from '@/lib/admin-config'
 
+// Simple in-memory cache for analytics
+const analyticsCache = new Map<string, { data: any; timestamp: number }>()
+const CACHE_TTL = 30 * 1000 // 30 seconds (was 5 minutes)
+
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -22,6 +26,29 @@ export async function GET(
     console.log('[Discord Analytics] Is public request:', isPublicRequest)
     console.log('[Discord Analytics] Timeframe:', timeframe)
     
+    // Check cache first
+    const cacheKey = `${projectId}-${timeframe}`
+    const cached = analyticsCache.get(cacheKey)
+    const now = Date.now()
+    
+    if (cached && now - cached.timestamp < CACHE_TTL) {
+      const cacheAge = Math.round((now - cached.timestamp) / 1000)
+      console.log(`[Discord Analytics] Returning cached data (age: ${cacheAge}s, TTL: ${CACHE_TTL/1000}s)`)
+      console.log(`[Discord Analytics] Cached data has ${cached.data?.analytics?.metrics?.totalMessages} messages`)
+      // Still need to check auth even for cached data
+      if (!isPublicRequest) {
+        const session = await getServerSession(authOptions)
+        if (!session) {
+          return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+      }
+      return NextResponse.json(cached.data)
+    } else if (cached) {
+      console.log(`[Discord Analytics] Cache expired (age: ${Math.round((now - cached.timestamp) / 1000)}s)`)
+    } else {
+      console.log(`[Discord Analytics] No cache found for key: ${cacheKey}`)
+    }
+    
     // For public requests, check if the project ID matches the public share pattern
     if (isPublicRequest && projectId.startsWith('project:discord:')) {
       console.log('[Discord Analytics] Public share link detected, allowing public access')
@@ -37,7 +64,7 @@ export async function GET(
       
       console.log(`✅ Public analytics fetched: ${analytics.metrics.totalMessages} messages, ${analytics.metrics.uniqueUsers} users`)
       
-      return NextResponse.json({ 
+      const responseData = { 
         project: {
           id: project.id,
           name: project.name,
@@ -46,7 +73,12 @@ export async function GET(
           iconUrl: project.iconUrl,
         },
         analytics 
-      })
+      }
+      
+      // Cache the data
+      analyticsCache.set(cacheKey, { data: responseData, timestamp: Date.now() })
+      
+      return NextResponse.json(responseData)
     }
     
     // For non-public requests, require authentication
@@ -146,11 +178,24 @@ export async function GET(
     const analytics = await DiscordService.getProjectAnalytics(projectId, timeframe)
     
     console.log(`✅ Analytics fetched: ${analytics.metrics.totalMessages} messages, ${analytics.metrics.uniqueUsers} users`)
+    console.log(`📊 Time range: ${analytics.startDate} to ${analytics.endDate}`)
     
-    return NextResponse.json({ 
-      project,
+    const responseData = { 
+      project: {
+        id: project.id,
+        name: project.name,
+        serverId: project.serverId,
+        serverName: project.serverName,
+        iconUrl: project.iconUrl,
+      },
       analytics 
-    })
+    }
+    
+    // Cache the data
+    analyticsCache.set(cacheKey, { data: responseData, timestamp: Date.now() })
+    console.log(`[Discord Analytics] Cached new data for key: ${cacheKey}`)
+    
+    return NextResponse.json(responseData)
   } catch (error) {
     console.error('Error fetching Discord analytics:', error)
     return NextResponse.json({ error: 'Failed to fetch analytics' }, { status: 500 })

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter, useParams } from 'next/navigation'
-import { ArrowLeft, Settings, Download, Share2, Users, MessageSquare, TrendingUp, AlertCircle, Hash, RefreshCw } from 'lucide-react'
+import { ArrowLeft, Settings, Download, Share2, Users, MessageSquare, TrendingUp, AlertCircle, Hash, RefreshCw, Clock } from 'lucide-react'
 import { Line, Doughnut, Bar } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
@@ -57,6 +57,37 @@ export default function DiscordProjectPage() {
   const [channelSuccess, setChannelSuccess] = useState('')
   const [refreshing, setRefreshing] = useState(false)
   const [copySuccess, setCopySuccess] = useState(false)
+  const [analyticsLoading, setAnalyticsLoading] = useState(true)
+  const [analyticsCache, setAnalyticsCache] = useState<Record<string, any>>({})
+  
+  // Sentiment settings state
+  const [sentimentSettings, setSentimentSettings] = useState({
+    bullishKeywords: '',
+    bearishKeywords: '',
+    bullishEmojis: '',
+    bearishEmojis: '',
+    ignoredChannels: [] as string[],
+    minimumMessageLength: 3
+  })
+  const [savingSentimentSettings, setSavingSentimentSettings] = useState(false)
+
+  // Add Moderator Modal state
+  const [showAddModModal, setShowAddModModal] = useState(false)
+  const [approvedUsers, setApprovedUsers] = useState<Array<{
+    handle: string
+    name: string
+    role: string
+    timezone?: string
+    profileImageUrl?: string
+  }>>([])
+  const [selectedMod, setSelectedMod] = useState('')
+  const [modShift, setModShift] = useState({
+    startTime: '',
+    endTime: '',
+    timezone: 'EDT'
+  })
+  const [addingMod, setAddingMod] = useState(false)
+  const [modSearchQuery, setModSearchQuery] = useState('')
 
   // Check admin access
   useEffect(() => {
@@ -78,6 +109,34 @@ export default function DiscordProjectPage() {
     }
   }, [projectId, timeframe])
 
+  // Load sentiment settings
+  useEffect(() => {
+    if (projectId) {
+      fetchSentimentSettings()
+    }
+  }, [projectId])
+
+  const fetchSentimentSettings = async () => {
+    try {
+      const res = await fetch(`/api/discord/projects/${projectId}/sentiment-settings`)
+      if (res.ok) {
+        const settings = await res.json()
+        if (settings) {
+          setSentimentSettings({
+            bullishKeywords: settings.bullishKeywords || '',
+            bearishKeywords: settings.bearishKeywords || '',
+            bullishEmojis: settings.bullishEmojis || '',
+            bearishEmojis: settings.bearishEmojis || '',
+            ignoredChannels: settings.ignoredChannels || [],
+            minimumMessageLength: settings.minimumMessageLength || 3
+          })
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching sentiment settings:', error)
+    }
+  }
+
   const fetchProjectData = async () => {
     try {
       const res = await fetch(`/api/discord/projects/${projectId}`)
@@ -97,6 +156,8 @@ export default function DiscordProjectPage() {
     console.log('🔄 Starting refresh for project:', projectId)
     setRefreshing(true)
     try {
+      // Clear cache to force fresh data
+      setAnalyticsCache({})
       await fetchProjectData()
       await fetchAnalytics()
       await fetchChannels()
@@ -110,19 +171,38 @@ export default function DiscordProjectPage() {
 
   const fetchAnalytics = async () => {
     console.log('🔍 Fetching analytics for:', projectId, 'timeframe:', timeframe)
+    
+    // Check cache first
+    const cacheKey = `${projectId}-${timeframe}`
+    if (analyticsCache[cacheKey]) {
+      console.log('📊 Using cached analytics data')
+      setAnalytics(analyticsCache[cacheKey])
+      setAnalyticsLoading(false)
+      return
+    }
+    
+    setAnalyticsLoading(true)
     try {
       const res = await fetch(`/api/discord/projects/${projectId}/analytics?timeframe=${timeframe}`)
       console.log('📊 Analytics response status:', res.status)
       if (res.ok) {
         const data = await res.json()
         console.log('✅ Analytics data received:', data)
-        setAnalytics(data.analytics || data)
+        const analyticsData = data.analytics || data
+        setAnalytics(analyticsData)
+        // Cache the data
+        setAnalyticsCache(prev => ({
+          ...prev,
+          [cacheKey]: analyticsData
+        }))
       } else {
         const errorText = await res.text()
         console.error('❌ Analytics fetch failed:', res.status, errorText)
       }
     } catch (error) {
       console.error('❌ Error fetching analytics:', error)
+    } finally {
+      setAnalyticsLoading(false)
     }
   }
 
@@ -130,9 +210,13 @@ export default function DiscordProjectPage() {
     setChannelsLoading(true)
     try {
       const res = await fetch(`/api/discord/projects/${projectId}/channels`)
+      console.log('📡 Fetching channels, status:', res.status)
       if (res.ok) {
         const data = await res.json()
+        console.log('📡 Channels data received:', data)
         setChannels(data)
+      } else {
+        console.error('❌ Failed to fetch channels:', res.status, await res.text())
       }
     } catch (error) {
       console.error('Error fetching channels:', error)
@@ -238,20 +322,183 @@ export default function DiscordProjectPage() {
   }
 
   const downloadReport = async () => {
+    // TODO: Implement PDF download
+    alert('PDF download coming soon!')
+  }
+
+  const saveSentimentSettings = async () => {
+    setSavingSentimentSettings(true)
     try {
-      const res = await fetch(`/api/discord/projects/${projectId}/report?timeframe=${timeframe}`)
+      const res = await fetch(`/api/discord/projects/${projectId}/sentiment-settings`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(sentimentSettings)
+      })
+      
       if (res.ok) {
-        const blob = await res.blob()
-        const url = window.URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `discord-report-${project?.name}-${timeframe}.pdf`
-        a.click()
+        alert('Sentiment settings saved successfully!')
+      } else {
+        const error = await res.json()
+        alert(`Failed to save settings: ${error.error || 'Unknown error'}`)
       }
     } catch (error) {
-      console.error('Error downloading report:', error)
+      console.error('Error saving sentiment settings:', error)
+      alert('Failed to save sentiment settings')
+    } finally {
+      setSavingSentimentSettings(false)
     }
   }
+
+  const resetSentimentSettings = () => {
+    setSentimentSettings({
+      bullishKeywords: '',
+      bearishKeywords: '',
+      bullishEmojis: '',
+      bearishEmojis: '',
+      ignoredChannels: [],
+      minimumMessageLength: 3
+    })
+  }
+
+  // Fetch approved users for moderator dropdown
+  const fetchApprovedUsers = async () => {
+    try {
+      const res = await fetch('/api/profiles/approved')
+      if (res.ok) {
+        const users = await res.json()
+        // Filter for team roles only (Team, Core, Admin, Intern)
+        const teamUsers = users.filter((user: any) => 
+          ['admin', 'core', 'team', 'intern'].includes(user.role)
+        )
+        setApprovedUsers(teamUsers)
+      }
+    } catch (error) {
+      console.error('Error fetching approved users:', error)
+    }
+  }
+
+  // Add moderator to project
+  const addModerator = async () => {
+    if (!selectedMod) {
+      alert('Please select a moderator')
+      return
+    }
+
+    setAddingMod(true)
+    try {
+      // Find the selected user details
+      const modUser = approvedUsers.find(u => u.handle === selectedMod)
+      if (!modUser) {
+        alert('Selected user not found')
+        return
+      }
+
+      // Create moderator object with shift info
+      const modInfo = {
+        handle: modUser.handle,
+        name: modUser.name,
+        profileImageUrl: modUser.profileImageUrl,
+        role: modUser.role,
+        timezone: modUser.timezone || 'UTC',
+        shift: {
+          startTime: modShift.startTime,
+          endTime: modShift.endTime,
+          timezone: modShift.timezone
+        },
+        // Future Mod 2FA check-in integration placeholder
+        twoFactorEnabled: false,
+        lastCheckIn: null
+      }
+
+      // Update project with new moderator
+      const updatedMods = [...teamMods, JSON.stringify(modInfo)]
+      
+      const res = await fetch(`/api/discord/projects/${projectId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teamMods: updatedMods })
+      })
+
+      if (res.ok) {
+        await fetchProjectData()
+        setShowAddModModal(false)
+        setSelectedMod('')
+        setModShift({ startTime: '', endTime: '', timezone: 'EDT' })
+        alert('Moderator added successfully!')
+      } else {
+        alert('Failed to add moderator')
+      }
+    } catch (error) {
+      console.error('Error adding moderator:', error)
+      alert('Error adding moderator')
+    } finally {
+      setAddingMod(false)
+    }
+  }
+
+  // Remove moderator from project
+  const removeModerator = async (modHandle: string) => {
+    try {
+      const updatedMods = teamMods.filter(mod => {
+        try {
+          const modData = JSON.parse(mod)
+          return modData.handle !== modHandle
+        } catch {
+          return mod !== modHandle
+        }
+      })
+
+      const res = await fetch(`/api/discord/projects/${projectId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teamMods: updatedMods })
+      })
+
+      if (res.ok) {
+        await fetchProjectData()
+      }
+    } catch (error) {
+      console.error('Error removing moderator:', error)
+    }
+  }
+
+  // Convert time between timezones
+  const convertTimezone = (time: string, fromTz: string, toTz: string) => {
+    // This is a simplified timezone conversion
+    // In production, use a library like moment-timezone or date-fns-tz
+    const timezoneOffsets: Record<string, number> = {
+      'UTC': 0,
+      'EDT': -4,
+      'EST': -5,
+      'PDT': -7,
+      'PST': -8,
+      'CET': 1,
+      'CEST': 2
+    }
+
+    if (!time || !timezoneOffsets[fromTz] || !timezoneOffsets[toTz]) {
+      return time
+    }
+
+    const [hours, minutes] = time.split(':').map(Number)
+    const totalMinutes = hours * 60 + minutes
+    const offsetDiff = (timezoneOffsets[toTz] - timezoneOffsets[fromTz]) * 60
+    const convertedMinutes = totalMinutes + offsetDiff
+
+    const newHours = Math.floor((convertedMinutes + 1440) % 1440 / 60)
+    const newMinutes = convertedMinutes % 60
+
+    return `${newHours.toString().padStart(2, '0')}:${newMinutes.toString().padStart(2, '0')}`
+  }
+
+  // Load approved users when modal opens
+  useEffect(() => {
+    if (showAddModModal && approvedUsers.length === 0) {
+      fetchApprovedUsers()
+    }
+  }, [showAddModModal])
 
   // Chart configurations
   const sentimentChartData = {
@@ -487,7 +734,7 @@ export default function DiscordProjectPage() {
                     <div key={channelId} className="flex items-center justify-between bg-black/50 p-2 rounded group">
                       <div className="flex items-center gap-2">
                         <Hash className="w-4 h-4 text-gray-400" />
-                        <span className="font-medium">
+                        <span className="font-medium text-white">
                           {channel?.name && channel.name !== `Channel ${channelId}` 
                             ? channel.name 
                             : `#${channelId}`}
@@ -550,22 +797,190 @@ export default function DiscordProjectPage() {
           <div className="mb-6">
             <h3 className="text-lg text-green-300 mb-3">Team Moderators</h3>
             <div className="space-y-2">
-              {teamMods.map((mod) => (
-                <div key={mod} className="flex items-center justify-between bg-black/50 p-2 rounded">
-                  <span>{mod}</span>
-                  <button
-                    onClick={() => {
-                      // Remove moderator functionality
-                    }}
-                    className="text-red-400 hover:text-red-300"
-                  >
-                    Remove
-                  </button>
-                </div>
-              ))}
-              <button className="w-full py-2 border border-dashed border-gray-600 rounded hover:border-green-500">
+              {teamMods.map((mod, index) => {
+                let modData: any = null
+                try {
+                  modData = JSON.parse(mod)
+                } catch {
+                  // Handle legacy string format
+                  modData = { handle: mod, name: mod }
+                }
+                
+                return (
+                  <div key={index} className="flex items-center justify-between bg-black/50 p-3 rounded">
+                    <div className="flex items-center gap-3 flex-1">
+                      {/* Profile Picture */}
+                      <div className="relative">
+                        {modData.profileImageUrl ? (
+                          <img 
+                            src={modData.profileImageUrl} 
+                            alt={modData.name}
+                            className="w-10 h-10 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
+                            <span className="text-sm text-gray-400">
+                              {(modData.name || modData.handle || '?')[0].toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-white font-medium">{modData.name || modData.handle}</span>
+                          <span className="text-gray-400 text-sm">@{modData.handle}</span>
+                          {/* Role Badge */}
+                          {modData.role && (
+                            <span className={`px-2 py-0.5 text-xs rounded-full ${
+                              modData.role === 'admin' ? 'bg-red-500/20 text-red-400' :
+                              modData.role === 'core' ? 'bg-purple-500/20 text-purple-400' :
+                              modData.role === 'team' ? 'bg-green-500/20 text-green-400' :
+                              modData.role === 'intern' ? 'bg-blue-500/20 text-blue-400' :
+                              'bg-gray-500/20 text-gray-400'
+                            }`}>
+                              {modData.role.toUpperCase()}
+                            </span>
+                          )}
+                        </div>
+                        {modData.shift && (
+                          <div className="text-xs text-gray-500 mt-1">
+                            Shift: {modData.shift.startTime} - {modData.shift.endTime} {modData.shift.timezone}
+                            {modData.timezone && modData.timezone !== modData.shift.timezone && (
+                              <span className="ml-2 text-blue-400">
+                                ({convertTimezone(modData.shift.startTime, modData.shift.timezone, modData.timezone)} - 
+                                {convertTimezone(modData.shift.endTime, modData.shift.timezone, modData.timezone)} {modData.timezone})
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        {/* Future Mod 2FA check-in integration placeholder */}
+                        {modData.twoFactorEnabled && (
+                          <div className="text-xs text-yellow-400 mt-1">
+                            2FA Enabled • Last check-in: {modData.lastCheckIn || 'Never'}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => removeModerator(modData.handle)}
+                      className="text-red-400 hover:text-red-300 ml-4"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )
+              })}
+              <button 
+                onClick={() => setShowAddModModal(true)}
+                className="w-full py-2 border border-dashed border-gray-600 rounded hover:border-green-500 transition-colors"
+              >
                 + Add Moderator
               </button>
+            </div>
+          </div>
+
+          {/* Sentiment Analysis Settings */}
+          <div className="mb-6">
+            <h3 className="text-lg text-green-300 mb-3">Sentiment Analysis Settings</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">Bullish Keywords (comma-separated)</label>
+                <input
+                  type="text"
+                  value={sentimentSettings.bullishKeywords}
+                  onChange={(e) => setSentimentSettings({ ...sentimentSettings, bullishKeywords: e.target.value })}
+                  placeholder="moon, pump, bullish, amazing, great"
+                  className="w-full px-3 py-2 bg-black border border-gray-600 rounded text-white placeholder-gray-500"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">Bearish Keywords (comma-separated)</label>
+                <input
+                  type="text"
+                  value={sentimentSettings.bearishKeywords}
+                  onChange={(e) => setSentimentSettings({ ...sentimentSettings, bearishKeywords: e.target.value })}
+                  placeholder="dump, crash, bearish, terrible, scam"
+                  className="w-full px-3 py-2 bg-black border border-gray-600 rounded text-white placeholder-gray-500"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">Bullish Emojis (comma-separated)</label>
+                <input
+                  type="text"
+                  value={sentimentSettings.bullishEmojis}
+                  onChange={(e) => setSentimentSettings({ ...sentimentSettings, bullishEmojis: e.target.value })}
+                  placeholder="🚀, 🌙, 💎, 🔥, ✨"
+                  className="w-full px-3 py-2 bg-black border border-gray-600 rounded text-white placeholder-gray-500"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">Bearish Emojis (comma-separated)</label>
+                <input
+                  type="text"
+                  value={sentimentSettings.bearishEmojis}
+                  onChange={(e) => setSentimentSettings({ ...sentimentSettings, bearishEmojis: e.target.value })}
+                  placeholder="📉, 💩, 🔴, ⬇️, 😢"
+                  className="w-full px-3 py-2 bg-black border border-gray-600 rounded text-white placeholder-gray-500"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">Ignored Channels</label>
+                <select
+                  multiple
+                  value={sentimentSettings.ignoredChannels}
+                  onChange={(e) => {
+                    const selected = Array.from(e.target.selectedOptions, option => option.value)
+                    setSentimentSettings({ ...sentimentSettings, ignoredChannels: selected })
+                  }}
+                  className="w-full px-3 py-2 bg-black border border-gray-600 rounded text-white min-h-[100px]"
+                >
+                  {channels.map(channel => (
+                    <option key={channel.id} value={channel.id}>
+                      {channel.name}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple channels</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">
+                  Minimum Message Length: {sentimentSettings.minimumMessageLength}
+                </label>
+                <input
+                  type="range"
+                  min="1"
+                  max="50"
+                  value={sentimentSettings.minimumMessageLength}
+                  onChange={(e) => setSentimentSettings({ ...sentimentSettings, minimumMessageLength: parseInt(e.target.value) })}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-gray-500">
+                  <span>1 char</span>
+                  <span>50 chars</span>
+                </div>
+              </div>
+              
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={saveSentimentSettings}
+                  disabled={savingSentimentSettings}
+                  className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded disabled:opacity-50"
+                >
+                  {savingSentimentSettings ? 'Saving...' : 'Save Settings'}
+                </button>
+                <button
+                  onClick={resetSentimentSettings}
+                  className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded"
+                >
+                  Reset to Defaults
+                </button>
+              </div>
             </div>
           </div>
 
@@ -599,6 +1014,168 @@ export default function DiscordProjectPage() {
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(false)}
+                className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Moderator Modal */}
+      {showAddModModal && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-lg font-semibold text-green-400 mb-4">Add Moderator</h3>
+            
+            {/* Searchable Moderator Dropdown */}
+            <div className="mb-4">
+              <label className="block text-sm text-gray-400 mb-2">Select Moderator</label>
+              <input
+                type="text"
+                value={modSearchQuery}
+                onChange={(e) => {
+                  setModSearchQuery(e.target.value)
+                  // If exact match, select it
+                  const exactMatch = approvedUsers.find(u => 
+                    u.handle.toLowerCase() === e.target.value.toLowerCase() ||
+                    u.name.toLowerCase() === e.target.value.toLowerCase()
+                  )
+                  if (exactMatch) {
+                    setSelectedMod(exactMatch.handle)
+                  }
+                }}
+                placeholder="Search by name or handle..."
+                className="w-full px-3 py-2 bg-black border border-gray-600 rounded text-white mb-2"
+              />
+              
+              <select
+                value={selectedMod}
+                onChange={(e) => setSelectedMod(e.target.value)}
+                className="w-full px-3 py-2 bg-black border border-gray-600 rounded text-white"
+                size={5}
+              >
+                <option value="">-- Select a team member --</option>
+                {approvedUsers
+                  .filter(user => 
+                    !modSearchQuery || 
+                    user.handle.toLowerCase().includes(modSearchQuery.toLowerCase()) ||
+                    user.name.toLowerCase().includes(modSearchQuery.toLowerCase())
+                  )
+                  .map(user => (
+                    <option key={user.handle} value={user.handle}>
+                      {user.name} (@{user.handle}) - {
+                        user.role === 'admin' ? 'Admin' : 
+                        user.role === 'core' ? 'Core' : 
+                        user.role === 'team' ? 'Team' :
+                        'Intern'
+                      }
+                    </option>
+                  ))
+                }
+              </select>
+            </div>
+
+            {/* Shift Time Settings */}
+            <div className="mb-4">
+              <h4 className="text-sm text-gray-400 mb-2">Moderator Shift Times</h4>
+              
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Start Time</label>
+                  <input
+                    type="time"
+                    value={modShift.startTime}
+                    onChange={(e) => setModShift({ ...modShift, startTime: e.target.value })}
+                    className="w-full px-2 py-1 bg-black border border-gray-600 rounded text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">End Time</label>
+                  <input
+                    type="time"
+                    value={modShift.endTime}
+                    onChange={(e) => setModShift({ ...modShift, endTime: e.target.value })}
+                    className="w-full px-2 py-1 bg-black border border-gray-600 rounded text-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">Timezone</label>
+                <select
+                  value={modShift.timezone}
+                  onChange={(e) => setModShift({ ...modShift, timezone: e.target.value })}
+                  className="w-full px-2 py-1 bg-black border border-gray-600 rounded text-white"
+                >
+                  <option value="EDT">EDT (Eastern Daylight)</option>
+                  <option value="EST">EST (Eastern Standard)</option>
+                  <option value="PDT">PDT (Pacific Daylight)</option>
+                  <option value="PST">PST (Pacific Standard)</option>
+                  <option value="UTC">UTC (Universal)</option>
+                  <option value="CET">CET (Central European)</option>
+                  <option value="CEST">CEST (Central European Summer)</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Timezone Conversion Display */}
+            {selectedMod && modShift.startTime && modShift.endTime && (
+              <div className="bg-black/50 p-3 rounded mb-4">
+                <h4 className="text-xs text-gray-400 mb-2">Time Conversions</h4>
+                <div className="space-y-1 text-xs">
+                  <div>
+                    <span className="text-gray-500">EDT:</span>{' '}
+                    <span className="text-white">
+                      {convertTimezone(modShift.startTime, modShift.timezone, 'EDT')} - 
+                      {convertTimezone(modShift.endTime, modShift.timezone, 'EDT')}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">UTC:</span>{' '}
+                    <span className="text-white">
+                      {convertTimezone(modShift.startTime, modShift.timezone, 'UTC')} - 
+                      {convertTimezone(modShift.endTime, modShift.timezone, 'UTC')}
+                    </span>
+                  </div>
+                  {approvedUsers.find(u => u.handle === selectedMod)?.timezone && (
+                    <div>
+                      <span className="text-gray-500">Mod's Local Time:</span>{' '}
+                      <span className="text-white">
+                        {convertTimezone(modShift.startTime, modShift.timezone, 
+                          approvedUsers.find(u => u.handle === selectedMod)?.timezone || 'UTC')} - 
+                        {convertTimezone(modShift.endTime, modShift.timezone, 
+                          approvedUsers.find(u => u.handle === selectedMod)?.timezone || 'UTC')}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Future Mod 2FA Integration Notice */}
+            <div className="bg-blue-900/20 border border-blue-700 p-3 rounded mb-4 text-xs">
+              <p className="text-blue-300">
+                ℹ️ Future Feature: Moderator 2FA check-ins will be integrated here
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={addModerator}
+                disabled={addingMod || !selectedMod || !modShift.startTime || !modShift.endTime}
+                className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded disabled:opacity-50"
+              >
+                {addingMod ? 'Adding...' : 'Add Moderator'}
+              </button>
+              <button
+                onClick={() => {
+                  setShowAddModModal(false)
+                  setSelectedMod('')
+                  setModSearchQuery('')
+                  setModShift({ startTime: '', endTime: '', timezone: 'EDT' })
+                }}
                 className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded"
               >
                 Cancel
@@ -654,7 +1231,7 @@ export default function DiscordProjectPage() {
         <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
           <h3 className="text-lg text-green-400 mb-4">Activity Trend</h3>
           <div className="h-64">
-            {analytics && (
+            {analytics ? (
               <Line
                 data={activityChartData}
                 options={{
@@ -676,6 +1253,10 @@ export default function DiscordProjectPage() {
                   }
                 }}
               />
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-500">
+                {analyticsLoading ? 'Loading...' : 'No data available'}
+              </div>
             )}
           </div>
         </div>
@@ -684,7 +1265,7 @@ export default function DiscordProjectPage() {
         <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
           <h3 className="text-lg text-green-400 mb-4">Sentiment Distribution</h3>
           <div className="h-64">
-            {analytics && (
+            {analytics ? (
               <Doughnut
                 data={sentimentChartData}
                 options={{
@@ -698,6 +1279,10 @@ export default function DiscordProjectPage() {
                   }
                 }}
               />
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-500">
+                {analyticsLoading ? 'Loading...' : 'No data available'}
+              </div>
             )}
           </div>
         </div>
@@ -706,7 +1291,7 @@ export default function DiscordProjectPage() {
         <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
           <h3 className="text-lg text-green-400 mb-4">Channel Activity</h3>
           <div className="h-64">
-            {analytics && (
+            {analytics ? (
               <Bar
                 data={channelChartData}
                 options={{
@@ -728,6 +1313,10 @@ export default function DiscordProjectPage() {
                   }
                 }}
               />
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-500">
+                {analyticsLoading ? 'Loading...' : 'No data available'}
+              </div>
             )}
           </div>
         </div>
@@ -743,7 +1332,7 @@ export default function DiscordProjectPage() {
                 <div key={user.userId} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span className="text-gray-500 w-6">{index + 1}.</span>
-                    <span>{user.username}</span>
+                    <span className="text-white">{user.username}</span>
                   </div>
                   <div className="flex items-center gap-4">
                     <span className="text-sm text-gray-400">{user.messageCount} msgs</span>

@@ -33,12 +33,17 @@ export async function POST(
 
     // Create a request for the bot to fetch channel info
     const requestKey = `discord:channel-info-request:${channelId}`
-    await redis.setex(requestKey, 30, JSON.stringify({
+    const requestData = {
       channelId,
       projectId: params.id,
       serverId: project.serverId,
       timestamp: new Date().toISOString()
-    }))
+    }
+    
+    // Use set with ex option for Upstash Redis
+    await redis.set(requestKey, JSON.stringify(requestData), {
+      ex: 30 // expire in 30 seconds
+    })
 
     // Wait a bit for the bot to process
     await new Promise(resolve => setTimeout(resolve, 1000))
@@ -53,6 +58,18 @@ export async function POST(
       await DiscordService.updateChannelMetadata(params.id, channelId, {
         name: channelInfo.name
       })
+      
+      // Store the channel info in Redis for future use
+      const channelKey = `channel:discord:${channelId}`
+      await redis.json.set(channelKey, '$', {
+        id: channelId,
+        name: channelInfo.name,
+        type: channelInfo.type,
+        projectId: params.id,
+        updatedAt: new Date().toISOString()
+      })
+      
+      console.log(`✅ Saved channel metadata for ${channelInfo.name} (${channelId})`)
       
       return NextResponse.json(channelInfo)
     }

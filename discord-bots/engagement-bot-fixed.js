@@ -258,13 +258,11 @@ client.on('ready', async () => {
         const request = await redis.get(key)
         if (!request) continue
         
-        let channelId, serverId, projectId
+        let channelId, serverId
         try {
-          // Upstash Redis returns the parsed object directly
-          const parsed = typeof request === 'string' ? JSON.parse(request) : request
+          const parsed = JSON.parse(request)
           channelId = parsed.channelId
           serverId = parsed.serverId
-          projectId = parsed.projectId
         } catch (parseError) {
           console.error(`Error parsing channel info request from ${key}:`, parseError)
           console.error('Raw request data:', request)
@@ -274,43 +272,39 @@ client.on('ready', async () => {
         
         // Try to fetch the channel
         try {
-          console.log(`[DEBUG] Looking for guild ${serverId}`)
-          console.log(`[DEBUG] Available guilds: ${client.guilds.cache.map(g => `${g.name} (${g.id})`).join(', ')}`)
+          console.log(`[CHANNEL-FETCH] Looking for guild ${serverId}`);
+          console.log(`[CHANNEL-FETCH] Available guilds: `, client.guilds.cache.map(g => ({ id: g.id, name: g.name })));
           
           const guild = client.guilds.cache.get(serverId)
           if (!guild) {
-            console.log(`Guild ${serverId} not found in cache`)
+            console.log(`[CHANNEL-FETCH] Guild ${serverId} not found in cache`)
+            console.log(`[CHANNEL-FETCH] Bot is in ${client.guilds.cache.size} guilds`)
+            await redis.del(key)
             continue
           }
           
+          console.log(`[CHANNEL-FETCH] Found guild: ${guild.name}`);
           const channel = guild.channels.cache.get(channelId)
           if (channel) {
             // Store the response
             const responseKey = `discord:channel-info-response:${channelId}`
-            await redis.set(responseKey, JSON.stringify({
+            const responseData = {
               id: channelId,
               name: channel.name,
               type: channel.type === 0 ? 'text' : 'voice'
-            }), {
+            };
+            
+            console.log(`[CHANNEL-FETCH] Found channel: #${channel.name} (${channelId})`);
+            await redis.set(responseKey, JSON.stringify(responseData), {
               ex: 60 // expire in 60 seconds
             })
-            
-            // Also store permanent channel metadata
-            const channelMetadataKey = `channel:discord:${channelId}`
-            await redis.json.set(channelMetadataKey, '$', {
-              id: channelId,
-              name: channel.name,
-              type: channel.type === 0 ? 'text' : 'voice',
-              projectId: projectId || null,
-              updatedAt: new Date().toISOString()
-            })
-            
-            console.log(`✅ Fetched channel info: #${channel.name} (${channelId})`)
+            console.log(`✅ Saved channel info response for #${channel.name}`)
           } else {
-            console.log(`Channel ${channelId} not found in guild ${serverId}`)
+            console.log(`[CHANNEL-FETCH] Channel ${channelId} not found in guild ${serverId}`)
+            console.log(`[CHANNEL-FETCH] Available channels in guild: `, guild.channels.cache.map(c => ({ id: c.id, name: c.name, type: c.type })).slice(0, 10))
           }
         } catch (error) {
-          console.error(`Error fetching channel ${channelId}:`, error)
+          console.error(`[CHANNEL-FETCH] Error fetching channel ${channelId}:`, error)
         }
         
         // Delete the request

@@ -156,6 +156,16 @@ export class DiscordService {
     await redis.sadd(`discord:messages:channel:${data.channelId}`, message.id);
     await redis.sadd(`discord:messages:user:${data.userId}`, message.id);
     
+    // OPTIMIZATION: Add to sorted set for time-based queries
+    // TEMPORARILY DISABLED: Need to fix Upstash Redis API usage
+    /*
+    const timestamp = new Date(data.timestamp).getTime()
+    await redis.zadd(`discord:messages:timeline:${data.projectId}`, {
+      score: timestamp,
+      member: data.messageId
+    })
+    */
+    
     // Update user stats
     await this.updateUserStats(data.userId, data.username, data.projectId, sentiment.score);
     
@@ -275,6 +285,57 @@ export class DiscordService {
     };
     
     await redis.json.set(projectId, '$', project as any);
+    
+    // OPTIMIZATION: Update cached stats for fast retrieval
+    // TEMPORARILY DISABLED: Focusing on getting basic functionality working
+    // await this.updateCachedStats(projectId, project.stats);
+  }
+  
+  // Cache project stats for fast aggregation
+  static async updateCachedStats(projectId: string, stats: any): Promise<void> {
+    const cacheKey = `discord:stats:cache:${projectId}`;
+    await redis.json.set(cacheKey, '$', {
+      ...stats,
+      updatedAt: new Date().toISOString()
+    });
+    
+    // Set expiry to 5 minutes
+    await redis.expire(cacheKey, 300);
+  }
+  
+  // Get cached stats for all projects
+  static async getCachedProjectStats(): Promise<Array<{
+    projectId: string;
+    stats: any;
+  }>> {
+    const projects = await this.getAllProjects();
+    const cachedStats = [];
+    
+    for (const project of projects) {
+      const cacheKey = `discord:stats:cache:${project.id}`;
+      let stats = await redis.json.get(cacheKey);
+      
+      // If no cached stats, generate them
+      if (!stats) {
+        const messageIds = await redis.smembers(`discord:messages:project:${project.id}`);
+        const userIds = await redis.smembers(`discord:users:project:${project.id}`);
+        
+        stats = {
+          totalMessages: messageIds.length,
+          totalUsers: userIds.length,
+          lastActivity: project.stats?.lastActivity || null
+        };
+        
+        await this.updateCachedStats(project.id, stats);
+      }
+      
+      cachedStats.push({
+        projectId: project.id,
+        stats
+      });
+    }
+    
+    return cachedStats;
   }
   
   // Analytics
@@ -410,27 +471,64 @@ export class DiscordService {
     endDate?: Date
   ): Promise<DiscordAnalytics> {
     const now = new Date()
-    const start = startDate || new Date()
+    let start: Date
+    let end: Date
     
-    switch (timeframe) {
-      case 'daily':
-        start.setHours(start.getHours() - 24)
-        break
-      case 'weekly':
-        start.setDate(start.getDate() - 7)
-        break
-      case 'monthly':
-        start.setDate(start.getDate() - 30)
-        break
-      case 'allTime':
-        start.setFullYear(2020) // Set to a date before any messages
-        break
+    // Set end date to end of current day unless specified
+    if (endDate) {
+      end = new Date(endDate)
+    } else {
+      end = new Date(now)
+      end.setHours(23, 59, 59, 999) // End of today
     }
     
-    const end = endDate || now
+    // Calculate start date based on timeframe
+    if (startDate) {
+      start = new Date(startDate)
+    } else {
+      start = new Date(end)
+      
+      switch (timeframe) {
+        case 'daily':
+          // Go back 24 hours from end
+          start.setTime(start.getTime() - (24 * 60 * 60 * 1000))
+          break
+        case 'weekly':
+          // Go back 7 days and set to start of that day
+          start.setDate(start.getDate() - 7)
+          start.setHours(0, 0, 0, 0)
+          break
+        case 'monthly':
+          // Go back 30 days and set to start of that day
+          start.setDate(start.getDate() - 30)
+          start.setHours(0, 0, 0, 0)
+          break
+        case 'allTime':
+          start = new Date('2020-01-01')
+          break
+      }
+    }
     
-    // Get all messages for the project in timeframe
-    const messageKeys = await redis.keys(`message:discord:${projectId}:*`)
+    console.log(`[DiscordService.getProjectAnalytics] Timeframe: ${timeframe}, Start: ${start.toISOString()}, End: ${end.toISOString()}`)
+    
+    // TEMPORARY: Use fallback method until optimization is fixed
+    return this.getProjectAnalyticsFallback(projectId, timeframe, start, end)
+  }
+
+  // Fallback method using keys scan (slow, for backwards compatibility)
+  private static async getProjectAnalyticsFallback(
+    projectId: string,
+    timeframe: 'daily' | 'weekly' | 'monthly' | 'allTime' | 'custom',
+    start: Date,
+    end: Date
+  ): Promise<DiscordAnalytics> {
+    console.log(`[DiscordService] Analytics request for ${projectId}`)
+    console.log(`[DiscordService] Timeframe: ${timeframe}, Start: ${start.toISOString()}, End: ${end.toISOString()}`)
+    
+    // Get all message IDs for the project from the index (MUCH faster than keys scan)
+    const messageIds = await redis.smembers(`discord:messages:project:${projectId}`)
+    console.log(`[DiscordService] Found ${messageIds.length} message IDs in index`)
+    
     const messages: DiscordMessage[] = []
     const uniqueUsers = new Set<string>()
     const channelStats: Record<string, { count: number; name: string }> = {}
@@ -438,52 +536,76 @@ export class DiscordService {
     const dailyData: Record<string, { messages: number; sentiment: number; sentimentCount: number }> = {}
     const userStats: Record<string, { messages: number; sentiment: number; sentimentCount: number }> = {}
     
-    // Process messages
-    for (const key of messageKeys) {
-      const message = await redis.json.get(key) as DiscordMessage
-      if (!message) continue
+    let processedCount = 0
+    let inTimeframeCount = 0
+    
+    // Process messages in batches to avoid memory issues
+    const batchSize = 50
+    for (let i = 0; i < messageIds.length; i += batchSize) {
+      const batch = messageIds.slice(i, i + batchSize)
+      const batchMessages = await Promise.all(
+        batch.map(async (messageId: string) => {
+          try {
+            return await redis.json.get(messageId) as DiscordMessage
+          } catch (error) {
+            console.error(`Error fetching message ${messageId}:`, error)
+            return null
+          }
+        })
+      )
       
-      const msgDate = new Date(message.timestamp)
-      if (msgDate < start || msgDate > end) continue
-      
-      messages.push(message)
-      uniqueUsers.add(message.userId)
-      
-      // Update channel stats
-      if (!channelStats[message.channelId]) {
-        channelStats[message.channelId] = { count: 0, name: message.channelName }
-      }
-      channelStats[message.channelId].count++
-      
-      // Update hourly activity
-      const hour = msgDate.getHours()
-      hourlyActivity[hour]++
-      
-      // Update daily data
-      const dateKey = msgDate.toISOString().slice(0, 10)
-      if (!dailyData[dateKey]) {
-        dailyData[dateKey] = { messages: 0, sentiment: 0, sentimentCount: 0 }
-      }
-      dailyData[dateKey].messages++
-      
-      // Update user stats
-      if (!userStats[message.userId]) {
-        userStats[message.userId] = { messages: 0, sentiment: 0, sentimentCount: 0 }
-      }
-      userStats[message.userId].messages++
-      
-      // Process sentiment if available
-      if (message.sentiment?.score) {
-        const sentimentValue = message.sentiment.score === 'positive' ? 1 : 
-                              message.sentiment.score === 'negative' ? -1 : 0
+      for (const message of batchMessages) {
+        if (!message) continue
+        processedCount++
         
-        dailyData[dateKey].sentimentCount++
-        dailyData[dateKey].sentiment += sentimentValue
+        const msgDate = new Date(message.timestamp)
+        if (msgDate < start || msgDate > end) {
+          continue
+        }
         
-        userStats[message.userId].sentimentCount++
-        userStats[message.userId].sentiment += sentimentValue
+        inTimeframeCount++
+        messages.push(message)
+        uniqueUsers.add(message.userId)
+        
+        // Update channel stats
+        if (!channelStats[message.channelId]) {
+          channelStats[message.channelId] = { count: 0, name: message.channelName }
+        }
+        channelStats[message.channelId].count++
+        
+        // Update hourly activity
+        const hour = msgDate.getHours()
+        hourlyActivity[hour]++
+        
+        // Update daily data
+        const dateKey = msgDate.toISOString().slice(0, 10)
+        if (!dailyData[dateKey]) {
+          dailyData[dateKey] = { messages: 0, sentiment: 0, sentimentCount: 0 }
+        }
+        dailyData[dateKey].messages++
+        
+        // Update user stats
+        if (!userStats[message.userId]) {
+          userStats[message.userId] = { messages: 0, sentiment: 0, sentimentCount: 0 }
+        }
+        userStats[message.userId].messages++
+        
+        // Process sentiment if available
+        if (message.sentiment?.score) {
+          const sentimentValue = message.sentiment.score === 'positive' ? 1 : 
+                                message.sentiment.score === 'negative' ? -1 : 0
+          
+          dailyData[dateKey].sentimentCount++
+          dailyData[dateKey].sentiment += sentimentValue
+          
+          userStats[message.userId].sentimentCount++
+          userStats[message.userId].sentiment += sentimentValue
+        }
       }
     }
+    
+    console.log(`[DiscordService] Processed ${processedCount} messages, ${inTimeframeCount} in timeframe`)
+    console.log(`[DiscordService] Date range check - First message: ${messages[0]?.timestamp}, Last: ${messages[messages.length-1]?.timestamp}`)
     
     // Calculate sentiment breakdown
     const sentimentBreakdown = { positive: 0, neutral: 0, negative: 0 }
@@ -558,28 +680,43 @@ export class DiscordService {
     let totalMessages = 0
     
     for (const project of projects) {
-      const messageKeys = await redis.keys(`message:discord:${project.id}:*`)
+      // Use the message index instead of keys scan
+      const messageIds = await redis.smembers(`discord:messages:project:${project.id}`)
       let projectMessages = 0
       let firstSeen: Date | null = null
       let lastSeen: Date | null = null
       let sentimentSum = 0
       let sentimentCount = 0
       
-      for (const key of messageKeys) {
-        const message = await redis.json.get(key) as DiscordMessage
-        if (!message || message.userId !== userId) continue
+      // Process in batches
+      const batchSize = 50
+      for (let i = 0; i < messageIds.length; i += batchSize) {
+        const batch = messageIds.slice(i, i + batchSize)
+        const batchMessages = await Promise.all(
+          batch.map(async (messageId: string) => {
+            try {
+              return await redis.json.get(messageId) as DiscordMessage
+            } catch (error) {
+              return null
+            }
+          })
+        )
         
-        projectMessages++
-        totalMessages++
-        
-        const msgDate = new Date(message.timestamp)
-        if (!firstSeen || msgDate < firstSeen) firstSeen = msgDate
-        if (!lastSeen || msgDate > lastSeen) lastSeen = msgDate
-        
-        if (message.sentiment?.score) {
-          sentimentCount++
-          sentimentSum += message.sentiment.score === 'positive' ? 1 :
-                         message.sentiment.score === 'negative' ? -1 : 0
+        for (const message of batchMessages) {
+          if (!message || message.userId !== userId) continue
+          
+          projectMessages++
+          totalMessages++
+          
+          const msgDate = new Date(message.timestamp)
+          if (!firstSeen || msgDate < firstSeen) firstSeen = msgDate
+          if (!lastSeen || msgDate > lastSeen) lastSeen = msgDate
+          
+          if (message.sentiment?.score) {
+            sentimentCount++
+            sentimentSum += message.sentiment.score === 'positive' ? 1 :
+                           message.sentiment.score === 'negative' ? -1 : 0
+          }
         }
       }
       

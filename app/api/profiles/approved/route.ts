@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     
     // Filter for approved users (those with role)
     const approvedProfiles = allProfiles.filter((profile: UnifiedProfile) => 
-      profile.role && ['admin', 'core', 'team', 'kol'].includes(profile.role)
+      profile.role && ['admin', 'core', 'team', 'kol', 'intern'].includes(profile.role)
     )
     console.log('[Approved Profiles API] Approved profiles found:', approvedProfiles.length)
     
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     }))
     
     // Sort by role priority and then by name
-    const rolePriority = { admin: 0, core: 1, team: 2, kol: 3 }
+    const rolePriority = { admin: 0, core: 1, team: 2, kol: 3, intern: 4 }
     profiles.sort((a: any, b: any) => {
       const aPriority = rolePriority[a.role as keyof typeof rolePriority] ?? 999
       const bPriority = rolePriority[b.role as keyof typeof rolePriority] ?? 999

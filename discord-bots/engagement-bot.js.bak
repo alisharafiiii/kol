@@ -258,13 +258,11 @@ client.on('ready', async () => {
         const request = await redis.get(key)
         if (!request) continue
         
-        let channelId, serverId, projectId
+        let channelId, serverId
         try {
-          // Upstash Redis returns the parsed object directly
-          const parsed = typeof request === 'string' ? JSON.parse(request) : request
+          const parsed = JSON.parse(request)
           channelId = parsed.channelId
           serverId = parsed.serverId
-          projectId = parsed.projectId
         } catch (parseError) {
           console.error(`Error parsing channel info request from ${key}:`, parseError)
           console.error('Raw request data:', request)
@@ -274,9 +272,6 @@ client.on('ready', async () => {
         
         // Try to fetch the channel
         try {
-          console.log(`[DEBUG] Looking for guild ${serverId}`)
-          console.log(`[DEBUG] Available guilds: ${client.guilds.cache.map(g => `${g.name} (${g.id})`).join(', ')}`)
-          
           const guild = client.guilds.cache.get(serverId)
           if (!guild) {
             console.log(`Guild ${serverId} not found in cache`)
@@ -287,24 +282,11 @@ client.on('ready', async () => {
           if (channel) {
             // Store the response
             const responseKey = `discord:channel-info-response:${channelId}`
-            await redis.set(responseKey, JSON.stringify({
+            await redis.setex(responseKey, 60, JSON.stringify({
               id: channelId,
               name: channel.name,
               type: channel.type === 0 ? 'text' : 'voice'
-            }), {
-              ex: 60 // expire in 60 seconds
-            })
-            
-            // Also store permanent channel metadata
-            const channelMetadataKey = `channel:discord:${channelId}`
-            await redis.json.set(channelMetadataKey, '$', {
-              id: channelId,
-              name: channel.name,
-              type: channel.type === 0 ? 'text' : 'voice',
-              projectId: projectId || null,
-              updatedAt: new Date().toISOString()
-            })
-            
+            }))
             console.log(`✅ Fetched channel info: #${channel.name} (${channelId})`)
           } else {
             console.log(`Channel ${channelId} not found in guild ${serverId}`)

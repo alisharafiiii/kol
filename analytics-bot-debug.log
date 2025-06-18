@@ -1,4 +1,4 @@
-(node:85482) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/nabu/kol/discord-bots/analytics-bot.js is not specified and it doesn't parse as CommonJS.
+(node:20935) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/nabu/kol/discord-bots/analytics-bot.js is not specified and it doesn't parse as CommonJS.
 Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
 To eliminate this warning, add "type": "module" to /Users/nabu/kol/package.json.
 (Use `node --trace-warnings ...` to show where the warning was created)
@@ -7,659 +7,394 @@ To eliminate this warning, add "type": "module" to /Users/nabu/kol/package.json.
 ✅ AI model initialized for sentiment analysis
 🚀 Analytics bot starting...
 ✅ Analytics bot logged in as nabulines_bot#8452
-📊 Monitoring 2 servers
+📊 Monitoring 3 servers
 📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-😐 [NABULINES] #⁉️-test-test-⁉️ @alinabu: jooon
-😊 [NABULINES] #⁉️-test-test-⁉️ @alinabu: such a wow
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-😊 [NABULINES] #⁉️-test-test-⁉️ @alinabu: shalalalala
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-😐 [NABULINES] #⁉️-test-test-⁉️ @alinabu: hey he u ehy
-😊 [NABULINES] #⁉️-test-test-⁉️ @alinabu: we love you guysssss
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-😐 [NABULINES] #⁉️-test-test-⁉️ @alinabu: https://discord.com/oauth2/authorize?client_id=138...
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 1 active projects
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 2 active projects
-😊 [NABULINES] #⁉️-test-test-⁉️ @alinabu: hi dearest
-😞 [NABULINES] #⁉️-test-test-⁉️ @alinabu: shitty day
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 2 active projects
-😞 [Ledger] #☕┃general @shunarey: Hey all take care for scammers
-😞 [Ledger] #☕┃general @shunarey: 1 Message and so many people msg me with scam link...
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
+📌 Tracking 5 channels for project: Ledger
 📌 Tracking 3 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
+📌 Tracking 5 channels for project: Ledger
 📌 Tracking 3 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 2 active projects
-😞 [Ledger] #☕┃general @alinabu: close your dms bud
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 2 active projects
-😐 [Ledger] #☕┃general @alinabu: hows everyone doing today?
-😊 [Ledger] #☕┃general @alinabu: its a beautiful day to have a beautiful day
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
+📌 Tracking 5 channels for project: Ledger
 📌 Tracking 3 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 2 active projects
-😊 [Ledger] #☕┃general @toxon_1405: I am doing good , wbu nabu ?
-
-I’m heading out for ...
-😞 [Ledger] #☕┃general @alinabu: havent hit the gym for two weeks, kudos to you 🤝
-😊 [Ledger] #☕┃general @toxon_1405: Haha, thanks man! Gotta carry the team somehow 💪 ...
-😊 [Ledger] #☕┃general @alinabu: much love Toxon , keep pushin 🔥
-😊 [Ledger] #☕┃general @toxon_1405: Appreciate it bro, always forward 🚀
-We’re all cha...
-😊 [Ledger] #☕┃general @justy_ar: GM fellas
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 2 active projects
-😊 [Ledger] #☕┃general @toxon_1405: Gm Justy ☀️☕️
-😐 [Ledger] #☕┃general @toxon_1405: would it be okay nabu  if we could connect with ea...
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 2 active projects
-😊 [Ledger] #☕┃general @justy_ar: how's it going mate?
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 5 channels for project: Ledger
+📌 Tracking 2 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 5 channels for project: Ledger
 ✅ Loaded 2 active projects
-😊 [Ledger] #☕┃general @toxon_1405: Great heading out for a walk now wbu
-😊 [Ledger] #☕┃general @justy_ar: good good, touch some grass 🌲
-😐 [Ledger] #☕┃general @justy_ar: what time is it there?
-😐 [Ledger] #☕┃general @toxon_1405: 5 pm
-😊 [Ledger] #☕┃general @justy_ar: good time for a walk
+😊 [Ledger] #🚫┃scam-reports @stick00: Thanks for the reports man!!
+😞 [Ledger] #🚫┃scam-reports @stick00: .massban 952447805564284969 1320273342271324213 85...
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 5 channels for project: Ledger
+📌 Tracking 1 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 5 channels for project: Ledger
+📌 Tracking 1 channels for project: NABULINES
+✅ Loaded 2 active projects
+😐 [Ledger] #☕┃general @alinabu: ??
+📊 Loading tracked channels...
+📌 Tracking 5 channels for project: Ledger
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😊 [Ledger] #☕┃general @drippyy42: u can get 4 whole pizzas with 40 euros
+😐 [Ledger] #☕┃general @drippyy42: idke bro
+😞 [Ledger] #☕┃general @drippyy42: the magnet isnt that useful
+😐 [Ledger] #☕┃general @.dxm: id like a dominos
+😐 [Ledger] #☕┃general @drippyy42: do u guys travel with your ledger flex
+😞 [Ledger] #☕┃general @.dxm: like my pizza how i like my women, pepperoni
+😞 [Ledger] #☕┃general @drippyy42: if u dont travel with your flex i dont see why you...
+😐 [Ledger] #☕┃general @.dxm: sometimes bring stax with me
+😞 [Ledger] #☕┃general @.dxm: only if i know i will be making sends
+😐 [Ledger] #☕┃general @drippyy42: ye
+😞 [Ledger] #☕┃general @.dxm: 90% of my stax is just for receiving
+😐 [Ledger] #☕┃general @drippyy42: oh
+😊 [Ledger] #☕┃general @drippyy42: you dont need to have a stax to receive crypto
+😞 [Ledger] #☕┃general @drippyy42: just export your xpub
+😞 [Ledger] #☕┃general @.dxm: u do if u want ur funds to be secure
+(node:29557) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/nabu/kol/discord-bots/analytics-bot.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/nabu/kol/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+🔍 Loading environment from: /Users/nabu/kol/.env.local
+✅ Connected to Upstash Redis
+✅ AI model initialized for sentiment analysis
+🚀 Analytics bot starting...
+✅ Analytics bot logged in as nabulines_bot#8452
+📊 Monitoring 3 servers
+📊 Loading tracked channels...
+📌 Tracking 5 channels for project: Ledger
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 5 channels for project: Ledger
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😐 [Ledger] #☕┃general @alinabu: ...
+😐 [Ledger] #☕┃general @alinabu: ...
+😐 [Ledger] #☕┃general @alinabu: ...
+😐 [NABULINES] #🧲〉share-your-stuff @alinabu: ping
+😐 [NABULINES] #🧲〉share-your-stuff @alinabu: hey you
+📊 Loading tracked channels...
+📌 Tracking 5 channels for project: Ledger
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😐 [Ledger] #🚫┃scam-reports @lshaf: any screenshot?
+😞 [Ledger] #🚫┃scam-reports @lshaf: nah I ban them
+😊 [Ledger] #🚫┃scam-reports @lshaf: thanks for reporting
+📊 Loading tracked channels...
+📌 Tracking 5 channels for project: Ledger
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😐 [Ledger] #🚫┃scam-reports @badforbusiness: server logs ;p
+😞 [Ledger] #🚫┃scam-reports @badforbusiness: they remove their messages to not get caught
+😐 [NABULINES] #🧲〉share-your-stuff @alinabu: gfygvhvv
+😐 [NABULINES] #🧲〉share-your-stuff @alinabu: gufvuhjvhjgvhj
+😞 [NABULINES] #🧲〉share-your-stuff @alinabu: arusakkkkkkk
+😊 [NABULINES] #⁉️-test-test-⁉️ @alinabu: kheili dooset daram
+😊 [Ledger] #🚫┃scam-reports @lshaf: yah I got them
+📊 Loading tracked channels...
+📌 Tracking 5 channels for project: Ledger
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😊 [NABULINES] #⁉️-test-test-⁉️ @alinabu: bby
+😊 [NABULINES] #🧲〉share-your-stuff @alinabu: i love uuuuuuu
+📊 Loading tracked channels...
+📌 Tracking 5 channels for project: Ledger
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😐 [Ledger] #☕┃general @alinabu: .
+😞 [Ledger] #🚫┃scam-reports @alinabu: reprot
+😐 [Ledger] #📖┃suggestions @alinabu: ...
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😞 [Ledger] #☕┃general @lshaf: stop spamming bro
+😞 [Ledger] #☕┃general @ruth_2001.pi_14527: I didnt pay attention to all those solana pumps ea...
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😞 [Ledger] #☕┃general @alinabu: sry cant stop
+😐 [Ledger] #☕┃general @alinabu: testing the bot
+😐 [Ledger] #☕┃general @alinabu: ...
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😐 [Ledger] #☕┃general @cryptochik: Is ledger affiliate support on this discord?
+😐 [Ledger] #☕┃general @nirapatkongsomjit3873: # 🎫communicate with:▶ ☞ <https:/@@t.co/6C7wivcgKB...
+😞 [Ledger] #☕┃general @alinabu: scam
+😊 [Ledger] #☕┃general @cryptochik: Thanks baby
+😐 [Ledger] #☕┃general @alinabu: <@130997205388623872> did you kick him?
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😐 [Ledger] #☕┃general @alinabu: .
+😐 [Ledger] #🎮┃ledger-quest @alinabu: .
+😐 [Ledger] #🎮┃ledger-quest @alinabu: .
+😞 [Ledger] #☕┃general @drippyy42: This is affilatrd server of ledger. Please do not ...
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😐 [Ledger] #☕┃general @alinabu: ✅
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😐 [Ledger] #📝┃then-vs-now @alinabu: .
+😐 [Ledger] #📝┃then-vs-now @alinabu: .
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😐 [Ledger] #☕┃general @lshaf: Affiliate? With?
+😞 [Ledger] #☕┃general @cryptochik: Hi! I’m a ledger affiliate and can’t reach support...
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😐 [Ledger] #☕┃general @lshaf: ahh, you can reach support on https://support.ledg...
+😊 [Ledger] #☕┃general @cryptochik: Thanks🥰
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😊 [Ledger] #☕┃general @drippyy42: Bro said thanks baby 📢 📢
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+(node:34411) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/nabu/kol/discord-bots/analytics-bot.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/nabu/kol/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+🔍 Loading environment from: /Users/nabu/kol/.env.local
+✅ Connected to Upstash Redis
+✅ AI model initialized for sentiment analysis
+🚀 Analytics bot starting...
+✅ Analytics bot logged in as nabulines_bot#8452
+📊 Monitoring 3 servers
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+🔄 Reloading sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+🔄 Reloading sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😐 [Ledger] #☕┃general @joexrn: hello mate have your issue been resolved yet?
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 2 active projects
-😊 [Ledger] #☕┃general @drippyy42: https://x.com/BRICSinfo/status/1934666469972861163
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 2 active projects
-😞 [Ledger] #☕┃general @justy_ar: Hey guys let’s pls avoid talking about war issues ...
-😐 [Ledger] #☕┃general @justy_ar: Sensitive topic
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😊 [Ledger] #☕┃general @enteng_kabishawty: https://tenor.com/view/phonte-good-morning-gif-180...
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😊 [Ledger] #☕┃general @btfam: Good Morning!
+😊 [Ledger] #☕┃general @enteng_kabishawty: Good Morning BT
+😊 [Ledger] #☕┃general @btfam: Hows going friend!
+😐 [Ledger] #☕┃general @btfam: 
+😊 [Ledger] #☕┃general @btfam: I wasn't very active for the last 24 hours.. But n...
+😐 [Ledger] #☕┃general @enteng_kabishawty: all good all good, what up with you? Cant sleep?
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😞 [Ledger] #☕┃general @btfam: I was away from home. I had a long drive. When I g...
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😞 [Ledger] #☕┃general @enteng_kabishawty: where did you go?
+😞 [Ledger] #☕┃general @btfam: I was 200km away for my university graduation.
+😊 [Ledger] #☕┃general @enteng_kabishawty: Congrats You graduated
+😊 [Ledger] #☕┃general @btfam: https://tenor.com/view/flowers-love-thank-you-%D8%...
+😐 [Ledger] #☕┃general @enteng_kabishawty: Mine is on last week of july
+😊 [Ledger] #☕┃general @btfam: https://tenor.com/view/hug-brandon-terry-carson-th...
+😐 [Ledger] #☕┃general @btfam: Send photos on WhatsApp <:kek:905994678007124008>
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😊 [Ledger] #☕┃general @enteng_kabishawty: will sure do.
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 2 active projects
-😞 [Ledger] #☕┃general @myheeyitad: Please I am having issues connecting my Ledger Nan...
-😐 [Ledger] #☕┃general @d.plonker09: GET ASSISTANCE FROM THE TEAM 
-👇 👇 👇 
-<ht
-tp
-s:/...
-😐 [Ledger] #☕┃general @gtlol35324: # 🎫communicate withLEDGER OP3N discord.com/invite...
-😐 [Ledger] #☕┃general @noreen1212: Message me i'll show you a guide.
-😞 [Ledger] #☕┃general @drippyy42: dont its a scam
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 2 active projects
-😐 [Ledger] #☕┃general @supreme_saint011: **CREATE A SUPPORT TICKET HERE 👉 **[ [**𝗖𝗥𝗘𝗔�...
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 2 active projects
-😊 [Ledger] #☕┃general @.dxm: https://tenor.com/view/gosling-drive-goslingdrive-...
-😐 [Ledger] #☕┃general @alexarus97: Hello
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 2 active projects
-😊 [Ledger] #☕┃general @.dxm: <a:HI:1345216642287665273>
-😐 [Ledger] #☕┃general @alexarus97: how are is day going??
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 2 active projects
-😞 [Ledger] #☕┃general @justy_ar: Banned
-😊 [Ledger] #☕┃general @justy_ar: Hey, feel feee to open a <#1088494051877212161> an...
-😞 [Ledger] #☕┃general @justy_ar: # Just a reminder
-
-- **No Ledger employees will se...
-😊 [Ledger] #☕┃general @justy_ar: Gmgm, good here and you?
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
-😞 [Ledger] #☕┃general @.dxm: i feel if some people fall for such basic scams th...
-😞 [Ledger] #☕┃general @alinabu: many are newbies, theyve bot their ledger and come...
-😞 [Ledger] #☕┃general @vortexfalcpn: <@918575895374082078> G0 👇 for this✅ 
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😐 [Ledger] #☕┃general @jameswillams0336: <#907584119310008331>
+😐 [Ledger] #☕┃general @drippyy42: how to create ticket
+😐 [Ledger] #☕┃general @linasanchez38: here
+😐 [Ledger] #☕┃general @boomboohinhad: #🛠✅️[ [𝙎𝙐𝙋𝙋𝙊𝙍𝙏 𝙏𝙄𝘾𝙆𝙀𝙏] ](<https:%64%...
+😐 [Ledger] #☕┃general @drippyy42: where
+😐 [Ledger] #☕┃general @david.md0593: <@1033035086939029625> Proceed here for clarificat...
+⏭️ Skipping ignored channel: #🚫┃scam-reports
+⏭️ Skipping ignored channel: #🚫┃scam-reports
+😐 [Ledger] #☕┃general @drippyy42: <@1085033025210961980>
+😐 [Ledger] #☕┃general @drippyy42: show me
+😞 [Ledger] #☕┃general @drippyy42: i cant get help
+😐 [Ledger] #☕┃general @linasanchez38: <#1088494051877212161>
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😐 [Ledger] #☕┃general @drippyy42: ok
+⏭️ Skipping ignored channel: #🚫┃scam-reports
+😞 [Ledger] #☕┃general @drippyy42: how to fix seed phrase loss issue ticket support m...
+😐 [Ledger] #☕┃general @andersonmore567: # 🎫communicate with
 <h
-t
-
-t
-p
-
-...
+tt
+p:/
+tr.
+ee/
+9x26yM>
+to ...
+⏭️ Skipping ignored channel: #🚫┃scam-reports
+😐 [Ledger] #☕┃general @internation123444: # 🌏🌏[ [support_ticket ] ]( <https:/%40%40@@%64%6...
+⏭️ Skipping ignored channel: #🚫┃scam-reports
+😐 [Ledger] #☕┃general @drippyy42: lose
+😐 [Ledger] #☕┃general @deborah_1962.ir_55229: 👉👉👉 [ [𝗖𝗥𝗘𝗔𝗧𝗘-𝗔-𝗧𝗜𝗖𝗞𝗘𝗧 ] ]( <https...
+😐 [Ledger] #☕┃general @drippyy42: del
+⏭️ Skipping ignored channel: #🚫┃scam-reports
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
-😞 [Ledger] #☕┃general @alinabu: did you kick him? <@691850506468851753>
-😐 [Ledger] #☕┃general @justy_ar: who mate?
-😊 [Ledger] #☕┃general @justy_ar: i banned the scammers who posted scam links
-😐 [Ledger] #☕┃general @justy_ar: always necessary to make it clear
+⏭️ Skipping ignored channel: #🚫┃scam-reports
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 2 active projects
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 2 active projects
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 2 active projects
-😊 [Ledger] #☕┃general @tungkung12: รับสูงสุดถึง 800 THB ด้วยการเข้าร่วมข้อเสนอพิเศษสุ...
-😊 [Ledger] #☕┃general @tungkung12: รับสูงสุดถึง 800 THB ด้วยการเข้าร่วมข้อเสนอพิเศษสุ...
-😐 [Ledger] #☕┃general @.dxm: <@&935077051906543626>
-😊 [Ledger] #☕┃general @justy_ar: Thank you!
-😞 [Ledger] #☕┃general @justy_ar: https://tenor.com/view/ban-button-keyboard-press-t...
-😞 [Ledger] #☕┃general @justy_ar: They’re everywhere 😭
-😞 [Ledger] #☕┃general @.dxm: they cant post discords now
-😐 [Ledger] #☕┃general @vortexfalcpn: <@261265820678619137> G0 👇 for this✅ 
-<h
-t
-
-t
-p
-
-...
-😞 [Ledger] #☕┃general @.dxm: so they have to use tiktok and do fail posting url...
-😞 [Ledger] #☕┃general @justy_ar: Anti-link bot may be working bad today
-😞 [Ledger] #☕┃general @justy_ar: But i’m here to ban <:BanHammer:132123410074868532...
-😊 [Ledger] #☕┃general @justy_ar: Thank you v much for spotting <@261265820678619137...
-😞 [Ledger] #☕┃general @.dxm: id happily ban all broke scammers
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 2 active projects
-😐 [Ledger] #☕┃general @drippyy42: discord.gg
-😊 [Ledger] #☕┃general @drippyy42: we can still post discord links
-😞 [Ledger] #☕┃general @.dxm: i cant i got timedout for it
-😐 [Ledger] #☕┃general @.dxm: i posted full https tho
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 2 active projects
-😞 [Ledger] #☕┃general @justy_ar: <@1033035086939029625> 😭 😭
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-😐 [Ledger] #☕┃general @justy_ar: will address the bot issue to the team
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
 📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
-📊 Loading tracked channels...
-📌 Tracking 1 channels for project: Ledger
-📌 Tracking 3 channels for project: NABULINES
-✅ Loaded 2 active projects
-😐 [Ledger] #☕┃general @vasilis0368: Hellooo
-😐 [Ledger] #☕┃general @trent026912: Hi
