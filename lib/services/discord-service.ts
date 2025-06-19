@@ -474,23 +474,22 @@ export class DiscordService {
     let start: Date
     let end: Date
     
-    // Set end date to end of current day unless specified
+    // Set end date to current time unless specified
     if (endDate) {
       end = new Date(endDate)
     } else {
       end = new Date(now)
-      end.setHours(23, 59, 59, 999) // End of today
     }
     
     // Calculate start date based on timeframe
     if (startDate) {
       start = new Date(startDate)
     } else {
-      start = new Date(end)
+      start = new Date(now)
       
       switch (timeframe) {
         case 'daily':
-          // Go back 24 hours from end
+          // Go back 24 hours from current time
           start.setTime(start.getTime() - (24 * 60 * 60 * 1000))
           break
         case 'weekly':
