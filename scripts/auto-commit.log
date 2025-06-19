@@ -349,3 +349,59 @@ After doing this, you may fix the identity used for this commit with:
 fatal: could not read Username for 'https://github.com': Device not configured
 Tue Jun 17 02:00:01 EDT 2025: Backup completed successfully
 Wed Jun 18 02:00:01 EDT 2025: Changes detected, creating backup commit...
+[main aae6453] Auto-backup: 2025-06-18 02:00:01
+ Committer: nabu <nabu@nabus-MacBook-Pro.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 50 files changed, 6803 insertions(+), 944 deletions(-)
+ create mode 100644 DISCORD_MOD_MANAGEMENT.md
+ create mode 100644 DISCORD_SENTIMENT_SETTINGS.md
+ create mode 100644 analytics-bot.log
+ create mode 100644 app/api/discord/projects/[id]/sentiment-settings/route.ts
+ create mode 100644 discord-bots/analytics-bot-original.js
+ create mode 100644 discord-bots/engagement-bot-debug.js
+ create mode 100644 discord-bots/engagement-bot-fixed.js
+ create mode 100644 discord-bots/engagement-bot.js.bak
+ create mode 100644 discord-bots/engagement-bot.js.bak2
+ create mode 100644 discord-bots/test-bot-guilds.js
+ create mode 100644 engagement-bot-debug.log
+ create mode 100644 engagement-bot-new.log
+ create mode 100644 engagement-bot.log
+ create mode 100644 engagement-fixed.log
+ create mode 100644 scripts/check-profile-raw.js
+ create mode 100644 scripts/check-team-users-rest.js
+ create mode 100644 scripts/check-team-users.js
+ create mode 100644 scripts/check-user-keys.js
+ create mode 100644 scripts/clear-channel-requests.js
+ create mode 100644 scripts/create-test-team-users.js
+ create mode 100644 scripts/debug-channel-fetch.js
+ create mode 100644 scripts/debug-profile-structure.js
+ create mode 100644 scripts/diagnose-channel-issue.js
+ create mode 100644 scripts/final-fix-team-users.js
+ create mode 100644 scripts/fix-all-nabulines-channels.js
+ create mode 100644 scripts/fix-channel-metadata.js
+ create mode 100644 scripts/fix-nabulines-channels.js
+ create mode 100644 scripts/fix-test-team-users.js
+ create mode 100644 scripts/manual-channel-fetch.js
+ create mode 100644 scripts/rebuild-discord-indexes.js
+ create mode 100644 scripts/test-analytics-refresh.js
+ create mode 100644 scripts/test-channel-fetch.js
+ create mode 100644 scripts/test-channels-api.js
+ create mode 100644 scripts/test-discord-mod-team-roles.js
+ create mode 100644 scripts/test-sentiment-settings.js
+ create mode 100644 scripts/verify-created-users.js
+ create mode 100644 scripts/verify-team-roles-config.js
+ create mode 100644 test-bot-guilds.js
+fatal: could not read Username for 'https://github.com': Device not configured
+Wed Jun 18 02:00:01 EDT 2025: Backup completed successfully
+Thu Jun 19 02:00:00 EDT 2025: Changes detected, creating backup commit...

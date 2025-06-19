@@ -5,6 +5,74 @@ const { config } = require('dotenv')
 // Load environment variables
 config({ path: '.env.local' })
 
+// Test analytics API directly
+const fetch = require('node-fetch');
+
+async function testAnalytics() {
+  console.log('Testing Discord Analytics API\n');
+  
+  const projectId = 'project--discord--OVPuPOX3_zHBnLUscRbdM'; // Ledger
+  const baseUrl = 'http://localhost:3000/api/discord/projects';
+  
+  // Test different timeframes
+  const timeframes = ['daily', 'weekly', 'monthly', 'allTime'];
+  
+  for (const timeframe of timeframes) {
+    try {
+      console.log(`\n📊 Testing ${timeframe.toUpperCase()} timeframe:`);
+      
+      const response = await fetch(`${baseUrl}/${projectId}/analytics?timeframe=${timeframe}`, {
+        headers: {
+          'Cookie': 'next-auth.session-token=YOUR_SESSION_TOKEN' // You'll need to add your session token
+        }
+      });
+      
+      if (!response.ok) {
+        console.log(`   Status: ${response.status} ${response.statusText}`);
+        const error = await response.text();
+        console.log(`   Error: ${error}`);
+        continue;
+      }
+      
+      const data = await response.json();
+      
+      if (data.analytics) {
+        const { metrics } = data.analytics;
+        console.log(`   Total Messages: ${metrics.totalMessages}`);
+        console.log(`   Unique Users: ${metrics.uniqueUsers}`);
+        console.log(`   Date Range: ${data.analytics.startDate} to ${data.analytics.endDate}`);
+        
+        // Show daily trend
+        if (metrics.dailyTrend && metrics.dailyTrend.length > 0) {
+          console.log(`   Daily Trend (last 3 days):`);
+          const lastThree = metrics.dailyTrend.slice(-3);
+          lastThree.forEach(day => {
+            console.log(`     ${day.date}: ${day.messages} messages`);
+          });
+        }
+      }
+    } catch (error) {
+      console.log(`   Error: ${error.message}`);
+    }
+  }
+  
+  // Now let's check what the system thinks "today" is
+  console.log('\n🕐 Date calculations:');
+  const now = new Date();
+  console.log(`   Current time: ${now.toString()}`);
+  console.log(`   ISO format: ${now.toISOString()}`);
+  
+  // Calculate what the API thinks is "daily" range
+  const end = new Date(now);
+  end.setHours(23, 59, 59, 999);
+  const start = new Date(end);
+  start.setTime(start.getTime() - (24 * 60 * 60 * 1000));
+  
+  console.log(`   Daily range: ${start.toISOString()} to ${end.toISOString()}`);
+}
+
+testAnalytics();
+
 async function testAnalyticsAPI() {
   const projectId = 'project:discord:GEpk5t8yZkQzaWYDHDZHS'
   

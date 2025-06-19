@@ -3,7 +3,7 @@
 const fetch = require('node-fetch');
 
 const projectId = 'project--discord--OVPuPOX3_zHBnLUscRbdM'; // Ledger
-const baseUrl = 'http://localhost:3006/api/discord/projects';
+const baseUrl = 'http://localhost:3000/api/discord/projects';
 
 async function checkAnalytics(timeframe = 'daily') {
   try {
