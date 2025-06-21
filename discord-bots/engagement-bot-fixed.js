@@ -3,6 +3,7 @@ const { config } = require('dotenv')
 const { Redis } = require('@upstash/redis')
 const { GoogleGenerativeAI } = require('@google/generative-ai')
 const path = require('path')
+const { nanoid } = require('nanoid')
 
 // Load environment variables from parent directory
 const envPath = path.join(__dirname, '..', '.env.local')
@@ -86,6 +87,47 @@ function extractTwitterHandle(url) {
   return match ? match[2] : null
 }
 
+// Create a new user profile
+async function createUserProfile(twitterHandle, discordId) {
+  try {
+    const normalizedHandle = twitterHandle.toLowerCase().replace('@', '')
+    const userId = `user:${nanoid()}`
+    
+    const newUser = {
+      id: userId,
+      twitterHandle: `@${normalizedHandle}`,
+      name: normalizedHandle, // Use handle as name initially
+      approvalStatus: 'approved', // Auto-approve for engagement bot
+      role: 'kol', // Default to KOL role for engagement
+      tier: 'micro', // Default tier
+      discordId: discordId,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      socialAccounts: {
+        twitter: {
+          handle: normalizedHandle,
+          connected: true
+        }
+      }
+    }
+    
+    // Save to Redis
+    await redis.json.set(userId, '$', newUser)
+    
+    // Create username index
+    await redis.sadd(`idx:username:${normalizedHandle}`, userId)
+    
+    // Add to approved users set
+    await redis.sadd('users:approved', userId)
+    
+    console.log(`✅ Created new user profile for @${normalizedHandle}`)
+    return newUser
+  } catch (error) {
+    console.error('Error creating user profile:', error)
+    throw error
+  }
+}
+
 // Check if user is approved in the database
 async function isUserApproved(twitterHandle) {
   try {
@@ -94,21 +136,21 @@ async function isUserApproved(twitterHandle) {
     // Check if user exists via username index
     const userIds = await redis.smembers(`idx:username:${normalizedHandle}`)
     if (!userIds || userIds.length === 0) {
-      return { approved: false, userData: null }
+      return { approved: false, userData: null, exists: false }
     }
     
     // Get user data
     const userData = await redis.json.get(`user:${userIds[0]}`)
     if (!userData) {
-      return { approved: false, userData: null }
+      return { approved: false, userData: null, exists: false }
     }
     
     // Check approval status
     const isApproved = userData.approvalStatus === 'approved'
-    return { approved: isApproved, userData }
+    return { approved: isApproved, userData, exists: true }
   } catch (error) {
     console.error('Error checking user approval:', error)
-    return { approved: false, userData: null }
+    return { approved: false, userData: null, exists: false }
   }
 }
 
@@ -246,7 +288,7 @@ function createTweetEmbed(tweet, submitterName, includeButtons = true) {
 
 // Handle slash commands
 client.on('ready', async () => {
-  console.log(`✅ Engagement bot logged in as ${client.user.tag}`)
+  console.log(`✅ Engagement bot (fixed) logged in as ${client.user.tag}`)
   
   // Start checking for channel info requests
   setInterval(async () => {
@@ -258,11 +300,13 @@ client.on('ready', async () => {
         const request = await redis.get(key)
         if (!request) continue
         
-        let channelId, serverId
+        let channelId, serverId, projectId
         try {
-          const parsed = JSON.parse(request)
+          // Upstash Redis returns the parsed object directly
+          const parsed = typeof request === 'string' ? JSON.parse(request) : request
           channelId = parsed.channelId
           serverId = parsed.serverId
+          projectId = parsed.projectId
         } catch (parseError) {
           console.error(`Error parsing channel info request from ${key}:`, parseError)
           console.error('Raw request data:', request)
@@ -272,39 +316,43 @@ client.on('ready', async () => {
         
         // Try to fetch the channel
         try {
-          console.log(`[CHANNEL-FETCH] Looking for guild ${serverId}`);
-          console.log(`[CHANNEL-FETCH] Available guilds: `, client.guilds.cache.map(g => ({ id: g.id, name: g.name })));
+          console.log(`[DEBUG] Looking for guild ${serverId}`)
+          console.log(`[DEBUG] Available guilds: ${client.guilds.cache.map(g => `${g.name} (${g.id})`).join(', ')}`)
           
           const guild = client.guilds.cache.get(serverId)
           if (!guild) {
-            console.log(`[CHANNEL-FETCH] Guild ${serverId} not found in cache`)
-            console.log(`[CHANNEL-FETCH] Bot is in ${client.guilds.cache.size} guilds`)
-            await redis.del(key)
+            console.log(`Guild ${serverId} not found in cache`)
             continue
           }
           
-          console.log(`[CHANNEL-FETCH] Found guild: ${guild.name}`);
           const channel = guild.channels.cache.get(channelId)
           if (channel) {
             // Store the response
             const responseKey = `discord:channel-info-response:${channelId}`
-            const responseData = {
+            await redis.set(responseKey, JSON.stringify({
               id: channelId,
               name: channel.name,
               type: channel.type === 0 ? 'text' : 'voice'
-            };
-            
-            console.log(`[CHANNEL-FETCH] Found channel: #${channel.name} (${channelId})`);
-            await redis.set(responseKey, JSON.stringify(responseData), {
+            }), {
               ex: 60 // expire in 60 seconds
             })
-            console.log(`✅ Saved channel info response for #${channel.name}`)
+            
+            // Also store permanent channel metadata
+            const channelMetadataKey = `channel:discord:${channelId}`
+            await redis.json.set(channelMetadataKey, '$', {
+              id: channelId,
+              name: channel.name,
+              type: channel.type === 0 ? 'text' : 'voice',
+              projectId: projectId || null,
+              updatedAt: new Date().toISOString()
+            })
+            
+            console.log(`✅ Fetched channel info: #${channel.name} (${channelId})`)
           } else {
-            console.log(`[CHANNEL-FETCH] Channel ${channelId} not found in guild ${serverId}`)
-            console.log(`[CHANNEL-FETCH] Available channels in guild: `, guild.channels.cache.map(c => ({ id: c.id, name: c.name, type: c.type })).slice(0, 10))
+            console.log(`Channel ${channelId} not found in guild ${serverId}`)
           }
         } catch (error) {
-          console.error(`[CHANNEL-FETCH] Error fetching channel ${channelId}:`, error)
+          console.error(`Error fetching channel ${channelId}:`, error)
         }
         
         // Delete the request
@@ -319,7 +367,7 @@ client.on('ready', async () => {
   const commands = [
     {
       name: 'connect',
-      description: 'Connect your Twitter account (must be approved)'
+      description: 'Connect your Twitter account'
     },
     {
       name: 'submit',
@@ -806,17 +854,69 @@ client.on('interactionCreate', async (interaction) => {
       const handle = interaction.fields.getTextInputValue('twitter-handle')
       const cleanHandle = handle.toLowerCase().replace('@', '').trim()
       
-      // Check if user is approved
-      const { approved, userData } = await isUserApproved(cleanHandle)
+      // Check if user exists
+      const { approved, userData, exists } = await isUserApproved(cleanHandle)
+      
+      // If user doesn't exist, create a new profile
+      if (!exists) {
+        try {
+          const newUser = await createUserProfile(cleanHandle, interaction.user.id)
+          console.log(`✅ Created new profile for @${cleanHandle}`)
+          
+          // Create connection with the new user data
+          const connection = {
+            discordId: interaction.user.id,
+            twitterHandle: cleanHandle,
+            tier: newUser.tier || 'micro',
+            connectedAt: new Date(),
+            totalPoints: 0,
+            role: newUser.role || 'kol'
+          }
+          
+          await redis.json.set(`engagement:connection:${interaction.user.id}`, '$', connection)
+          await redis.set(`engagement:twitter:${cleanHandle}`, interaction.user.id)
+          
+          // Try to assign Discord KOL role
+          try {
+            const member = await interaction.guild.members.fetch(interaction.user.id)
+            const kolRole = interaction.guild.roles.cache.find(role => role.name.toLowerCase() === KOL_ROLE_NAME)
+            
+            if (kolRole && member && !member.roles.cache.has(kolRole.id)) {
+              const botMember = interaction.guild.members.cache.get(client.user.id)
+              if (botMember.permissions.has('ManageRoles') && botMember.roles.highest.position > kolRole.position) {
+                await member.roles.add(kolRole)
+                console.log(`✅ Assigned KOL role to ${member.user.tag}`)
+              }
+            }
+          } catch (roleError) {
+            console.error('Error assigning Discord role:', roleError)
+          }
+          
+          await interaction.reply({ 
+            content: `✅ Welcome! Your Twitter account @${cleanHandle} has been connected and approved!\n🎉 You've been assigned the KOL role and can now start submitting tweets.`, 
+            flags: 64 
+          })
+          return
+        } catch (error) {
+          console.error('Error creating new user profile:', error)
+          await interaction.reply({ 
+            content: '❌ An error occurred while creating your profile. Please try again or contact an admin.', 
+            flags: 64 
+          })
+          return
+        }
+      }
+      
+      // If user exists but is not approved
       if (!approved) {
         await interaction.reply({ 
-          content: '❌ Your Twitter account is not approved. Please apply through the website first.', 
+          content: '❌ Your Twitter account exists but is not approved. Please contact an admin for approval.', 
           flags: 64 
         })
         return
       }
       
-      // Check if handle is already connected
+      // Check if handle is already connected to another Discord account
       const existingDiscordId = await redis.get(`engagement:twitter:${cleanHandle}`)
       if (existingDiscordId && existingDiscordId !== interaction.user.id) {
         await interaction.reply({ 
@@ -826,7 +926,7 @@ client.on('interactionCreate', async (interaction) => {
         return
       }
       
-      // Get current role from database
+      // User exists and is approved - create connection
       const currentRole = userData.role || 'user'
       
       // Assign KOL role if user doesn't have a higher role
@@ -919,5 +1019,6 @@ client.on('messageCreate', async (message) => {
 
 // Login
 client.login(process.env.DISCORD_BOT_TOKEN)
-  .then(() => console.log('🚀 Engagement bot starting...'))
+  .then(() => console.log('🚀 Engagement bot (fixed) starting...'))
+  .catch(console.error) 
   .catch(console.error) 

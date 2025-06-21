@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Discord Link Test (Simple)</title>
+    <style>
+        body {
+            background: black;
+            color: lime;
+            font-family: monospace;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #111;
+            border: 2px solid lime;
+            padding: 30px;
+            border-radius: 8px;
+        }
+        input {
+            background: #222;
+            color: lime;
+            border: 1px solid #444;
+            padding: 8px;
+            width: 100%;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        button {
+            background: #00f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0080ff;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 10px;
+            background: #222;
+            border-radius: 4px;
+            white-space: pre-wrap;
+        }
+        .success {
+            color: #0f0;
+        }
+        .error {
+            color: #f00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Discord Link Test (Simple)</h1>
+        <p>This bypasses NextAuth to test the Discord linking directly.</p>
+        
+        <div>
+            <label>Session ID:</label>
+            <input type="text" id="sessionId" placeholder="verify-xxxxx-xxxxx">
+        </div>
+        
+        <div>
+            <label>Twitter Handle:</label>
+            <input type="text" id="twitterHandle" placeholder="@yourusername">
+        </div>
+        
+        <button onclick="testLink()">Test Link</button>
+        <button onclick="checkSession()">Check Session</button>
+        
+        <div id="status"></div>
+    </div>
+    
+    <script>
+        // Get session ID from URL if present
+        const params = new URLSearchParams(window.location.search);
+        const sessionFromUrl = params.get('session');
+        if (sessionFromUrl) {
+            document.getElementById('sessionId').value = sessionFromUrl;
+        }
+        
+        function log(message, className = '') {
+            const status = document.getElementById('status');
+            const timestamp = new Date().toLocaleTimeString();
+            status.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+            status.scrollTop = status.scrollHeight;
+        }
+        
+        async function checkSession() {
+            const sessionId = document.getElementById('sessionId').value;
+            if (!sessionId) {
+                log('Please enter a session ID', 'error');
+                return;
+            }
+            
+            log('Checking session in Redis...');
+            
+            // We'll use the test endpoint to check if session exists
+            try {
+                const response = await fetch('/api/test-discord-link', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: sessionId,
+                        twitterHandle: 'test' // Just to pass validation
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.status === 404) {
+                    log('Session not found or expired', 'error');
+                } else if (response.ok) {
+                    log('Session exists! (This would link if you provided a real Twitter handle)', 'success');
+                } else {
+                    log(`Error: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testLink() {
+            const sessionId = document.getElementById('sessionId').value;
+            const twitterHandle = document.getElementById('twitterHandle').value;
+            
+            if (!sessionId || !twitterHandle) {
+                log('Please enter both session ID and Twitter handle', 'error');
+                return;
+            }
+            
+            log('Testing Discord link...');
+            
+            try {
+                const response = await fetch('/api/test-discord-link', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: sessionId,
+                        twitterHandle: twitterHandle
+                    })
+                });
+                
+                const data = await response.json();
+                log(`Response status: ${response.status}`);
+                
+                if (response.ok) {
+                    log('✅ Success!', 'success');
+                    log(JSON.stringify(data, null, 2), 'success');
+                } else {
+                    log(`❌ Error: ${data.error}`, 'error');
+                    if (data.details) {
+                        log(`Details: ${data.details}`, 'error');
+                    }
+                }
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Auto-populate current session
+        if (sessionFromUrl) {
+            log(`Session ID loaded from URL: ${sessionFromUrl}`);
+            log('Enter your Twitter handle and click "Test Link" to complete the linking');
+        }
+    </script>
+</body>
+</html> 

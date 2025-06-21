@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { checkUserRoleFromSession } from '@/lib/user-identity'
+import { isMasterAdmin } from '@/lib/admin-config'
 
 interface AdminLayoutProps {
   children: React.ReactNode
@@ -28,6 +29,16 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
   }
   
   try {
+    // First check if user is a master admin
+    if (isMasterAdmin(session.twitterHandle)) {
+      console.log(`Admin Layout: Master admin access granted to @${session.twitterHandle}`)
+      return (
+        <div className="min-h-screen bg-black">
+          {children}
+        </div>
+      )
+    }
+    
     // Check if the Twitter user has admin role
     const roleCheck = await checkUserRoleFromSession(session, ['admin'])
     

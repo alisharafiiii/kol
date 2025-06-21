@@ -89,7 +89,7 @@ async function loadTrackedChannels() {
   try {
     console.log('📊 Loading tracked channels...')
     
-    // Get all Discord projects - Using correct key pattern
+    // Get all Discord projects - FIX: Use correct key pattern
     const projectKeys = await redis.keys('project:discord:*')
     
     for (const key of projectKeys) {

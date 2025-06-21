@@ -106,6 +106,23 @@ export interface UnifiedProfile {
   kolMetrics?: KOLMetrics
   campaigns?: CampaignParticipation[]
   
+  // Points System
+  points: number  // Total points earned across all activities (default: 0)
+  pointsBreakdown?: {
+    discord: number
+    contests: number
+    scouts: number
+    campaigns: number
+    other: number
+  }
+  pointsHistory?: Array<{
+    amount: number
+    source: 'discord' | 'contest' | 'scout' | 'campaign' | 'other'
+    description: string
+    timestamp: Date
+    metadata?: any
+  }>
+  
   // Contact Information
   email?: string
   phone?: string
@@ -125,12 +142,34 @@ export interface UnifiedProfile {
     website?: string
   }
   
+  // Social Accounts (for Discord and other OAuth connections)
+  socialAccounts?: {
+    discord?: {
+      id: string
+      username: string
+      tag?: string
+      connected: boolean
+    }
+    twitter?: {
+      handle: string
+      connected: boolean
+    }
+    [key: string]: any
+  }
+  
+  // Discord fields (for backward compatibility)
+  discordId?: string
+  discordUsername?: string
+  
   // Wallet Information (legacy support)
   walletAddresses?: {
     ethereum?: string
     solana?: string
     base?: string
   }
+  
+  // Active Chains
+  activeChains?: string[]
   
   // Preferences
   languages?: string[]

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Discord Link Test</title>
+    <style>
+        body {
+            background: black;
+            color: lime;
+            font-family: monospace;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: #111;
+            border: 2px solid lime;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 400px;
+        }
+        button {
+            background: #00f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #0080ff;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 10px;
+            background: #222;
+            border-radius: 4px;
+            text-align: left;
+            font-size: 14px;
+        }
+        .error {
+            color: #ff6666;
+        }
+        .success {
+            color: #66ff66;
+        }
+        a {
+            color: #66ccff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Discord Link Test Page</h1>
+        <p>This is a simple test page for Discord linking.</p>
+        <p>Session ID: <span id="sessionId">Loading...</span></p>
+        
+        <button onclick="checkSession()">Check Session</button>
+        <button onclick="testLink()">Test Link API</button>
+        <button onclick="goToSignIn()">Sign In with Twitter</button>
+        
+        <div id="status"></div>
+    </div>
+    
+    <script>
+        // Get session ID from URL
+        const params = new URLSearchParams(window.location.search);
+        const sessionId = params.get('session');
+        document.getElementById('sessionId').textContent = sessionId || 'No session';
+        
+        function log(message, isError = false) {
+            const statusDiv = document.getElementById('status');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = isError ? 'error' : '';
+            statusDiv.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+            statusDiv.scrollTop = statusDiv.scrollHeight;
+        }
+        
+        async function checkSession() {
+            log('Checking authentication status...');
+            
+            try {
+                const response = await fetch('/api/auth/session');
+                const contentType = response.headers.get('content-type');
+                
+                if (!contentType || !contentType.includes('application/json')) {
+                    log('Error: Server returned HTML instead of JSON', true);
+                    log('Response status: ' + response.status, true);
+                    return;
+                }
+                
+                const session = await response.json();
+                
+                if (session.user) {
+                    log(`✅ Authenticated as: @${session.user.name}`, false);
+                    log('You can now test the link API');
+                } else {
+                    log('❌ Not authenticated', true);
+                    log('Please sign in with Twitter first');
+                }
+            } catch (error) {
+                log(`Error: ${error.message}`, true);
+            }
+        }
+        
+        async function testLink() {
+            if (!sessionId) {
+                log('Error: No session ID in URL', true);
+                return;
+            }
+            
+            log('Testing Discord link API...');
+            
+            try {
+                const response = await fetch('/api/auth/discord-link', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ sessionId })
+                });
+                
+                const contentType = response.headers.get('content-type');
+                log(`Response status: ${response.status}`);
+                log(`Content-Type: ${contentType}`);
+                
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    log('Error: Server returned HTML instead of JSON', true);
+                    log('First 200 chars: ' + text.substring(0, 200), true);
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    log(`✅ Success! ${data.message}`, false);
+                    if (data.profile) {
+                        log(`Profile: @${data.profile.twitterHandle}`);
+                        log(`Status: ${data.profile.approvalStatus}`);
+                    }
+                } else {
+                    log(`❌ Error: ${data.error}`, true);
+                    if (data.details) {
+                        log(`Details: ${data.details}`, true);
+                    }
+                }
+            } catch (error) {
+                log(`Error: ${error.message}`, true);
+                console.error('Full error:', error);
+            }
+        }
+        
+        function goToSignIn() {
+            const callbackUrl = encodeURIComponent(window.location.href);
+            window.location.href = `/auth/signin?callbackUrl=${callbackUrl}`;
+        }
+        
+        // Auto-check session on load
+        setTimeout(checkSession, 500);
+    </script>
+</body>
+</html> 

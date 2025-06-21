@@ -157,15 +157,38 @@ export const authOptions: NextAuthOptions = {
         
         if (existingProfile) {
           log("Found existing profile, updating...");
-          // Update existing profile with latest data
-          existingProfile.profileImageUrl = profile?.data?.profile_image_url?.replace('_normal', '_400x400') || user.image?.replace('_normal', '_400x400') || existingProfile.profileImageUrl;
-          if (!existingProfile.socialLinks) {
-            existingProfile.socialLinks = {};
-          }
-          existingProfile.socialLinks.twitter = `https://twitter.com/${twitterHandle}`;
-          existingProfile.lastLoginAt = new Date();
+          log(`Current profile - Role: ${existingProfile.role}, Approval: ${existingProfile.approvalStatus}`);
           
-          await ProfileService.saveProfile(existingProfile);
+          // CRITICAL: Only update Twitter-related data that may have changed
+          // Create updated profile to avoid modifying admin fields
+          const updatedProfile = {
+            ...existingProfile,
+            // Only update Twitter-related fields
+            profileImageUrl: profile?.data?.profile_image_url?.replace('_normal', '_400x400') || user.image?.replace('_normal', '_400x400') || existingProfile.profileImageUrl,
+            name: profile?.data?.name || existingProfile.name || twitterHandle,
+            lastLoginAt: new Date(),
+            socialLinks: {
+              ...existingProfile.socialLinks,
+              twitter: `https://twitter.com/${twitterHandle}`,
+            },
+          };
+          
+          // Update follower count if available
+          if (followerCount > 0) {
+            updatedProfile.followerCount = followerCount;
+          }
+          
+          // EXPLICITLY PRESERVE admin-controlled fields
+          updatedProfile.role = existingProfile.role;
+          updatedProfile.approvalStatus = existingProfile.approvalStatus;
+          updatedProfile.isKOL = existingProfile.isKOL;
+          updatedProfile.tier = existingProfile.tier;
+          updatedProfile.currentTier = existingProfile.currentTier;
+          
+          log(`Saving with preserved fields - Role: ${updatedProfile.role}, Approval: ${updatedProfile.approvalStatus}`);
+          
+          await ProfileService.saveProfile(updatedProfile);
+          log(`Profile updated - preserved role: ${existingProfile.role} and approval: ${existingProfile.approvalStatus}`);
         } else {
           log("Creating new profile...");
           // Create new profile in the new system
@@ -312,17 +335,28 @@ export const authOptions: NextAuthOptions = {
             if (profileRes.ok) {
               const profileData = await profileRes.json();
               if (profileData.user) {
-                token.role = profileData.user.role || 'user';
-                token.approvalStatus = profileData.user.approvalStatus || 'pending';
+                // Only update if values are explicitly provided (not undefined or null)
+                if (profileData.user.role !== undefined && profileData.user.role !== null) {
+                  token.role = profileData.user.role;
+                }
+                if (profileData.user.approvalStatus !== undefined && profileData.user.approvalStatus !== null) {
+                  token.approvalStatus = profileData.user.approvalStatus;
+                }
                 
                 log(`User ${token.twitterHandle} - Role: ${token.role}, Status: ${token.approvalStatus}`);
               }
             }
           } catch (error) {
             log("Error fetching user profile in JWT:", error);
-            // Default to scout role for other users when API fails
-            token.role = 'scout';
-            token.approvalStatus = 'pending';
+            // Don't override approval status when API fails - keep existing values
+            // Only set defaults if this is a brand new token (no existing values)
+            if (!token.role) {
+              token.role = 'scout';
+            }
+            if (!token.approvalStatus) {
+              token.approvalStatus = 'pending';
+            }
+            log(`API failed but preserved existing values - Role: ${token.role}, Status: ${token.approvalStatus}`);
           }
         }
       }

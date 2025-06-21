@@ -132,6 +132,7 @@ export interface InfluencerProfile {
     role: 'creator' | 'recipient'
     linkedAt: string
   }>
+  points?: number                     // Total points earned (optional for backward compatibility)
   createdAt: string                   // ISO timestamp
   updatedAt?: string
   updatedBy?: string                  // admin who made the last change

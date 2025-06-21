@@ -203,8 +203,9 @@ const getChainDistribution = (users: KOLProfile[]) => {
   const chainCounts: Record<string, number> = {};
   
   users.forEach(user => {
-    if (user.chains && user.chains.length > 0) {
-      user.chains.forEach(chain => {
+    const chains = user.activeChains || user.chains || [];
+    if (chains && chains.length > 0) {
+      chains.forEach(chain => {
         chainCounts[chain] = (chainCounts[chain] || 0) + 1;
       });
     }
@@ -632,19 +633,56 @@ function ProfileModal({
               </div>
             </div>
             
+            {/* Points System */}
+            <div className="border border-green-400/30 p-4 rounded-sm">
+              <h3 className="text-md border-b border-green-300/50 mb-4 pb-1 uppercase">Points</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex">
+                  <span className="font-bold mr-2 w-24">Total Points:</span>
+                  <span className="text-green-200 text-lg font-bold">{(user as any).points || 0}</span>
+                </div>
+                
+                {(user as any).pointsBreakdown && (
+                  <>
+                    <div className="mt-2 pt-2 border-t border-green-400/20">
+                      <span className="text-xs text-green-400/70 uppercase">Breakdown:</span>
+                    </div>
+                    <div className="flex">
+                      <span className="text-xs mr-2 w-20">Discord:</span>
+                      <span className="text-green-200">{(user as any).pointsBreakdown.discord || 0}</span>
+                    </div>
+                    <div className="flex">
+                      <span className="text-xs mr-2 w-20">Contests:</span>
+                      <span className="text-green-200">{(user as any).pointsBreakdown.contests || 0}</span>
+                    </div>
+                    <div className="flex">
+                      <span className="text-xs mr-2 w-20">Scouts:</span>
+                      <span className="text-green-200">{(user as any).pointsBreakdown.scouts || 0}</span>
+                    </div>
+                    <div className="flex">
+                      <span className="text-xs mr-2 w-20">Campaigns:</span>
+                      <span className="text-green-200">{(user as any).pointsBreakdown.campaigns || 0}</span>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+            
             {/* Chains */}
-            {user.chains && user.chains.length > 0 && (
+            {((user.activeChains && user.activeChains.length > 0) || (user.chains && user.chains.length > 0)) && (
               <div className="border border-green-400/30 p-4 rounded-sm">
                 <h3 className="text-md border-b border-green-300/50 mb-4 pb-1 uppercase">Active Chains</h3>
                 <div className="flex flex-wrap gap-2">
-                  {Array.isArray(user.chains) ? 
-                    user.chains.map(chain => (
-                      <span key={chain} className="px-2 py-1 bg-green-900/50 text-xs rounded">
-                        {chain}
-                      </span>
-                    )) : 
-                    <span className="px-2 py-1 bg-green-900/50 text-xs rounded">{String(user.chains)}</span>
-                  }
+                  {(() => {
+                    const chains = user.activeChains || user.chains || [];
+                    return Array.isArray(chains) ? 
+                      chains.map(chain => (
+                        <span key={chain} className="px-2 py-1 bg-green-900/50 text-xs rounded">
+                          {chain}
+                        </span>
+                      )) : 
+                      <span className="px-2 py-1 bg-green-900/50 text-xs rounded">{String(chains)}</span>
+                  })()}
                 </div>
               </div>
             )}
@@ -726,7 +764,11 @@ function ProfileModal({
                         <div className="flex-1">
                           <div className="text-xs text-green-400/80 uppercase">{platform}</div>
                           <div className="text-green-200">
-                            {handle || 'Connected'}
+                            {handle || 
+                             (account && typeof account === 'object' && 'username' in account ? account.username : null) ||
+                             (account && typeof account === 'object' && 'tag' in account ? account.tag : null) ||
+                             (account && typeof account === 'object' && 'id' in account ? `User ${account.id}` : null) ||
+                             'Connected'}
                             {followers > 0 && <span className="text-xs ml-2 text-green-400/70">({followers.toLocaleString()} followers)</span>}
                           </div>
                         </div>
@@ -1191,7 +1233,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
               email: user.email,
               approvalStatus: user.approvalStatus || 'pending',
               followers: user.totalFollowers ?? user.followerCount ?? Math.floor(Math.random() * 100000),
-              chains: user.chains || [chainOptions[Math.floor(Math.random() * chainOptions.length)]],
+              chains: user.activeChains || user.chains || [chainOptions[Math.floor(Math.random() * chainOptions.length)]],
               createdAt: user.createdAt || new Date().toISOString(),
               country: user.country || 'United States',
               walletCount: user.wallets ? Object.keys(user.wallets).length : 0,
@@ -1215,7 +1257,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
               // Add twitter handle
               twitterHandle: user.twitterHandle,
               // Add tier
-              tier: user.tier
+              tier: user.tier,
+              // Add activeChains and points
+              activeChains: user.activeChains || user.chains || [],
+              points: user.points || 0
             }))
           : generateMockUsers();
         
@@ -1644,7 +1689,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                   email: user.email,
                   approvalStatus: user.approvalStatus || 'pending',
                   followers: user.totalFollowers ?? user.followerCount ?? Math.floor(Math.random() * 100000),
-                  chains: user.chains || [chainOptions[Math.floor(Math.random() * chainOptions.length)]],
+                  chains: user.activeChains || user.chains || [chainOptions[Math.floor(Math.random() * chainOptions.length)]],
                   createdAt: user.createdAt || new Date().toISOString(),
                   country: user.country || 'United States',
                   walletCount: user.wallets ? Object.keys(user.wallets).length : 0,
@@ -2783,19 +2828,24 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                       {/* User Stats - Second Row */}
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         {/* Active Chains */}
-                        {user.chains && user.chains.length > 0 && (
+                        {((user.activeChains && user.activeChains.length > 0) || (user.chains && user.chains.length > 0)) && (
                           <div className="flex flex-wrap gap-1 hidden sm:flex">
-                            {Array.isArray(user.chains) 
-                              ? user.chains.slice(0, 3).map(chain => (
-                                <span key={chain} className="px-1.5 py-0.5 bg-green-900/30 text-xs rounded">
-                                  {chain}
-                                </span>
-                              ))
-                              : <span className="px-1.5 py-0.5 bg-green-900/30 text-xs rounded">{String(user.chains)}</span>
-                            }
-                            {Array.isArray(user.chains) && user.chains.length > 3 && (
-                              <span className="text-xs text-green-400">+{user.chains.length - 3} more</span>
-                            )}
+                            {(() => {
+                              const chains = user.activeChains || user.chains || [];
+                              return Array.isArray(chains) 
+                                ? chains.slice(0, 3).map(chain => (
+                                  <span key={chain} className="px-1.5 py-0.5 bg-green-900/30 text-xs rounded">
+                                    {chain}
+                                  </span>
+                                ))
+                                : <span className="px-1.5 py-0.5 bg-green-900/30 text-xs rounded">{String(chains)}</span>
+                            })()}
+                            {(() => {
+                              const chains = user.activeChains || user.chains || [];
+                              return Array.isArray(chains) && chains.length > 3 && (
+                                <span className="text-xs text-green-400">+{chains.length - 3} more</span>
+                              )
+                            })()}
                           </div>
                         )}
                         

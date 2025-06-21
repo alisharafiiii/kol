@@ -31,6 +31,17 @@ export class ProfileMigrationService {
       tier: oldProfile.tier || 'micro',
       campaigns: [], // Will need to convert old campaign format
       
+      // Points - preserve from old profile
+      points: oldProfile.points || 0,
+      pointsBreakdown: {
+        discord: 0,
+        contests: 0,
+        scouts: 0,
+        campaigns: 0,
+        other: 0
+      },
+      pointsHistory: [],
+      
       // Contact info
       email: undefined, // Old profile doesn't have email field
       phone: undefined, // Old profile doesn't have phone
@@ -46,12 +57,22 @@ export class ProfileMigrationService {
         tiktok: oldProfile.socialAccounts?.tiktok?.handle,
       },
       
+      // Preserve socialAccounts for Discord and other OAuth connections
+      socialAccounts: oldProfile.socialAccounts,
+      
+      // Discord fields (for backward compatibility)
+      discordId: oldProfile.discordId,
+      discordUsername: oldProfile.discordUsername,
+      
       // Wallet info (legacy) - map old fields to new
       walletAddresses: oldProfile.walletAddresses ? {
         ethereum: oldProfile.walletAddresses.coinbase,
         base: oldProfile.walletAddresses.coinbase, // Using coinbase for base chain
         solana: oldProfile.walletAddresses.phantom,
       } : undefined,
+      
+      // Active chains - preserve from old profile
+      activeChains: oldProfile.chains || [],
       
       // Location
       country: oldProfile.country,

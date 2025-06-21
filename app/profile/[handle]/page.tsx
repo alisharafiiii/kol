@@ -38,6 +38,15 @@ export default function ProfilePage({ params }: { params: { handle: string } }) 
       }
       
       const data = await res.json()
+      console.log('Profile data received:', {
+        handle: data.twitterHandle,
+        hasDiscordInSocialAccounts: !!data.socialAccounts?.discord,
+        discordUsername: data.socialAccounts?.discord?.username || data.discordUsername,
+        discordId: data.socialAccounts?.discord?.id || data.discordId,
+        socialAccounts: data.socialAccounts,
+        points: data.points,
+        hasPoints: 'points' in data
+      })
       setProfile(data)
     } catch (err: any) {
       setError(err.message)
@@ -151,6 +160,10 @@ export default function ProfilePage({ params }: { params: { handle: string } }) 
               
               {/* Quick Stats */}
               <div className="flex flex-wrap gap-4">
+                <div>
+                  <span className="text-green-500 text-sm">Points</span>
+                  <p className="text-xl font-bold">{profile.points || 0}</p>
+                </div>
                 {profile.isKOL && profile.kolMetrics && (
                   <>
                     <div>
@@ -301,6 +314,22 @@ export default function ProfilePage({ params }: { params: { handle: string } }) 
                       @{profile.twitterHandle}
                     </a>
                   </div>
+                  {profile.socialAccounts?.discord && (
+                    <div className="flex items-center gap-3">
+                      <span className="text-green-500">Discord:</span>
+                      <span className="text-green-300">
+                        {profile.socialAccounts.discord.username}
+                      </span>
+                    </div>
+                  )}
+                  {!profile.socialAccounts?.discord && profile.discordUsername && (
+                    <div className="flex items-center gap-3">
+                      <span className="text-green-500">Discord:</span>
+                      <span className="text-green-300">
+                        {profile.discordUsername}
+                      </span>
+                    </div>
+                  )}
                   {profile.socialLinks?.instagram && (
                     <div className="flex items-center gap-3">
                       <span className="text-green-500">Instagram:</span>

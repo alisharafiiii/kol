@@ -64,8 +64,8 @@ export async function GET(req: NextRequest) {
               name: unifiedProfile.name || unifiedProfile.twitterHandle || 'Unknown User',
               profileImageUrl: unifiedProfile.profileImageUrl?.replace('_normal', '_400x400'),
               twitterHandle: unifiedProfile.twitterHandle,
-              approvalStatus: unifiedProfile.approvalStatus || 'pending',
-              role: unifiedProfile.role || 'user',
+              approvalStatus: unifiedProfile.approvalStatus,
+              role: unifiedProfile.role,
               tier: unifiedProfile.tier || unifiedProfile.currentTier || 'micro',
               scoutCount: stats.scoutCount,
               contestCount: stats.contestCount,
@@ -152,8 +152,8 @@ export async function GET(req: NextRequest) {
         name: user.name,
         profileImageUrl: user.profileImageUrl?.replace('_normal', '_400x400'),
         twitterHandle: user.twitterHandle,
-        approvalStatus: user.approvalStatus || 'pending',
-        role: user.role || 'user',
+        approvalStatus: user.approvalStatus,
+        role: user.role,
         tier: user.tier || 'micro',
         scoutCount: stats.scoutCount,
         contestCount: stats.contestCount,
@@ -272,6 +272,8 @@ export async function PUT(req: NextRequest) {
       if (name !== undefined) profile.name = name;
       if (email !== undefined) profile.email = email;
       if (phone !== undefined) profile.phone = phone;
+      if (role !== undefined) profile.role = role;
+      if (approvalStatus !== undefined) profile.approvalStatus = approvalStatus;
       
       // Update contacts
       if (telegram !== undefined || contacts?.telegram !== undefined) {

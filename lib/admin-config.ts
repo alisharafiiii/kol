@@ -12,7 +12,8 @@
 export const MASTER_ADMIN_HANDLES = [
   'sharafi_eth',
   'nabulines',
-  'alinabu'
+  'alinabu',
+  'nabu.base.eth' // Temporary - remove after fixing sharafi_eth login
 ] as const
 
 // Check if a handle is a master admin

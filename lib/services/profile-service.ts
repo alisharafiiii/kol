@@ -397,57 +397,58 @@ export class ProfileService {
   private static async updateIndexes(profile: UnifiedProfile): Promise<void> {
     console.log('[ProfileService.updateIndexes] Starting index update for:', profile.twitterHandle || profile.id)
     
-    const pipeline = redis.pipeline()
-    
-    // Handle index
-    if (profile.twitterHandle) {
-      const handleKey = `${this.INDEX_PREFIX}handle:${profile.twitterHandle}`
-      console.log('[ProfileService.updateIndexes] Adding to handle index:', handleKey, 'value:', profile.id)
-      pipeline.sadd(
-        handleKey,
-        profile.id
-      )
+    try {
+      // Execute each index update individually instead of using pipeline
+      // This ensures compatibility with Upstash Redis
+      
+      // Handle index
+      if (profile.twitterHandle) {
+        const handleKey = `${this.INDEX_PREFIX}handle:${profile.twitterHandle}`
+        console.log('[ProfileService.updateIndexes] Adding to handle index:', handleKey, 'value:', profile.id)
+        await redis.sadd(handleKey, profile.id)
+      }
+      
+      // Role index
+      const roleKey = `${this.INDEX_PREFIX}role:${profile.role}`
+      console.log('[ProfileService.updateIndexes] Adding to role index:', roleKey, 'value:', profile.id)
+      await redis.sadd(roleKey, profile.id)
+      
+      // Status index
+      const statusKey = `${this.INDEX_PREFIX}status:${profile.approvalStatus}`
+      console.log('[ProfileService.updateIndexes] Adding to status index:', statusKey, 'value:', profile.id)
+      await redis.sadd(statusKey, profile.id)
+      
+      // KOL index
+      if (profile.isKOL) {
+        const kolKey = `${this.INDEX_PREFIX}kol:true`
+        console.log('[ProfileService.updateIndexes] Adding to KOL index:', kolKey, 'value:', profile.id)
+        await redis.sadd(kolKey, profile.id)
+      }
+      
+      // Tier index (for all users, not just KOLs)
+      if (profile.tier) {
+        const tierKey = `${this.INDEX_PREFIX}tier:${profile.tier}`
+        console.log('[ProfileService.updateIndexes] Adding to tier index:', tierKey, 'value:', profile.id)
+        await redis.sadd(tierKey, profile.id)
+      } else if (profile.currentTier) {
+        // Legacy support for currentTier
+        const tierKey = `${this.INDEX_PREFIX}tier:${profile.currentTier}`
+        console.log('[ProfileService.updateIndexes] Adding to currentTier index:', tierKey, 'value:', profile.id)
+        await redis.sadd(tierKey, profile.id)
+      }
+      
+      // Country index
+      if (profile.country) {
+        const countryKey = `${this.INDEX_PREFIX}country:${profile.country}`
+        console.log('[ProfileService.updateIndexes] Adding to country index:', countryKey, 'value:', profile.id)
+        await redis.sadd(countryKey, profile.id)
+      }
+      
+      console.log('[ProfileService.updateIndexes] All indexes updated successfully')
+    } catch (error) {
+      console.error('[ProfileService.updateIndexes] Error updating indexes:', error)
+      throw error
     }
-    
-    // Role index
-    const roleKey = `${this.INDEX_PREFIX}role:${profile.role}`
-    console.log('[ProfileService.updateIndexes] Adding to role index:', roleKey, 'value:', profile.id)
-    pipeline.sadd(roleKey, profile.id)
-    
-    // Status index
-    const statusKey = `${this.INDEX_PREFIX}status:${profile.approvalStatus}`
-    console.log('[ProfileService.updateIndexes] Adding to status index:', statusKey, 'value:', profile.id)
-    pipeline.sadd(statusKey, profile.id)
-    
-    // KOL index
-    if (profile.isKOL) {
-      const kolKey = `${this.INDEX_PREFIX}kol:true`
-      console.log('[ProfileService.updateIndexes] Adding to KOL index:', kolKey, 'value:', profile.id)
-      pipeline.sadd(kolKey, profile.id)
-    }
-    
-    // Tier index (for all users, not just KOLs)
-    if (profile.tier) {
-      const tierKey = `${this.INDEX_PREFIX}tier:${profile.tier}`
-      console.log('[ProfileService.updateIndexes] Adding to tier index:', tierKey, 'value:', profile.id)
-      pipeline.sadd(tierKey, profile.id)
-    } else if (profile.currentTier) {
-      // Legacy support for currentTier
-      const tierKey = `${this.INDEX_PREFIX}tier:${profile.currentTier}`
-      console.log('[ProfileService.updateIndexes] Adding to currentTier index:', tierKey, 'value:', profile.id)
-      pipeline.sadd(tierKey, profile.id)
-    }
-    
-    // Country index
-    if (profile.country) {
-      const countryKey = `${this.INDEX_PREFIX}country:${profile.country}`
-      console.log('[ProfileService.updateIndexes] Adding to country index:', countryKey, 'value:', profile.id)
-      pipeline.sadd(countryKey, profile.id)
-    }
-    
-    console.log('[ProfileService.updateIndexes] Executing pipeline...')
-    const results = await pipeline.exec()
-    console.log('[ProfileService.updateIndexes] Pipeline results:', results)
   }
   
   /**

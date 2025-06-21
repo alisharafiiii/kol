@@ -1,0 +1,3970 @@
+(node:76071) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/nabu/kol/discord-bots/analytics-bot-debug.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/nabu/kol/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+🔍 Loading environment from: /Users/nabu/kol/.env.local
+✅ Connected to Upstash Redis
+✅ AI model initialized for sentiment analysis
+🚀 Analytics bot starting...
+✅ Analytics bot logged in as nabulines_bot#8452
+📊 Monitoring 3 servers
+[DEBUG] Connected servers:
+  - Ledger OP3N (885256081289379850)
+  - NABU LINES (980159046176870450)
+  - AmeretaVerse (1199707792706117642)
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+[DEBUG] Message from hayhemjay in AmeretaVerse#💻│ethos-network: "https://www.xeet.ai/boost/__PaaPa"
+[DEBUG] Checking channel 1381247937308393542 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] Checking project NABULINES: channels=980162754365235300,984154482168434728,1382942333741568190,1382583759907459123
+[DEBUG] Channel 💻│ethos-network (1381247937308393542) is NOT tracked
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+[DEBUG] Message from alinabu in Ledger OP3N#☕┃general: "."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385799600769728543
+[DEBUG] Updated project stats: 1006 messages, 104 users
+😐 [Ledger] #☕┃general @alinabu: .
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+[DEBUG] Message from monkey.so1 in Ledger OP3N#☕┃general: "That’s good"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385801546784051271
+[DEBUG] Updated project stats: 1007 messages, 105 users
+😊 [Ledger] #☕┃general @monkey.so1: That’s good
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+[DEBUG] Message from bellaqueency in Ledger OP3N#🎮┃ledger-quest: "I sent the guide to your profile <@125441848757767..."
+[DEBUG] Checking channel 1087303184076251157 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+⏭️ Skipping ignored channel: #🎮┃ledger-quest
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+[DEBUG] Message from enteng_kabishawty in Ledger OP3N#☕┃general: "https://tenor.com/view/phonte-good-morning-gif-180..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385809304627707964
+[DEBUG] Updated project stats: 1008 messages, 105 users
+😊 [Ledger] #☕┃general @enteng_kabishawty: https://tenor.com/view/phonte-good-morning-gif-180...
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "good morning, my bed time soon 😄"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385837442552041675
+[DEBUG] Updated project stats: 1009 messages, 105 users
+😐 [Ledger] #☕┃general @badforbusiness: good morning, my bed time soon 😄
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "GM"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385837480334458880
+[DEBUG] Updated project stats: 1010 messages, 105 users
+😐 [Ledger] #☕┃general @lshaf: GM
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "i really have to do something about my schedule"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385837544620691578
+[DEBUG] Updated project stats: 1011 messages, 105 users
+😞 [Ledger] #☕┃general @badforbusiness: i really have to do something about my schedule
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "yesterday i didnt sleep until 11 am and now its 6...."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385837590225227951
+[DEBUG] Updated project stats: 1012 messages, 105 users
+😞 [Ledger] #☕┃general @badforbusiness: yesterday i didnt sleep until 11 am and now its 6....
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "kinda enjoy it though, nights are way more peacefu..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385837696911413321
+[DEBUG] Updated project stats: 1013 messages, 105 users
+😊 [Ledger] #☕┃general @badforbusiness: kinda enjoy it though, nights are way more peacefu...
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "even though i never truly becomes night here, sun ..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385837821604134983
+[DEBUG] Updated project stats: 1014 messages, 105 users
+😞 [Ledger] #☕┃general @badforbusiness: even though i never truly becomes night here, sun ...
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "wut, where do you live?"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385838036494848090
+[DEBUG] Updated project stats: 1015 messages, 105 users
+😐 [Ledger] #☕┃general @lshaf: wut, where do you live?
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "no night?"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385838058838032598
+[DEBUG] Updated project stats: 1016 messages, 105 users
+😞 [Ledger] #☕┃general @lshaf: no night?
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "kiruna, sweden"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385838083064463460
+[DEBUG] Updated project stats: 1017 messages, 105 users
+😐 [Ledger] #☕┃general @badforbusiness: kiruna, sweden
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "correct"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385838118296490075
+[DEBUG] Updated project stats: 1018 messages, 105 users
+😐 [Ledger] #☕┃general @badforbusiness: correct
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "we have midnight sun and polar night"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385838153616592896
+[DEBUG] Message from enteng_kabishawty in Ledger OP3N#☕┃general: "it must be hard"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Updated project stats: 1019 messages, 105 users
+😐 [Ledger] #☕┃general @badforbusiness: we have midnight sun and polar night
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385838159262384210
+[DEBUG] Updated project stats: 1020 messages, 105 users
+😞 [Ledger] #☕┃general @enteng_kabishawty: it must be hard
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "basically meaning summers are 24/7 sun and winters..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385838206997631026
+[DEBUG] Updated project stats: 1021 messages, 105 users
+😞 [Ledger] #☕┃general @badforbusiness: basically meaning summers are 24/7 sun and winters...
+[DEBUG] Message from enteng_kabishawty in Ledger OP3N#☕┃general: "equip your room with thick curtains"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385838267014054059
+[DEBUG] Updated project stats: 1022 messages, 105 users
+😐 [Ledger] #☕┃general @enteng_kabishawty: equip your room with thick curtains
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "artificial night"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385838314698834090
+[DEBUG] Updated project stats: 1023 messages, 105 users
+😐 [Ledger] #☕┃general @lshaf: artificial night
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "😄"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385838323305681075
+[DEBUG] Updated project stats: 1024 messages, 105 users
+😐 [Ledger] #☕┃general @lshaf: 😄
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "i did, sun always finds its way through the gaps"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385838364623634576
+[DEBUG] Updated project stats: 1025 messages, 105 users
+😊 [Ledger] #☕┃general @badforbusiness: i did, sun always finds its way through the gaps
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "https://www.youtube.com/watch?v=Sl6DbRoX9X4"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385838836185038879
+[DEBUG] Updated project stats: 1026 messages, 105 users
+😐 [Ledger] #☕┃general @badforbusiness: https://www.youtube.com/watch?v=Sl6DbRoX9X4
+[DEBUG] Message from catgirl234 in Ledger OP3N#☕┃general: "does anyone here do memecoins?"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385839004372439100
+[DEBUG] Updated project stats: 1027 messages, 106 users
+😐 [Ledger] #☕┃general @catgirl234: does anyone here do memecoins?
+[DEBUG] Message from enteng_kabishawty in Ledger OP3N#☕┃general: "check up on a professional, maybe he can prescribe..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385839016032862298
+[DEBUG] Message from thecoldneverbotheredmeanyway in Ledger OP3N#☕┃general: "and I got banned again 🙃"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385839018809364671
+[DEBUG] Updated project stats: 1029 messages, 106 users
+😐 [Ledger] #☕┃general @enteng_kabishawty: check up on a professional, maybe he can prescribe...
+[DEBUG] Updated project stats: 1029 messages, 106 users
+😞 [Ledger] #☕┃general @thecoldneverbotheredmeanyway: and I got banned again 🙃
+[DEBUG] Message from spyrospiro in Ledger OP3N#☕┃general: "Yes sure"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385839059527663626
+[DEBUG] Updated project stats: 1030 messages, 107 users
+😐 [Ledger] #☕┃general @spyrospiro: Yes sure
+[DEBUG] Message from thecoldneverbotheredmeanyway in Ledger OP3N#☕┃general: "mind unbanning neiara 😁"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385839219062083594
+[DEBUG] Updated project stats: 1031 messages, 107 users
+😊 [Ledger] #☕┃general @thecoldneverbotheredmeanyway: mind unbanning neiara 😁
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "never send URL here"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385839310200115250
+[DEBUG] Updated project stats: 1032 messages, 107 users
+😞 [Ledger] #☕┃general @lshaf: never send URL here
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "seems the bot haven't fixed"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385839332102901811
+[DEBUG] Updated project stats: 1033 messages, 107 users
+😞 [Ledger] #☕┃general @lshaf: seems the bot haven't fixed
+[DEBUG] Message from thecoldneverbotheredmeanyway in Ledger OP3N#☕┃general: "youtube videos probably shouldn't be auto banned, ..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+📊 Loading tracked channels...
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385839346409668649
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+[DEBUG] Updated project stats: 1034 messages, 107 users
+😞 [Ledger] #☕┃general @thecoldneverbotheredmeanyway: youtube videos probably shouldn't be auto banned, ...
+[DEBUG] Message from thecoldneverbotheredmeanyway in Ledger OP3N#☕┃general: "i just wanted to show hows the sun never sets ;_;"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385839423543054337
+[DEBUG] Updated project stats: 1035 messages, 107 users
+😊 [Ledger] #☕┃general @thecoldneverbotheredmeanyway: i just wanted to show hows the sun never sets ;_;
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "because we have no control over carl bot, and high..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385839526827659365
+[DEBUG] Updated project stats: 1036 messages, 107 users
+😞 [Ledger] #☕┃general @lshaf: because we have no control over carl bot, and high...
+[DEBUG] Message from thecoldneverbotheredmeanyway in Ledger OP3N#☕┃general: "can prob just whitelist youtube"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385839665814437918
+[DEBUG] Updated project stats: 1037 messages, 107 users
+😊 [Ledger] #☕┃general @thecoldneverbotheredmeanyway: can prob just whitelist youtube
+[DEBUG] Message from enteng_kabishawty in Ledger OP3N#☕┃general: "it will."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385840042811064574
+[DEBUG] Updated project stats: 1038 messages, 107 users
+😐 [Ledger] #☕┃general @enteng_kabishawty: it will.
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "you get used to it and the beauty of the arctic mo..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385840130618560673
+[DEBUG] Updated project stats: 1039 messages, 107 users
+😊 [Ledger] #☕┃general @badforbusiness: you get used to it and the beauty of the arctic mo...
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "amazing landscapes, wildlife, auroras, etc"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385840252513419448
+[DEBUG] Updated project stats: 1040 messages, 107 users
+😊 [Ledger] #☕┃general @badforbusiness: amazing landscapes, wildlife, auroras, etc
+[DEBUG] Message from enteng_kabishawty in Ledger OP3N#☕┃general: "the auroras must be breath taking"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385840421674025084
+[DEBUG] Updated project stats: 1041 messages, 107 users
+😊 [Ledger] #☕┃general @enteng_kabishawty: the auroras must be breath taking
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "they absolutely are! 😄"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385840520730906654
+[DEBUG] Updated project stats: 1042 messages, 107 users
+😊 [Ledger] #☕┃general @badforbusiness: they absolutely are! 😄
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "and there's probably no better place in the world ..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385840576666013778
+[DEBUG] Updated project stats: 1043 messages, 107 users
+😊 [Ledger] #☕┃general @badforbusiness: and there's probably no better place in the world ...
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "tromso / kiruna / abisko / etc are all the top pla..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385840636736966706
+[DEBUG] Updated project stats: 1044 messages, 107 users
+😊 [Ledger] #☕┃general @badforbusiness: tromso / kiruna / abisko / etc are all the top pla...
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "we get so many tourists every year just coming her..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385840938995290123
+[DEBUG] Updated project stats: 1045 messages, 107 users
+😊 [Ledger] #☕┃general @badforbusiness: we get so many tourists every year just coming her...
+[DEBUG] Message from enteng_kabishawty in Ledger OP3N#☕┃general: "hope to see it before i die. I want to experience ..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385841096424427560
+[DEBUG] Updated project stats: 1046 messages, 107 users
+😊 [Ledger] #☕┃general @enteng_kabishawty: hope to see it before i die. I want to experience ...
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "you should see them in person, cameras don't do th..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385841166259322910
+[DEBUG] Updated project stats: 1047 messages, 107 users
+😊 [Ledger] #☕┃general @badforbusiness: you should see them in person, cameras don't do th...
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "no camera is good enough to really capture them as..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385841228427427932
+[DEBUG] Updated project stats: 1048 messages, 107 users
+😞 [Ledger] #☕┃general @badforbusiness: no camera is good enough to really capture them as...
+[DEBUG] Message from sufyan_2003 in AmeretaVerse#💻│ethos-network: "https://www.xeet.ai/boost/Sufyan_2003_"
+[DEBUG] Checking channel 1381247937308393542 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] Checking project NABULINES: channels=980162754365235300,984154482168434728,1382942333741568190,1382583759907459123
+[DEBUG] Channel 💻│ethos-network (1381247937308393542) is NOT tracked
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "ledger northern lights campfire this winter in kir..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385842398210297876
+[DEBUG] Updated project stats: 1049 messages, 107 users
+😊 [Ledger] #☕┃general @badforbusiness: ledger northern lights campfire this winter in kir...
+[DEBUG] Message from drippyy42 in Ledger OP3N#☕┃general: "roblox"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385842932636188743
+[DEBUG] Updated project stats: 1050 messages, 107 users
+😐 [Ledger] #☕┃general @drippyy42: roblox
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "i was talking in a documentary discord about kirun..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385843049736831128
+[DEBUG] Updated project stats: 1051 messages, 107 users
+😊 [Ledger] #☕┃general @badforbusiness: i was talking in a documentary discord about kirun...
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+[DEBUG] Message from drippyy42 in Ledger OP3N#🎮┃ledger-quest: "i need help with my wallet"
+[DEBUG] Checking channel 1087303184076251157 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+⏭️ Skipping ignored channel: #🎮┃ledger-quest
+[DEBUG] Message from drippyy42 in Ledger OP3N#🎮┃ledger-quest: "can someone help support"
+[DEBUG] Checking channel 1087303184076251157 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+⏭️ Skipping ignored channel: #🎮┃ledger-quest
+[DEBUG] Message from jimmy1ll in Ledger OP3N#🎮┃ledger-quest: "**SUBMIT QUERY TO TEAM**
+  
+   [**`# |SUPPORT—TICK..."
+[DEBUG] Checking channel 1087303184076251157 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+⏭️ Skipping ignored channel: #🎮┃ledger-quest
+[DEBUG] Message from ruix34 in Ledger OP3N#🎮┃ledger-quest: "scam"
+[DEBUG] Checking channel 1087303184076251157 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+⏭️ Skipping ignored channel: #🎮┃ledger-quest
+[DEBUG] Message from drippyy42 in Ledger OP3N#☕┃general: "oh we have verified role now?"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385843314246553662
+[DEBUG] Updated project stats: 1052 messages, 107 users
+😊 [Ledger] #☕┃general @drippyy42: oh we have verified role now?
+[DEBUG] Message from drippyy42 in Ledger OP3N#☕┃general: "https://tenor.com/view/catto-gif-17643687004817745..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385843501522096130
+[DEBUG] Updated project stats: 1053 messages, 107 users
+😊 [Ledger] #☕┃general @drippyy42: https://tenor.com/view/catto-gif-17643687004817745...
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "apparently, unsure what it does"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385843515363295392
+[DEBUG] Updated project stats: 1054 messages, 107 users
+😐 [Ledger] #☕┃general @badforbusiness: apparently, unsure what it does
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "definitely doesnt allow youtube! 😄"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385843588927066152
+[DEBUG] Updated project stats: 1055 messages, 107 users
+😞 [Ledger] #☕┃general @badforbusiness: definitely doesnt allow youtube! 😄
+[DEBUG] Message from drippyy42 in Ledger OP3N#🎮┃ledger-quest: "can someone help support"
+[DEBUG] Checking channel 1087303184076251157 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+⏭️ Skipping ignored channel: #🎮┃ledger-quest
+[DEBUG] Message from drippyy42 in Ledger OP3N#☕┃general: "discord.gg/test"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385843662612856954
+[DEBUG] Updated project stats: 1056 messages, 107 users
+😐 [Ledger] #☕┃general @drippyy42: discord.gg/test
+[DEBUG] Message from drippyy42 in Ledger OP3N#☕┃general: "https://youtube.com"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385843692748668948
+[DEBUG] Updated project stats: 1057 messages, 107 users
+😐 [Ledger] #☕┃general @drippyy42: https://youtube.com
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "lmao"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385843731273617521
+[DEBUG] Updated project stats: 1058 messages, 107 users
+😐 [Ledger] #☕┃general @badforbusiness: lmao
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "lol"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385843749963432027
+[DEBUG] Updated project stats: 1059 messages, 107 users
+😐 [Ledger] #☕┃general @lshaf: lol
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "nice"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385843763884200036
+[DEBUG] Updated project stats: 1060 messages, 107 users
+😐 [Ledger] #☕┃general @lshaf: nice
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "funny how the scam link was fine but somehow the y..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385843781131304960
+[DEBUG] Updated project stats: 1061 messages, 107 users
+😞 [Ledger] #☕┃general @badforbusiness: funny how the scam link was fine but somehow the y...
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "unban them xD"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385843823694843996
+[DEBUG] Updated project stats: 1062 messages, 107 users
+😊 [Ledger] #☕┃general @badforbusiness: unban them xD
+[DEBUG] Message from catgirl234 in Ledger OP3N#☕┃general: "wait whyd i get pinged"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385844140813717654
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "I want to test the security but it's require me to..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Updated project stats: 1063 messages, 107 users
+😞 [Ledger] #☕┃general @catgirl234: wait whyd i get pinged
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385844147449106644
+[DEBUG] Updated project stats: 1064 messages, 107 users
+😞 [Ledger] #☕┃general @lshaf: I want to test the security but it's require me to...
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "wdym"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385844396653678622
+[DEBUG] Updated project stats: 1065 messages, 107 users
+😐 [Ledger] #☕┃general @badforbusiness: wdym
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "want any help? I'm verified with phone"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385844424826818703
+[DEBUG] Updated project stats: 1066 messages, 107 users
+😊 [Ledger] #☕┃general @badforbusiness: want any help? I'm verified with phone
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "I have alternative account"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385844453654269964
+[DEBUG] Updated project stats: 1067 messages, 107 users
+😐 [Ledger] #☕┃general @lshaf: I have alternative account
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "I want to testout scammer message"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385844491197481000
+[DEBUG] Updated project stats: 1068 messages, 107 users
+😞 [Ledger] #☕┃general @lshaf: I want to testout scammer message
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "that not deleted"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385844512668123186
+[DEBUG] Updated project stats: 1069 messages, 107 users
+😞 [Ledger] #☕┃general @lshaf: that not deleted
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "can you try discord.gg?"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385844540866302093
+[DEBUG] Updated project stats: 1070 messages, 107 users
+😐 [Ledger] #☕┃general @lshaf: can you try discord.gg?
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "want me to write one? 😄"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385844554632134726
+[DEBUG] Updated project stats: 1071 messages, 107 users
+😊 [Ledger] #☕┃general @badforbusiness: want me to write one? 😄
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "@@discord.gg/test"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385844576090066974
+[DEBUG] Updated project stats: 1072 messages, 107 users
+😐 [Ledger] #☕┃general @lshaf: @@discord.gg/test
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "oh it's working"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385844783515303958
+[DEBUG] Updated project stats: 1073 messages, 107 users
+😊 [Ledger] #☕┃general @lshaf: oh it's working
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "that timed me out 😄"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385844806500225077
+[DEBUG] Updated project stats: 1074 messages, 107 users
+😞 [Ledger] #☕┃general @badforbusiness: that timed me out 😄
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "don't use https"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385844854138867832
+[DEBUG] Updated project stats: 1075 messages, 107 users
+😞 [Ledger] #☕┃general @lshaf: don't use https
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "discord://@@discord.gg/heelpasdasd"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385844898787360889
+[DEBUG] Updated project stats: 1076 messages, 107 users
+😐 [Ledger] #☕┃general @lshaf: discord://@@discord.gg/heelpasdasd
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "seems to work"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385844989040394300
+[DEBUG] Updated project stats: 1077 messages, 107 users
+😊 [Ledger] #☕┃general @badforbusiness: seems to work
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "how about this. just exactly write it"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385845029532209283
+[DEBUG] Updated project stats: 1078 messages, 107 users
+😐 [Ledger] #☕┃general @lshaf: how about this. just exactly write it
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "after this I got 1 more to tes"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385845049400758302
+[DEBUG] Updated project stats: 1079 messages, 107 users
+😐 [Ledger] #☕┃general @lshaf: after this I got 1 more to tes
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "[support tick](@@discord.gg/ledger) viola"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385845189184323715
+[DEBUG] Updated project stats: 1080 messages, 107 users
+😊 [Ledger] #☕┃general @lshaf: [support tick](@@discord.gg/ledger) viola
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "seems working"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385845312521896038
+[DEBUG] Updated project stats: 1081 messages, 107 users
+😊 [Ledger] #☕┃general @lshaf: seems working
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "`[support_tick](discord.gg/ledger)`"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385845509129896007
+[DEBUG] Updated project stats: 1082 messages, 107 users
+😐 [Ledger] #☕┃general @lshaf: `[support_tick](discord.gg/ledger)`
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "last thing"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385845524535709759
+[DEBUG] Updated project stats: 1083 messages, 107 users
+😐 [Ledger] #☕┃general @lshaf: last thing
+[DEBUG] Message from thecoldneverbotheredmeanyway in Ledger OP3N#☕┃general: "im muted on neia ^^"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385845572262432791
+[DEBUG] Updated project stats: 1084 messages, 107 users
+😞 [Ledger] #☕┃general @thecoldneverbotheredmeanyway: im muted on neia ^^
+[DEBUG] Message from ruix34 in Ledger OP3N#☕┃general: "scam"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385845627124056217
+[DEBUG] Updated project stats: 1085 messages, 108 users
+😐 [Ledger] #☕┃general @ruix34: scam
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+[DEBUG] Message from ruix34 in Ledger OP3N#☕┃general: "is admin scamming now"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385845690592264304
+[DEBUG] Updated project stats: 1086 messages, 108 users
+😞 [Ledger] #☕┃general @ruix34: is admin scamming now
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "lol"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385845715716276274
+[DEBUG] Message from ruix34 in Ledger OP3N#☕┃general: "i'm confused"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Updated project stats: 1087 messages, 108 users
+😐 [Ledger] #☕┃general @lshaf: lol
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385845720380080169
+[DEBUG] Updated project stats: 1088 messages, 108 users
+😞 [Ledger] #☕┃general @ruix34: i'm confused
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "try read the context"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385845793595854849
+[DEBUG] Updated project stats: 1089 messages, 108 users
+😞 [Ledger] #☕┃general @lshaf: try read the context
+[DEBUG] Message from yaboitrix.eth in Ledger OP3N#☕┃general: "<a:PartyBlob0:905994273802031124>"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385845800973635595
+[DEBUG] Updated project stats: 1090 messages, 109 users
+😊 [Ledger] #☕┃general @yaboitrix.eth: <a:PartyBlob0:905994273802031124>
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "we were just testing some stuff, none of the links..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "you just scream scam to any link here without know..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385845853134127104
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385845852194472066
+[DEBUG] Updated project stats: 1092 messages, 109 users
+😊 [Ledger] #☕┃general @badforbusiness: we were just testing some stuff, none of the links...
+[DEBUG] Updated project stats: 1092 messages, 109 users
+😞 [Ledger] #☕┃general @lshaf: you just scream scam to any link here without know...
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "still curious how scammer bypass the link"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385846002971447317
+[DEBUG] Updated project stats: 1093 messages, 109 users
+😞 [Ledger] #☕┃general @lshaf: still curious how scammer bypass the link
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "<:lul:712621130283745372>"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385846009564893184
+[DEBUG] Updated project stats: 1094 messages, 109 users
+😐 [Ledger] #☕┃general @lshaf: <:lul:712621130283745372>
+[DEBUG] Message from enteng_kabishawty in Ledger OP3N#☕┃general: "all good no need to be alerted 🙂"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385846021678174300
+[DEBUG] Updated project stats: 1095 messages, 109 users
+😊 [Ledger] #☕┃general @enteng_kabishawty: all good no need to be alerted 🙂
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "they use multilines"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385846059707797564
+[DEBUG] Updated project stats: 1096 messages, 109 users
+😞 [Ledger] #☕┃general @badforbusiness: they use multilines
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "nope"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385846084047339620
+[DEBUG] Updated project stats: 1097 messages, 109 users
+😐 [Ledger] #☕┃general @lshaf: nope
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "last `[# |SUPPORT—TICKET](discord:/#@@discord.gg/l..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385846494346875082
+[DEBUG] Updated project stats: 1098 messages, 109 users
+😐 [Ledger] #☕┃general @lshaf: last `[# |SUPPORT—TICKET](discord:/#@@discord.gg/l...
+[DEBUG] Message from thecoldneverbotheredmeanyway in Ledger OP3N#☕┃general: "can you unmute again, trying to bypass <:smilecatt..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385846710680420473
+[DEBUG] Updated project stats: 1099 messages, 109 users
+😐 [Ledger] #☕┃general @thecoldneverbotheredmeanyway: can you unmute again, trying to bypass <:smilecatt...
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "try my txext"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385846718406594570
+[DEBUG] Updated project stats: 1100 messages, 109 users
+😐 [Ledger] #☕┃general @lshaf: try my txext
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "oh dang, it's working"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385846854960418847
+[DEBUG] Updated project stats: 1101 messages, 109 users
+😊 [Ledger] #☕┃general @lshaf: oh dang, it's working
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "<:lul:712621130283745372>"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385846864607318050
+[DEBUG] Updated project stats: 1102 messages, 109 users
+😐 [Ledger] #☕┃general @lshaf: <:lul:712621130283745372>
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+[DEBUG] Message from thecoldneverbotheredmeanyway in Ledger OP3N#☕┃general: "unmute again <:smilecatto:1120781443732357150>"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385847389822386207
+[DEBUG] Updated project stats: 1103 messages, 109 users
+😊 [Ledger] #☕┃general @thecoldneverbotheredmeanyway: unmute again <:smilecatto:1120781443732357150>
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "stop testing xD"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385847450698387457
+[DEBUG] Updated project stats: 1104 messages, 109 users
+😞 [Ledger] #☕┃general @lshaf: stop testing xD
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "other than I prompted are proofed"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385847550908563516
+[DEBUG] Updated project stats: 1105 messages, 109 users
+😞 [Ledger] #☕┃general @lshaf: other than I prompted are proofed
+[DEBUG] Message from thecoldneverbotheredmeanyway in Ledger OP3N#☕┃general: "н⁠т⁠т⁠р⁠ѕ⁠:⁠/⁠/⁠d⁠і⁠ѕ⁠с⁠о⁠r⁠d⁠.⁠g⁠g⁠/⁠l⁠е⁠d⁠g⁠е⁠r⁠..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385847612317634612
+[DEBUG] Updated project stats: 1106 messages, 109 users
+😐 [Ledger] #☕┃general @thecoldneverbotheredmeanyway: н⁠т⁠т⁠р⁠ѕ⁠:⁠/⁠/⁠d⁠і⁠ѕ⁠с⁠о⁠r⁠d⁠.⁠g⁠g⁠/⁠l⁠е⁠d⁠g⁠е⁠r⁠...
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "right this one"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385847679770296463
+[DEBUG] Updated project stats: 1107 messages, 109 users
+😐 [Ledger] #☕┃general @lshaf: right this one
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "how come"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385847698032427048
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "lul"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385847702239318107
+[DEBUG] Updated project stats: 1109 messages, 109 users
+😐 [Ledger] #☕┃general @lshaf: how come
+[DEBUG] Updated project stats: 1109 messages, 109 users
+😐 [Ledger] #☕┃general @lshaf: lul
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "special characters, you can automod them too"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385847759726313473
+[DEBUG] Updated project stats: 1110 messages, 109 users
+😐 [Ledger] #☕┃general @badforbusiness: special characters, you can automod them too
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "sec"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385847791871332502
+[DEBUG] Updated project stats: 1111 messages, 109 users
+😐 [Ledger] #☕┃general @badforbusiness: sec
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "lol"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385847842848903189
+[DEBUG] Updated project stats: 1112 messages, 109 users
+😐 [Ledger] #☕┃general @lshaf: lol
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "everything is unicode"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385847872427266148
+[DEBUG] Updated project stats: 1113 messages, 109 users
+😊 [Ledger] #☕┃general @lshaf: everything is unicode
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "`[\U0001D400-\U0001D7FF]+`"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385847942094786590
+[DEBUG] Updated project stats: 1114 messages, 109 users
+😐 [Ledger] #☕┃general @badforbusiness: `[\U0001D400-\U0001D7FF]+`
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "add this as an automod rule, it's untested so idk ..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385847995081162902
+[DEBUG] Updated project stats: 1115 messages, 109 users
+😐 [Ledger] #☕┃general @badforbusiness: add this as an automod rule, it's untested so idk ...
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "swhould technically ban special characters to bypa..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385848088777855098
+[DEBUG] Updated project stats: 1116 messages, 109 users
+😞 [Ledger] #☕┃general @badforbusiness: swhould technically ban special characters to bypa...
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "ahh regex"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385848105005482156
+[DEBUG] Updated project stats: 1117 messages, 109 users
+😞 [Ledger] #☕┃general @lshaf: ahh regex
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "yes i taslked about this to <@822618685297393714> ..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385848172177260596
+[DEBUG] Updated project stats: 1118 messages, 109 users
+😊 [Ledger] #☕┃general @badforbusiness: yes i taslked about this to <@822618685297393714> ...
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "let see what I can do"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385848309213565031
+[DEBUG] Updated project stats: 1119 messages, 109 users
+😐 [Ledger] #☕┃general @lshaf: let see what I can do
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "can you make this clickable?"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385848377563943014
+[DEBUG] Updated project stats: 1120 messages, 109 users
+😐 [Ledger] #☕┃general @lshaf: can you make this clickable?
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "like real url"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385848421281300510
+[DEBUG] Updated project stats: 1121 messages, 109 users
+😐 [Ledger] #☕┃general @lshaf: like real url
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "no not without taking you to the correct url, as t..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385848524784275468
+[DEBUG] Updated project stats: 1122 messages, 109 users
+😞 [Ledger] #☕┃general @badforbusiness: no not without taking you to the correct url, as t...
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "I know that one able to scam, they tought is real ..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385848680082313226
+[DEBUG] Updated project stats: 1123 messages, 109 users
+😞 [Ledger] #☕┃general @lshaf: I know that one able to scam, they tought is real ...
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "let ask AI"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385848776325070912
+[DEBUG] Updated project stats: 1124 messages, 109 users
+😐 [Ledger] #☕┃general @lshaf: let ask AI
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "hahaha"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385848784239726666
+[DEBUG] Updated project stats: 1125 messages, 109 users
+😊 [Ledger] #☕┃general @lshaf: hahaha
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "encoding?"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385848932583866389
+[DEBUG] Updated project stats: 1126 messages, 109 users
+😐 [Ledger] #☕┃general @badforbusiness: encoding?
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "my own servers have so many regexes we literally n..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385849073830989874
+[DEBUG] Updated project stats: 1127 messages, 109 users
+😞 [Ledger] #☕┃general @badforbusiness: my own servers have so many regexes we literally n...
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "i love taking on fights with these scammers and ma..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385849120820039782
+[DEBUG] Updated project stats: 1128 messages, 109 users
+😞 [Ledger] #☕┃general @badforbusiness: i love taking on fights with these scammers and ma...
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "yah, i tried but it's not supported"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385849228110204958
+[DEBUG] Updated project stats: 1129 messages, 109 users
+😞 [Ledger] #☕┃general @lshaf: yah, i tried but it's not supported
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "do you just literally put the letter and add that ..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385849270892236851
+[DEBUG] Updated project stats: 1130 messages, 109 users
+😐 [Ledger] #☕┃general @lshaf: do you just literally put the letter and add that ...
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "what do you mean"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385849383085670490
+[DEBUG] Updated project stats: 1131 messages, 109 users
+😞 [Ledger] #☕┃general @badforbusiness: what do you mean
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "just try adding `[\U0001D400-\U0001D7FF]+` to auto..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385849568205213716
+[DEBUG] Updated project stats: 1132 messages, 109 users
+😊 [Ledger] #☕┃general @badforbusiness: just try adding `[\U0001D400-\U0001D7FF]+` to auto...
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "regardless of how they are used"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385849621858877500
+[DEBUG] Updated project stats: 1133 messages, 109 users
+😐 [Ledger] #☕┃general @badforbusiness: regardless of how they are used
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "let me try"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"500"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"59s"}]
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385849714695733299
+[DEBUG] Updated project stats: 1134 messages, 109 users
+😐 [Ledger] #☕┃general @lshaf: let me try
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "it will match U+1D400 to U+1D7FF"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"500"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"40s"}]
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385849798334222387
+[DEBUG] Updated project stats: 1135 messages, 109 users
+😐 [Ledger] #☕┃general @badforbusiness: it will match U+1D400 to U+1D7FF
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "yah any unicode text will be get caught"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"500"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"7s"}]
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385849933495668787
+[DEBUG] Updated project stats: 1136 messages, 109 users
+😐 [Ledger] #☕┃general @lshaf: yah any unicode text will be get caught
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "<:lul:712621130283745372>"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"500"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"6s"}]
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385849940047302656
+[DEBUG] Updated project stats: 1137 messages, 109 users
+😐 [Ledger] #☕┃general @lshaf: <:lul:712621130283745372>
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "i got muted 😄"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"500"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"53s"}]
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385849992073187431
+[DEBUG] Updated project stats: 1138 messages, 109 users
+😐 [Ledger] #☕┃general @badforbusiness: i got muted 😄
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "yah, been added"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-1.5-flash","location":"global"},"quotaValue":"500"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"44s"}]
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385850032615329813
+[DEBUG] Updated project stats: 1139 messages, 109 users
+😐 [Ledger] #☕┃general @lshaf: yah, been added
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "so it works, great"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385850061224804413
+[DEBUG] Updated project stats: 1140 messages, 109 users
+😊 [Ledger] #☕┃general @badforbusiness: so it works, great
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "that should catch a lot of scammers trying to circ..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385850093906956409
+[DEBUG] Updated project stats: 1141 messages, 109 users
+😞 [Ledger] #☕┃general @badforbusiness: that should catch a lot of scammers trying to circ...
+[DEBUG] Message from badforbusiness in Ledger OP3N#☕┃general: "if they still manage, try to copy/paste their text..."
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"500"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"22s"}]
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385850375516717097
+[DEBUG] Updated project stats: 1142 messages, 109 users
+😐 [Ledger] #☕┃general @badforbusiness: if they still manage, try to copy/paste their text...
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+[DEBUG] Message from lshaf in Ledger OP3N#☕┃general: "nice, I've seen a lot 😄"
+[DEBUG] Checking channel 907584119310008331 against 2 projects
+[DEBUG] Checking project Ledger: channels=1087303184076251157,907584119310008331,945560645254922240,1381024310503936210,1379435307791024229,1303710040863019008,1085614643835326594,1381023675758678096,990951425674727485
+[DEBUG] MATCH! Channel is tracked by project Ledger
+[DEBUG] Processing message for project: Ledger
+[DEBUG] Saving message for project Ledger
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-1.5-flash","location":"global"},"quotaValue":"500"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"4s"}]
+[DEBUG] Message saved with ID: message:discord:project:discord:OVPuPOX3_zHBnLUscRbdM:1385852462774358126
+[DEBUG] Updated project stats: 1143 messages, 109 users
+😐 [Ledger] #☕┃general @lshaf: nice, I've seen a lot 😄
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]
+📊 Loading tracked channels...
+[DEBUG] Found 2 project keys
+[DEBUG] Project project:discord:OVPuPOX3_zHBnLUscRbdM: active=true, channels=9
+📌 Tracking 9 channels for project: Ledger
+[DEBUG] Channel IDs: [
+  '1087303184076251157',
+  '907584119310008331',
+  '945560645254922240',
+  '1381024310503936210',
+  '1379435307791024229',
+  '1303710040863019008',
+  '1085614643835326594',
+  '1381023675758678096',
+  '990951425674727485'
+]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+[DEBUG] Project project:discord:pype0pAxNMSU9k0LDSkF4: active=true, channels=4
+📌 Tracking 4 channels for project: NABULINES
+[DEBUG] Channel IDs: [
+  '980162754365235300',
+  '984154482168434728',
+  '1382942333741568190',
+  '1382583759907459123'
+]
+✅ Loaded 2 active projects
+[DEBUG] Project cache: [
+  {
+    id: 'project:discord:OVPuPOX3_zHBnLUscRbdM',
+    name: 'Ledger',
+    channels: [
+      '1087303184076251157',
+      '907584119310008331',
+      '945560645254922240',
+      '1381024310503936210',
+      '1379435307791024229',
+      '1303710040863019008',
+      '1085614643835326594',
+      '1381023675758678096',
+      '990951425674727485'
+    ]
+  },
+  {
+    id: 'project:discord:pype0pAxNMSU9k0LDSkF4',
+    name: 'NABULINES',
+    channels: [
+      '980162754365235300',
+      '984154482168434728',
+      '1382942333741568190',
+      '1382583759907459123'
+    ]
+  }
+]

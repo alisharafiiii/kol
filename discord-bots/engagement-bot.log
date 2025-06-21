@@ -1,15 +1,101 @@
 🔍 Loading environment from: /Users/nabu/kol/.env.local
 ✅ AI model initialized for sentiment analysis
+[DEBUG] Provided token: MTM4NTcyNjAzNjkwOTc1MjM0MA.GmINTo.**************************************
+[DEBUG] Preparing to connect to the gateway...
+[DEBUG] [WS => Manager] Fetched Gateway Information
+	URL: wss://gateway.discord.gg
+	Recommended Shards: 1
+[DEBUG] [WS => Manager] Session Limit Information
+	Total: 1000
+	Remaining: 934
+[DEBUG] [WS => Shard 0] Connecting to wss://gateway.discord.gg?v=10&encoding=json
+[DEBUG] [WS => Shard 0] Waiting for event hello for 60000ms
+[DEBUG] [WS => Shard 0] Waiting for identify throttle
+[DEBUG] [WS => Shard 0] Identifying
+	shard id: 0
+	shard count: 1
+	intents: 34307
+	compression: none
+[DEBUG] [WS => Shard 0] Waiting for event ready for 15000ms
 🚀 Engagement bot starting...
-✅ Engagement bot logged in as nabulines_bot#8452
+[DEBUG] [WS => Shard 0] Shard received all its guilds. Marking as fully ready.
+✅ Engagement bot logged in as nabulines_engagement#3015
+📍 Bot ID: 1385726036909752340
+🏠 Guilds: NABU LINES (980159046176870450)
+✅ Registered commands to guild: NABU LINES
 ✅ Slash commands registered
-Error parsing channel info request from discord:channel-info-request:1382942333741568190: SyntaxError: "[object Object]" is not valid JSON
-    at JSON.parse (<anonymous>)
-    at Timeout._onTimeout (/Users/nabu/kol/discord-bots/engagement-bot.js:263:31)
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
-Raw request data: {
-  channelId: '1382942333741568190',
-  serverId: '1382942333741568000',
-  projectId: 'project:discord:pype0pAxNMSU9k0LDSkF4',
-  timestamp: '2025-06-18T00:26:25.455Z'
-}
+📥 Received interaction: 2 - connect from alinabu
+🔧 Processing command: connect
+📱 /connect command triggered
+🔗 Generated OAuth URL: https://www.nabulines.com/auth/discord-link?session=verify-918575895374082078-1750464034925
+📨 Message received: "<@461460143343927306> dada" from alinabu in #🧲〉share-your-stuff
+📨 Message received: "hasti?" from alinabu in #🧲〉share-your-stuff
+📥 Received interaction: 2 - connect from mahsamn944
+🔧 Processing command: connect
+📱 /connect command triggered
+🔗 Generated OAuth URL: https://www.nabulines.com/auth/discord-link?session=verify-1385779426817478736-1750466461164
+[DEBUG] [WS => Shard 0] The gateway closed with an unexpected code 1006, attempting to resume.
+[DEBUG] [WS => Shard 0] Destroying shard
+	Reason: none
+	Code: 1006
+	Recover: Resume
+[DEBUG] [WS => Shard 0] Connection status during destroy
+	Needs closing: false
+	Ready state: 3
+[DEBUG] [WS => Shard 0] Connecting to wss://gateway-us-east1-c.discord.gg?v=10&encoding=json
+[DEBUG] [WS => Shard 0] Waiting for event hello for 60000ms
+[DEBUG] [WS => Shard 0] Resuming session
+	resume url: wss://gateway-us-east1-c.discord.gg
+	sequence: 10
+	shard id: 0
+[DEBUG] [WS => Shard 0] Resumed and replayed 1 events
+📥 Received interaction: 2 - connect from alinabu
+🔧 Processing command: connect
+📱 /connect command triggered
+🔗 Generated OAuth URL: https://www.nabulines.com/auth/discord-link?session=verify-918575895374082078-1750467993316
+📥 Received interaction: 2 - connect from alinabu
+🔧 Processing command: connect
+📱 /connect command triggered
+🔗 Generated OAuth URL: https://www.nabulines.com/auth/discord-link?session=verify-918575895374082078-1750469291355
+[DEBUG] [WS => Shard 0] Destroying shard
+	Reason: Told to reconnect by Discord
+	Code: 4200
+	Recover: Resume
+[DEBUG] [WS => Shard 0] Connection status during destroy
+	Needs closing: true
+	Ready state: 1
+[DEBUG] [WS => Shard 0] Connecting to wss://gateway-us-east1-c.discord.gg?v=10&encoding=json
+[DEBUG] [WS => Shard 0] Waiting for event hello for 60000ms
+[DEBUG] [WS => Shard 0] Resuming session
+	resume url: wss://gateway-us-east1-c.discord.gg
+	sequence: 13
+	shard id: 0
+[DEBUG] [WS => Shard 0] Resumed and replayed 1 events
+[DEBUG] [WS => Shard 0] Destroying shard
+	Reason: Told to reconnect by Discord
+	Code: 4200
+	Recover: Resume
+[DEBUG] [WS => Shard 0] Connection status during destroy
+	Needs closing: true
+	Ready state: 1
+[DEBUG] [WS => Shard 0] Connecting to wss://gateway-us-east1-c.discord.gg?v=10&encoding=json
+[DEBUG] [WS => Shard 0] Waiting for event hello for 60000ms
+[DEBUG] [WS => Shard 0] Resuming session
+	resume url: wss://gateway-us-east1-c.discord.gg
+	sequence: 14
+	shard id: 0
+[DEBUG] [WS => Shard 0] Resumed and replayed 1 events
+[DEBUG] [WS => Shard 0] Destroying shard
+	Reason: Told to reconnect by Discord
+	Code: 4200
+	Recover: Resume
+[DEBUG] [WS => Shard 0] Connection status during destroy
+	Needs closing: true
+	Ready state: 1
+[DEBUG] [WS => Shard 0] Connecting to wss://gateway-us-east1-c.discord.gg?v=10&encoding=json
+[DEBUG] [WS => Shard 0] Waiting for event hello for 60000ms
+[DEBUG] [WS => Shard 0] Resuming session
+	resume url: wss://gateway-us-east1-c.discord.gg
+	sequence: 15
+	shard id: 0
+[DEBUG] [WS => Shard 0] Resumed and replayed 1 events

@@ -2,7 +2,7 @@ node:internal/modules/cjs/loader:1404
   throw err;
   ^
 
-Error: Cannot find module '/Users/nabu/kol/engagement-bot.js'
+Error: Cannot find module '/Users/nabu/kol/engagement-bot-working.js'
     at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
     at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)

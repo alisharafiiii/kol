@@ -1,0 +1,44 @@
+{
+  "pricePerPost": 5000,
+  "socialLinks": {
+    "twitter": "https://twitter.com/sharafi_eth"
+  },
+  "updatedAt": "2025-06-21T03:27:06.520Z",
+  "name": "nabu.base.eth",
+  "points": 100,
+  "lastLoginAt": "2025-06-21T03:27:06.520Z",
+  "twitterHandle": "sharafi_eth",
+  "id": "user_sharafi_eth",
+  "role": "admin",
+  "tier": "micro",
+  "priceMonthly": 15000,
+  "approvalStatus": "approved",
+  "createdAt": "2025-06-20T19:31:57.949Z",
+  "activeChains": [],
+  "profileImageUrl": "https://pbs.twimg.com/profile_images/1911790623893422080/vxsHVWbL_400x400.jpg",
+  "pointsHistory": [],
+  "discordUsername": "alinabu",
+  "socialAccounts": {
+    "discord": {
+      "tag": "alinabu",
+      "username": "alinabu",
+      "connected": true,
+      "id": "918575895374082078"
+    },
+    "twitter": {
+      "handle": "sharafi_eth",
+      "connected": true
+    }
+  },
+  "isKOL": false,
+  "approvedAt": "2025-06-21T00:19:08.918Z",
+  "pointsBreakdown": {
+    "contests": 0,
+    "scouts": 0,
+    "campaigns": 0,
+    "other": 0,
+    "discord": 0
+  },
+  "discordId": "918575895374082078",
+  "approvedBy": "system"
+}

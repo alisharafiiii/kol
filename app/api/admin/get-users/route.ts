@@ -72,8 +72,12 @@ export async function GET(req: NextRequest) {
           socialAccounts: (profile as any).socialAccounts || { twitter: { handle: profile.twitterHandle, followers: (profile as any).followerCount || 0 } },
           audienceTypes: (profile as any).audienceTypes,
           chains: (profile as any).chains,
+          activeChains: profile.activeChains || (profile as any).chains || [],
           postPricePerPost: (profile as any).postPricePerPost,
-          monthlySupportBudget: (profile as any).monthlySupportBudget
+          monthlySupportBudget: (profile as any).monthlySupportBudget,
+          // Add points data
+          points: profile.points || 0,
+          pointsBreakdown: profile.pointsBreakdown
         })
       })
       
