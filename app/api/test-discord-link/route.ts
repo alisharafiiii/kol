@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     
     if (!userIds || userIds.length === 0) {
       // Create new profile
-      userId = `user:${nanoid()}`
+      userId = `user_${normalizedHandle}`
       isNewUser = true
       
       const newProfile = {
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
         await redis.srem(`idx:username:${normalizedHandle}`, userId)
         
         // Create new profile
-        userId = `user:${nanoid()}`
+        userId = `user_${normalizedHandle}`
         isNewUser = true
         
         const newProfile = {

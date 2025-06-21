@@ -7,8 +7,8 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Check auth - only admin and core can sync tweets
-    const auth = await checkAuth(request, ['admin', 'core'])
+    // Check auth - allow admin, core, and team to sync tweets
+    const auth = await checkAuth(request, ['admin', 'core', 'team'])
     if (!auth.authenticated) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -18,7 +18,7 @@ export async function POST(
     
     if (!auth.hasAccess) {
       return NextResponse.json(
-        { error: 'Forbidden' },
+        { error: 'Forbidden - You need admin, core, or team role to sync tweets' },
         { status: 403 }
       )
     }

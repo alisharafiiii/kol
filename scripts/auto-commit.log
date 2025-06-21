@@ -448,3 +448,98 @@ After doing this, you may fix the identity used for this commit with:
 fatal: could not read Username for 'https://github.com': Device not configured
 Fri Jun 20 02:00:01 EDT 2025: Backup completed successfully
 Sat Jun 21 02:00:01 EDT 2025: Changes detected, creating backup commit...
+[main f49bde7] Auto-backup: 2025-06-21 02:00:01
+ Committer: nabu <nabu@nabus-MacBook-Pro.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 100 files changed, 15647 insertions(+), 3497 deletions(-)
+ create mode 100644 ADMIN_STATUS_UPDATE_FIX.md
+ create mode 100644 DISCORD_OAUTH_IMPLEMENTATION.md
+ create mode 100644 ENGAGEMENT_BOT_FIX.md
+ create mode 100644 PROFILE_MIGRATION_AND_CHAINS_FIX.md
+ create mode 100644 PROFILE_PRESERVATION_FIX.md
+ create mode 100644 SECURE_ENGAGEMENT_BOT.md
+ create mode 100644 app/api/admin/check-sharafi-profile/route.ts
+ create mode 100644 app/api/admin/fix-sharafi-index/route.ts
+ create mode 100644 app/api/auth/discord-link/route.ts
+ create mode 100644 app/api/debug/check-hunter-data/route.ts
+ create mode 100644 app/api/debug/fix-hunter-campaigns/route.ts
+ create mode 100644 app/api/test-discord-link/route.ts
+ create mode 100644 app/api/user/points/leaderboard/route.ts
+ create mode 100644 app/api/user/points/route.ts
+ create mode 100644 app/auth/discord-link/layout.tsx
+ create mode 100644 app/auth/discord-link/loading.tsx
+ create mode 100644 app/auth/discord-link/page.tsx
+ create mode 100644 app/auth/discord-link/test-page.tsx
+ create mode 100644 check-hunter-profile.js
+ create mode 100644 discord-bots/analytics-bot-debug.js
+ create mode 100644 discord-bots/analytics-bot-debug.log
+ create mode 100644 discord-bots/analytics-bot.log
+ create mode 100644 discord-bots/clear-commands.js
+ create mode 100644 discord-bots/debug-engagement.js
+ create mode 100644 discord-bots/engagement-bot-broken.js
+ create mode 100644 discord-bots/engagement-bot-conservative.js
+ create mode 100644 discord-bots/engagement-bot-original.js
+ create mode 100644 discord-bots/engagement-bot-presecure.js
+ create mode 100644 discord-bots/engagement-bot-secure.js
+ create mode 100644 discord-bots/engagement-bot-simple.js
+ create mode 100644 discord-bots/engagement-bot-working.js
+ create mode 100644 discord-bots/test-bot-connection.js
+ create mode 100644 discord-bots/test-engagement.js
+ create mode 100644 lib/services/points-service.ts
+ create mode 100644 profile-debug.json
+ create mode 100644 public/test-discord-link-simple.html
+ create mode 100644 public/test-discord-link.html
+ create mode 100644 scripts/approve-twitter-user.js
+ create mode 100644 scripts/check-discord-channels.js
+ create mode 100644 scripts/check-discord-redis.js
+ create mode 100644 scripts/check-discord-session.js
+ create mode 100644 scripts/check-sharafi-role.js
+ create mode 100644 scripts/clean-all-duplicates.js
+ create mode 100644 scripts/create-test-session.js
+ create mode 100644 scripts/debug-campaign-tweets.js
+ create mode 100644 scripts/debug-sharafi-profile.js
+ create mode 100644 scripts/debug-user-profile.js
+ create mode 100644 scripts/fix-all-discord-profiles.js
+ create mode 100644 scripts/fix-engagement-bot-redis.js
+ create mode 100644 scripts/fix-sharafi-admin-access.js
+ create mode 100644 scripts/fix-sharafi-complete.js
+ create mode 100644 scripts/fix-sharafi-profile-complete.js
+ create mode 100644 scripts/fix-sharafi-profile-handle.ts
+ create mode 100644 scripts/fix-sharafi-profile.js
+ create mode 100644 scripts/fix-sharafi-simple.js
+ create mode 100644 scripts/fix-sharafi-username-index.ts
+ create mode 100644 scripts/fix-undefined-approval-status.js
+ create mode 100644 scripts/force-profile-refresh.js
+ create mode 100644 scripts/migrate-chains-to-profiles.js
+ create mode 100644 scripts/patch-engagement-bot.js
+ create mode 100644 scripts/process-discord-points.js
+ create mode 100644 scripts/quick-analytics-check.js
+ create mode 100644 scripts/recreate-sharafi-profile.js
+ create mode 100644 scripts/restore-sharafi-admin.js
+ create mode 100644 scripts/secure-engagement-bot-patch.js
+ create mode 100644 scripts/test-analytics-api-logic.js
+ create mode 100644 scripts/test-analytics-calculation.js
+ create mode 100644 scripts/test-current-session.js
+ create mode 100644 scripts/test-discord-link-api.js
+ create mode 100644 scripts/test-discord-link-flow.js
+ create mode 100644 scripts/test-discord-link-simple.js
+ create mode 100644 scripts/test-discord-link-status.js
+ create mode 100644 scripts/test-discord-link.js
+ create mode 100644 scripts/test-discord-oauth-flow.js
+ create mode 100644 scripts/test-engagement-connection.js
+ create mode 100644 scripts/test-engagement-fix.js
+ create mode 100644 scripts/test-specific-session.js
+ create mode 100644 scripts/test-upstash-redis.js
+fatal: could not read Username for 'https://github.com': Device not configured
+Sat Jun 21 02:00:02 EDT 2025: Backup completed successfully

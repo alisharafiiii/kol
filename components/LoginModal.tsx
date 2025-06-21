@@ -127,7 +127,7 @@ export default function LoginModal() {
       if (!session) return;
       
       // Use the Twitter handle from session, not the display name
-      const twitterHandle = (session as any)?.twitterHandle || session?.user?.twitterHandle;
+      const twitterHandle = (session as any)?.twitterHandle || (session?.user as any)?.twitterHandle;
       
       if (!twitterHandle) {
         console.log('[LoginModal] No Twitter handle found in session');
@@ -1249,7 +1249,7 @@ export default function LoginModal() {
                         {/* Name/Handle */}
                         <div className="border-b border-green-400/30 pb-1">
                           <div className="text-[12px] sm:text-[14px] font-bold text-green-300 leading-tight">
-                            @{userProfile?.twitterHandle?.replace('@', '') || (session as any)?.twitterHandle || session?.user?.name || 'unknown'}
+                            @{userProfile?.twitterHandle?.replace('@', '') || (session as any)?.twitterHandle || (session?.user as any)?.twitterHandle || 'unknown'}
                           </div>
                           <div className="text-[8px] sm:text-[9px] text-green-500 flex items-center gap-2">
                             <span>{userProfile?.role?.toUpperCase() || 'USER'}</span>
@@ -1410,7 +1410,7 @@ export default function LoginModal() {
                     className="w-8 h-8 rounded-full"
                     style={{ imageRendering: 'pixelated' }}
                   />
-                  <span className="text-xs ml-2">{session.user.name}</span>
+                  <span className="text-xs ml-2">@{(session as any)?.twitterHandle || userProfile?.twitterHandle || 'unknown'}</span>
                   <button 
                     className="text-red-500 ml-auto"
                     onClick={() => {
@@ -1709,7 +1709,7 @@ export default function LoginModal() {
                     className="w-8 h-8 rounded-full"
                     style={{ imageRendering: 'pixelated' }}
                   />
-                  <span className="text-xs ml-2">{session.user.name}</span>
+                  <span className="text-xs ml-2">@{(session as any)?.twitterHandle || userProfile?.twitterHandle || 'unknown'}</span>
                   <button 
                     className="text-red-500 ml-auto"
                     onClick={() => {

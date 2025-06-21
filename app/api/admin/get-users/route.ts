@@ -74,8 +74,14 @@ export async function GET(req: NextRequest) {
           chains: (profile as any).chains,
           activeChains: profile.activeChains || (profile as any).chains || [],
           postPricePerPost: (profile as any).postPricePerPost,
+          priceMonthly: (profile as any).priceMonthly,
           monthlySupportBudget: (profile as any).monthlySupportBudget,
-          // Add points data
+          adminNotes: (profile as any).adminNotes,
+          bestCollabUrls: (profile as any).bestCollabUrls,
+          // Campaign and engagement fields
+          campaigns: profile.campaigns || [],
+          kolMetrics: profile.kolMetrics,
+          notes: profile.notes || [],
           points: profile.points || 0,
           pointsBreakdown: profile.pointsBreakdown
         })

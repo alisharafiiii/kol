@@ -99,3 +99,93 @@
 	sequence: 15
 	shard id: 0
 [DEBUG] [WS => Shard 0] Resumed and replayed 1 events
+[DEBUG] [WS => Shard 0] Destroying shard
+	Reason: Told to reconnect by Discord
+	Code: 4200
+	Recover: Resume
+[DEBUG] [WS => Shard 0] Connection status during destroy
+	Needs closing: true
+	Ready state: 1
+[DEBUG] [WS => Shard 0] Connecting to wss://gateway-us-east1-c.discord.gg?v=10&encoding=json
+[DEBUG] [WS => Shard 0] Waiting for event hello for 60000ms
+[DEBUG] [WS => Shard 0] Resuming session
+	resume url: wss://gateway-us-east1-c.discord.gg
+	sequence: 16
+	shard id: 0
+[DEBUG] [WS => Shard 0] Resumed and replayed 1 events
+[DEBUG] [WS => Shard 0] The gateway closed with an unexpected code 1006, attempting to resume.
+[DEBUG] [WS => Shard 0] Destroying shard
+	Reason: none
+	Code: 1006
+	Recover: Resume
+[DEBUG] [WS => Shard 0] Connection status during destroy
+	Needs closing: false
+	Ready state: 3
+[DEBUG] [WS => Shard 0] Connecting to wss://gateway-us-east1-c.discord.gg?v=10&encoding=json
+[DEBUG] [WS => Shard 0] Waiting for event hello for 60000ms
+[DEBUG] [WS => Shard 0] Resuming session
+	resume url: wss://gateway-us-east1-c.discord.gg
+	sequence: 17
+	shard id: 0
+[DEBUG] [WS => Shard 0] Resumed and replayed 1 events
+📨 Message received: "raftam khabidam oonmoqe" from nervyesi1 in #🧲〉share-your-stuff
+📨 Message received: "salam" from nervyesi1 in #🧲〉share-your-stuff
+[DEBUG] [WS => Shard 0] The gateway closed with an unexpected code 1001, attempting to resume.
+[DEBUG] [WS => Shard 0] Destroying shard
+	Reason: none
+	Code: 1001
+	Recover: Resume
+[DEBUG] [WS => Shard 0] Connection status during destroy
+	Needs closing: false
+	Ready state: 3
+[DEBUG] [WS => Shard 0] Connecting to wss://gateway-us-east1-c.discord.gg?v=10&encoding=json
+[DEBUG] [WS => Shard 0] Waiting for event hello for 60000ms
+[DEBUG] [WS => Shard 0] Resuming session
+	resume url: wss://gateway-us-east1-c.discord.gg
+	sequence: 22
+	shard id: 0
+[DEBUG] [WS => Shard 0] Resumed and replayed 1 events
+[DEBUG] [WS => Shard 0] The gateway closed with an unexpected code 1006, attempting to resume.
+[DEBUG] [WS => Shard 0] Destroying shard
+	Reason: none
+	Code: 1006
+	Recover: Resume
+[DEBUG] [WS => Shard 0] Connection status during destroy
+	Needs closing: false
+	Ready state: 3
+[DEBUG] [WS => Shard 0] Connecting to wss://gateway-us-east1-c.discord.gg?v=10&encoding=json
+[DEBUG] [WS => Shard 0] Waiting for event hello for 60000ms
+[DEBUG] [WS => Shard 0] Resuming session
+	resume url: wss://gateway-us-east1-c.discord.gg
+	sequence: 23
+	shard id: 0
+[DEBUG] [WS => Shard 0] Resumed and replayed 1 events
+[DEBUG] [WS => Shard 0] The gateway closed with an unexpected code 1001, attempting to resume.
+[DEBUG] [WS => Shard 0] Destroying shard
+	Reason: none
+	Code: 1001
+	Recover: Resume
+[DEBUG] [WS => Shard 0] Connection status during destroy
+	Needs closing: false
+	Ready state: 3
+[DEBUG] [WS => Shard 0] Connecting to wss://gateway-us-east1-c.discord.gg?v=10&encoding=json
+[DEBUG] [WS => Shard 0] Waiting for event hello for 60000ms
+[DEBUG] [WS => Shard 0] Resuming session
+	resume url: wss://gateway-us-east1-c.discord.gg
+	sequence: 24
+	shard id: 0
+[DEBUG] [WS => Shard 0] Resumed and replayed 1 events
+[DEBUG] [WS => Shard 0] Destroying shard
+	Reason: Told to reconnect by Discord
+	Code: 4200
+	Recover: Resume
+[DEBUG] [WS => Shard 0] Connection status during destroy
+	Needs closing: true
+	Ready state: 1
+[DEBUG] [WS => Shard 0] Connecting to wss://gateway-us-east1-c.discord.gg?v=10&encoding=json
+[DEBUG] [WS => Shard 0] Waiting for event hello for 60000ms
+[DEBUG] [WS => Shard 0] Resuming session
+	resume url: wss://gateway-us-east1-c.discord.gg
+	sequence: 25
+	shard id: 0
+[DEBUG] [WS => Shard 0] Resumed and replayed 1 events

@@ -963,7 +963,7 @@ client.login(botToken)
 async function createUserProfile(twitterHandle, discordId) {
   try {
     const normalizedHandle = twitterHandle.toLowerCase().replace('@', '')
-    const userId = `user:${nanoid()}`
+    const userId = `user_${normalizedHandle}`
     
     const newUser = {
       id: userId,

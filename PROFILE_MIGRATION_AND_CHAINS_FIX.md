@@ -83,3 +83,60 @@ In `components/AdminPanel.tsx`, around line 2821, update:
 2. Remove dependency on old profile format
 3. Add validation to ensure all required fields are present
 4. Consider adding a profile version field for easier migrations
+
+## Campaign Participations and Engagement Metrics Fix
+
+### Issue Found
+User profiles were not showing campaign cards or engagement metrics even though KOLs were participating in campaigns. The root cause:
+- Campaign participations were stored separately in `CampaignKOLService`
+- Profile migration was setting campaigns array to empty
+- KOL metrics were not being calculated
+
+### Solution
+Created `scripts/rebuild-profile-campaigns.mjs` that:
+1. Scans all campaigns with KOLs
+2. Rebuilds campaign participations in profiles
+3. Calculates KOL metrics (views, engagement, earnings)
+
+### How to Fix
+```bash
+# Run the rebuild script
+node scripts/rebuild-profile-campaigns.mjs
+```
+
+### What Gets Fixed
+- Campaign cards now appear in user profiles
+- KOL Statistics section shows:
+  - Total campaigns
+  - Total earnings  
+  - Total views
+  - Average engagement rate
+- Campaigns tab displays all participations with metrics
+
+See `REBUILD_PROFILE_CAMPAIGNS.md` for detailed documentation.
+
+## Duplicate Profiles Issue and Resolution
+
+### Issue (2025-06-21)
+The `rebuild-profile-campaigns-upstash.mjs` script had a bug that created profiles with timestamp-based IDs (`handle_timestamp`) instead of using the standard format (`user_handle`). This created duplicate profile IDs in the indexes.
+
+### Resolution
+1. Created emergency fix scripts to:
+   - Identify profiles with timestamp IDs
+   - Fix profile IDs back to `user_handle` format
+   - Update all Redis indexes
+   - Preserve all profile data including images
+
+2. Profile Image Status:
+   - 15 profiles have images (10 base64, 5 URL)
+   - 17 profiles don't have images (these KOLs were added without uploading profile pictures)
+   - No images were lost - the "missing" images never existed
+
+### Current State
+- All 29 KOL profiles have correct IDs
+- No duplicates in the system
+- Campaign participations and metrics are properly linked
+- Images that existed are preserved
+
+### Lesson Learned
+Always use consistent ID generation: `user_${handle}` for profiles

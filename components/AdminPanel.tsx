@@ -72,6 +72,55 @@ interface KOLProfile {
   socialAccounts?: Record<string, { handle?: string; followers?: number; subscribers?: number; } | unknown>;
   profileImageUrl?: string;
   bestCollabUrls?: string[]; // Add best collaboration URLs
+  // Add campaign and engagement fields
+  isKOL?: boolean;
+  campaigns?: Array<{
+    campaignId: string;
+    campaignName: string;
+    role: 'kol' | 'team_member';
+    tier?: 'hero' | 'legend' | 'star' | 'rising' | 'micro';
+    stage: string;
+    deviceStatus: string;
+    budget: number;
+    paymentStatus: string;
+    links: string[];
+    platform: string;
+    totalViews: number;
+    totalEngagement: number;
+    score?: number;
+    joinedAt: string | Date;
+    completedAt?: string | Date;
+  }>;
+  kolMetrics?: {
+    totalCampaigns: number;
+    totalEarnings: number;
+    totalViews: number;
+    totalEngagement: number;
+    averageEngagementRate: number;
+    topPlatform: string;
+    tierHistory: Array<{
+      tier: string;
+      date: string | Date;
+      campaignId: string;
+    }>;
+  };
+  notes?: Array<{
+    id: string;
+    authorId: string;
+    authorName: string;
+    authorImage?: string;
+    content: string;
+    createdAt: string | Date;
+    campaignId?: string;
+  }>;
+  points?: number;
+  pointsBreakdown?: {
+    discord: number;
+    contests: number;
+    scouts: number;
+    campaigns: number;
+    other: number;
+  };
 }
 
 // Constants for filter options
@@ -203,9 +252,11 @@ const getChainDistribution = (users: KOLProfile[]) => {
   const chainCounts: Record<string, number> = {};
   
   users.forEach(user => {
-    const chains = user.activeChains || user.chains || [];
+    const chainsData = user.activeChains || user.chains || [];
+    // Ensure chains is always an array
+    const chains = Array.isArray(chainsData) ? chainsData : [chainsData];
     if (chains && chains.length > 0) {
-      chains.forEach(chain => {
+      chains.forEach((chain: string) => {
         chainCounts[chain] = (chainCounts[chain] || 0) + 1;
       });
     }
@@ -765,8 +816,8 @@ function ProfileModal({
                           <div className="text-xs text-green-400/80 uppercase">{platform}</div>
                           <div className="text-green-200">
                             {handle || 
-                             (account && typeof account === 'object' && 'username' in account ? account.username : null) ||
-                             (account && typeof account === 'object' && 'tag' in account ? account.tag : null) ||
+                             (account && typeof account === 'object' && 'username' in account ? String(account.username) : null) ||
+                             (account && typeof account === 'object' && 'tag' in account ? String(account.tag) : null) ||
                              (account && typeof account === 'object' && 'id' in account ? `User ${account.id}` : null) ||
                              'Connected'}
                             {followers > 0 && <span className="text-xs ml-2 text-green-400/70">({followers.toLocaleString()} followers)</span>}
@@ -849,6 +900,145 @@ function ProfileModal({
             )}
           </div>
         </div>
+        
+        {/* Campaign Participations and KOL Metrics */}
+        {user.isKOL && user.campaigns && user.campaigns.length > 0 && (
+          <div className="mt-6 border-t border-green-300/30 pt-6">
+            <h3 className="text-md border-b border-green-300/50 mb-4 pb-1 uppercase">Campaign Participations & KOL Metrics</h3>
+            
+            {/* KOL Metrics Summary */}
+            {user.kolMetrics && (
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                <div className="border border-green-400/30 p-4 rounded-sm text-center">
+                  <div className="text-2xl font-bold text-green-300">{user.kolMetrics.totalCampaigns}</div>
+                  <div className="text-xs text-green-400/70">Total Campaigns</div>
+                </div>
+                <div className="border border-green-400/30 p-4 rounded-sm text-center">
+                  <div className="text-2xl font-bold text-green-300">${user.kolMetrics.totalEarnings.toLocaleString()}</div>
+                  <div className="text-xs text-green-400/70">Total Earnings</div>
+                </div>
+                <div className="border border-green-400/30 p-4 rounded-sm text-center">
+                  <div className="text-2xl font-bold text-green-300">{user.kolMetrics.totalViews.toLocaleString()}</div>
+                  <div className="text-xs text-green-400/70">Total Views</div>
+                </div>
+                <div className="border border-green-400/30 p-4 rounded-sm text-center">
+                  <div className="text-2xl font-bold text-green-300">{user.kolMetrics.totalEngagement.toLocaleString()}</div>
+                  <div className="text-xs text-green-400/70">Total Engagement</div>
+                </div>
+                <div className="border border-green-400/30 p-4 rounded-sm text-center">
+                  <div className="text-2xl font-bold text-green-300">{user.kolMetrics.averageEngagementRate.toFixed(2)}%</div>
+                  <div className="text-xs text-green-400/70">Avg Engagement Rate</div>
+                </div>
+              </div>
+            )}
+            
+            {/* Campaign List */}
+            <div className="space-y-3">
+              {user.campaigns.map((campaign, index) => (
+                <div key={campaign.campaignId || index} className="border border-green-400/30 p-4 rounded-sm">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h4 className="font-bold text-green-300">{campaign.campaignName}</h4>
+                      <div className="flex gap-4 text-xs text-green-400/70 mt-1">
+                        <span>Platform: {campaign.platform}</span>
+                        <span>Stage: {campaign.stage}</span>
+                        <span>Device: {campaign.deviceStatus}</span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-lg font-bold text-green-300">${campaign.budget.toLocaleString()}</div>
+                      <div className={`text-xs ${
+                        campaign.paymentStatus === 'paid' ? 'text-green-400' :
+                        campaign.paymentStatus === 'approved' ? 'text-blue-400' :
+                        'text-yellow-400'
+                      }`}>{campaign.paymentStatus}</div>
+                    </div>
+                  </div>
+                  
+                  {campaign.tier && (
+                    <span className={`inline-block px-2 py-0.5 rounded text-xs ${
+                      campaign.tier === 'hero' ? 'bg-amber-900 text-amber-300' : 
+                      campaign.tier === 'legend' ? 'bg-red-900 text-red-300' :
+                      campaign.tier === 'star' ? 'bg-blue-900 text-blue-300' :
+                      campaign.tier === 'rising' ? 'bg-green-900 text-green-300' :
+                      'bg-gray-900 text-gray-300'
+                    }`}>
+                      {campaign.tier}
+                    </span>
+                  )}
+                  
+                  <div className="grid grid-cols-3 gap-4 mt-3 text-xs">
+                    <div>
+                      <span className="text-green-400/70">Views:</span>
+                      <span className="ml-2 text-green-300">{campaign.totalViews.toLocaleString()}</span>
+                    </div>
+                    <div>
+                      <span className="text-green-400/70">Engagement:</span>
+                      <span className="ml-2 text-green-300">{campaign.totalEngagement.toLocaleString()}</span>
+                    </div>
+                    {campaign.score !== undefined && (
+                      <div>
+                        <span className="text-green-400/70">Score:</span>
+                        <span className="ml-2 text-green-300">{campaign.score.toFixed(0)}</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {campaign.links && campaign.links.length > 0 && (
+                    <div className="mt-3 flex gap-2">
+                      {campaign.links.map((link, i) => (
+                        <a
+                          key={i}
+                          href={link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-blue-400 hover:underline"
+                        >
+                          Link {i + 1}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {/* Notes Section */}
+        {user.notes && user.notes.length > 0 && (
+          <div className="mt-6 border-t border-green-300/30 pt-6">
+            <h3 className="text-md border-b border-green-300/50 mb-4 pb-1 uppercase">Notes from Team Members</h3>
+            <div className="space-y-3">
+              {user.notes.map((note) => (
+                <div key={note.id} className="border border-green-400/30 p-4 rounded-sm">
+                  <div className="flex items-start gap-3">
+                    {note.authorImage ? (
+                      <img
+                        src={note.authorImage}
+                        alt={note.authorName}
+                        className="w-8 h-8 rounded-full border border-green-400"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-green-900 border border-green-400 flex items-center justify-center text-xs font-bold">
+                        {note.authorName.substring(0, 2).toUpperCase()}
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start mb-1">
+                        <span className="text-sm font-bold text-green-300">{note.authorName}</span>
+                        <span className="text-xs text-green-400/70">
+                          {formatDate(typeof note.createdAt === 'string' ? note.createdAt : note.createdAt.toISOString())}
+                        </span>
+                      </div>
+                      <div className="text-sm text-green-200 whitespace-pre-wrap">{note.content}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         
         {/* Debug Button & Raw Data */}
         <details className="mt-6 border-t border-green-300/30 pt-4">
@@ -1260,7 +1450,13 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
               tier: user.tier,
               // Add activeChains and points
               activeChains: user.activeChains || user.chains || [],
-              points: user.points || 0
+              points: user.points || 0,
+              // Add campaign and engagement fields
+              isKOL: user.isKOL || false,
+              campaigns: user.campaigns || [],
+              kolMetrics: user.kolMetrics,
+              notes: user.notes || [],
+              pointsBreakdown: user.pointsBreakdown
             }))
           : generateMockUsers();
         

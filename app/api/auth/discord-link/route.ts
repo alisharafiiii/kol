@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     
     if (!userIds || userIds.length === 0) {
       // Create new profile
-      userId = `user:${nanoid()}`
+      userId = `user_${twitterHandle}`
       isNewUser = true
       
       const newProfile = {
