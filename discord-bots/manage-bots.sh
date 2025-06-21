@@ -30,7 +30,7 @@ start_analytics_bot() {
     fi
     
     echo "Starting analytics bot..."
-    nohup node discord-bots/analytics-bot.js > discord-bots/analytics-bot.log 2>&1 &
+    nohup node discord-bots/analytics-bot.mjs > discord-bots/analytics-bot.log 2>&1 &
     echo $! > "$ANALYTICS_BOT_PID_FILE"
     echo "Analytics bot started (PID: $!)"
 }

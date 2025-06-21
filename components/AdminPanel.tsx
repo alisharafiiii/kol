@@ -189,7 +189,7 @@ type BarChartOptions = ChartOptions<'bar'>;
 type PieChartOptions = ChartOptions<'pie'>;
 type DoughnutChartOptions = ChartOptions<'doughnut'>;
 
-type Tab = 'dashboard' | 'search' | 'leaderboard' | 'roles' | 'twitter-roles' | 'products' | 'discord' | 'engagement' | 'contests'
+type Tab = 'dashboard' | 'search' | 'leaderboard' | 'roles' | 'twitter-roles' | 'products' | 'discord' | 'engagement' | 'contests' | 'points'
 
 // Helper function to safely get follower count from social accounts
 const getFollowerCount = (data: unknown): number => {
@@ -2304,6 +2304,12 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
             onClick={() => setActiveTab('contests')}
           >
             Contests
+          </button>
+          <button 
+            className={`px-4 py-2 whitespace-nowrap ${activeTab === 'points' ? 'bg-green-800' : ''}`}
+            onClick={() => window.location.href = '/admin/points'}
+          >
+            Points
           </button>
           {/* Roles management tab – visible to admins only.  */}
           {/* Roles tabs removed */}

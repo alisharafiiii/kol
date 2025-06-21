@@ -13,277 +13,392 @@ export interface PointTransaction {
   metadata?: any
 }
 
+/**
+ * Points Service - Centralized service for managing points
+ * 
+ * This service handles:
+ * - Loading points configuration
+ * - Calculating points based on actions and tiers
+ * - Awarding points to users
+ * - Retrieving user points
+ */
+
+// Types
+export interface PointAction {
+  id: string
+  name: string
+  description: string
+  basePoints: number
+  category: string
+}
+
+export interface Tier {
+  id: string
+  name: string
+  minPoints: number
+  maxPoints: number
+  multiplier: number
+  color: string
+}
+
+export interface Scenario {
+  id: string
+  tier: string
+  action: string
+  points: number
+  multiplier: number
+}
+
+export interface PointsConfig {
+  actions: PointAction[]
+  tiers: Tier[]
+  scenarios: Scenario[]
+}
+
+export interface PointsBreakdown {
+  discord: number
+  contests: number
+  scouts: number
+  campaigns: number
+  other: number
+  total: number
+}
+
 export class PointsService {
-  // Point values for different activities
-  static readonly POINT_VALUES = {
-    discord: {
-      message: 1,
-      positiveMessage: 2,
-      dailyBonus: 5,
-      weeklyActive: 10
-    },
-    contest: {
-      submission: 10,
-      topTen: 50,
-      winner: 100
-    },
-    scout: {
-      submission: 5,
-      approved: 20
-    },
-    campaign: {
-      participation: 25,
-      completion: 50
+  private config: PointsConfig | null = null
+  private configKey = 'points:config'
+
+  /**
+   * Load points configuration from Redis
+   */
+  async loadConfig(): Promise<PointsConfig> {
+    if (this.config) {
+      return this.config
     }
+
+    try {
+      const config = await redis.json.get(this.configKey) as PointsConfig | null
+      
+      if (!config) {
+        // Return default config if none exists
+        this.config = this.getDefaultConfig()
+      } else {
+        this.config = config
+      }
+      
+      return this.config
+    } catch (error) {
+      console.error('Error loading points config:', error)
+      // Return default config on error
+      this.config = this.getDefaultConfig()
+      return this.config
+    }
+  }
+
+  /**
+   * Get default configuration
+   */
+  private getDefaultConfig(): PointsConfig {
+    return {
+      actions: [
+        {
+          id: 'action_tweet_post',
+          name: 'Tweet Post',
+          description: 'Points for posting campaign tweets',
+          basePoints: 100,
+          category: 'engagement'
+        },
+        {
+          id: 'action_discord_msg',
+          name: 'Discord Message',
+          description: 'Points for Discord engagement',
+          basePoints: 10,
+          category: 'social'
+        },
+        {
+          id: 'action_contest_entry',
+          name: 'Contest Entry',
+          description: 'Points for entering contests',
+          basePoints: 50,
+          category: 'engagement'
+        },
+        {
+          id: 'action_referral',
+          name: 'Referral',
+          description: 'Points for successful referrals',
+          basePoints: 200,
+          category: 'referral'
+        }
+      ],
+      tiers: [
+        {
+          id: 'tier_hero',
+          name: 'Hero',
+          minPoints: 10000,
+          maxPoints: 999999,
+          multiplier: 2.0,
+          color: '#FFB800'
+        },
+        {
+          id: 'tier_legend',
+          name: 'Legend',
+          minPoints: 5000,
+          maxPoints: 9999,
+          multiplier: 1.8,
+          color: '#FF0000'
+        },
+        {
+          id: 'tier_star',
+          name: 'Star',
+          minPoints: 2500,
+          maxPoints: 4999,
+          multiplier: 1.5,
+          color: '#0080FF'
+        },
+        {
+          id: 'tier_rising',
+          name: 'Rising',
+          minPoints: 1000,
+          maxPoints: 2499,
+          multiplier: 1.2,
+          color: '#00FF00'
+        },
+        {
+          id: 'tier_micro',
+          name: 'Micro',
+          minPoints: 0,
+          maxPoints: 999,
+          multiplier: 1.0,
+          color: '#808080'
+        }
+      ],
+      scenarios: []
+    }
+  }
+
+  /**
+   * Calculate points for an action based on user tier
+   */
+  async calculatePoints(actionId: string, userTier?: string): Promise<number> {
+    const config = await this.loadConfig()
+    
+    // Find the action
+    const action = config.actions.find(a => a.id === actionId)
+    if (!action) {
+      console.error(`Action not found: ${actionId}`)
+      return 0
+    }
+    
+    // If no tier specified, use base points
+    if (!userTier) {
+      return action.basePoints
+    }
+    
+    // Find scenario for this tier and action
+    const scenario = config.scenarios.find(
+      s => s.tier === userTier && s.action === actionId
+    )
+    
+    if (scenario) {
+      return scenario.points
+    }
+    
+    // If no specific scenario, apply tier multiplier to base points
+    const tier = config.tiers.find(t => t.id === userTier)
+    if (tier) {
+      return Math.round(action.basePoints * tier.multiplier)
+    }
+    
+    // Default to base points
+    return action.basePoints
+  }
+
+  /**
+   * Get tier based on user's total points
+   */
+  async getTierByPoints(totalPoints: number): Promise<Tier | null> {
+    const config = await this.loadConfig()
+    
+    // Sort tiers by minPoints descending to check from highest to lowest
+    const sortedTiers = [...config.tiers].sort((a, b) => b.minPoints - a.minPoints)
+    
+    for (const tier of sortedTiers) {
+      if (totalPoints >= tier.minPoints && totalPoints <= tier.maxPoints) {
+        return tier
+      }
+    }
+    
+    // Default to lowest tier
+    return config.tiers.find(t => t.id === 'tier_micro') || null
   }
 
   /**
    * Award points to a user
    */
-  static async awardPoints(
-    userIdentifier: string, // Can be handle or user ID
-    amount: number,
-    source: PointSource,
-    description: string,
-    metadata?: any
-  ): Promise<UnifiedProfile | null> {
+  async awardPoints(
+    userId: string, 
+    actionId: string, 
+    category: 'discord' | 'contests' | 'scouts' | 'campaigns' | 'other' = 'other',
+    metadata?: Record<string, any>
+  ): Promise<number> {
     try {
-      // Validate amount
-      if (amount < 0) {
-        console.error('[PointsService] Cannot award negative points')
-        return null
+      // Get user's current points
+      const userData = await redis.json.get(`user:${userId}`)
+      if (!userData) {
+        throw new Error(`User not found: ${userId}`)
       }
-
-      // Get user profile
-      const profile = await ProfileService.getProfileByHandle(userIdentifier) || 
-                     await ProfileService.getProfile(userIdentifier)
       
-      if (!profile) {
-        console.error(`[PointsService] User not found: ${userIdentifier}`)
-        return null
+      const user = userData as any
+      const currentTotal = user.points || 0
+      const currentBreakdown = user.pointsBreakdown || {
+        discord: 0,
+        contests: 0,
+        scouts: 0,
+        campaigns: 0,
+        other: 0,
+        total: 0
       }
-
-      // Initialize points if not set
-      if (typeof profile.points !== 'number') {
-        profile.points = 0
-      }
-
-      // Update total points
-      profile.points += amount
-
+      
+      // Get user's current tier based on total points
+      const tier = await this.getTierByPoints(currentTotal)
+      
+      // Calculate points for this action
+      const pointsAwarded = await this.calculatePoints(actionId, tier?.id)
+      
       // Update breakdown
-      if (!profile.pointsBreakdown) {
-        profile.pointsBreakdown = {
-          discord: 0,
-          contests: 0,
-          scouts: 0,
-          campaigns: 0,
-          other: 0
-        }
-      }
-      profile.pointsBreakdown[source === 'contest' ? 'contests' : source] += amount
-
-      // Add to history
-      if (!profile.pointsHistory) {
-        profile.pointsHistory = []
-      }
-      profile.pointsHistory.push({
-        amount,
-        source,
-        description,
-        timestamp: new Date(),
-        metadata
-      })
-
-      // Keep only last 100 history entries
-      if (profile.pointsHistory.length > 100) {
-        profile.pointsHistory = profile.pointsHistory.slice(-100)
-      }
-
-      // Save updated profile
-      await ProfileService.saveProfile(profile)
-
-      // Log transaction
-      await this.logPointTransaction({
-        userId: profile.id,
-        amount,
-        source,
-        description,
-        timestamp: new Date(),
-        metadata
-      })
-
-      // Update leaderboard
-      await this.updateLeaderboard(profile.id, profile.points)
-
-      console.log(`[PointsService] Awarded ${amount} points to ${profile.twitterHandle} (${source}: ${description})`)
+      currentBreakdown[category] += pointsAwarded
+      currentBreakdown.total += pointsAwarded
       
-      return profile
+      // Update user profile
+      await redis.json.set(`user:${userId}`, '$.points', currentTotal + pointsAwarded)
+      await redis.json.set(`user:${userId}`, '$.pointsBreakdown', currentBreakdown)
+      
+      // Log the points award
+      const logEntry = {
+        userId,
+        actionId,
+        category,
+        points: pointsAwarded,
+        tierUsed: tier?.id || 'none',
+        timestamp: new Date().toISOString(),
+        metadata
+      }
+      
+      // Store in a sorted set for history (score is timestamp)
+      await redis.zadd(`points:history:${userId}`, {
+        score: Date.now(),
+        member: JSON.stringify(logEntry)
+      })
+      
+      // Also store in daily leaderboard
+      const today = new Date().toISOString().split('T')[0]
+      await redis.zincrby(`points:leaderboard:${today}`, pointsAwarded, userId)
+      
+      // Update all-time leaderboard
+      await redis.zincrby('points:leaderboard:alltime', pointsAwarded, userId)
+      
+      console.log(`Awarded ${pointsAwarded} points to user ${userId} for action ${actionId}`)
+      
+      return pointsAwarded
     } catch (error) {
-      console.error('[PointsService] Error awarding points:', error)
+      console.error('Error awarding points:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Get user's points and breakdown
+   */
+  async getUserPoints(userId: string): Promise<PointsBreakdown | null> {
+    try {
+      const userData = await redis.json.get(`user:${userId}`)
+      if (!userData) {
+        return null
+      }
+      
+      const user = userData as any
+      const breakdown = user.pointsBreakdown || {
+        discord: 0,
+        contests: 0,
+        scouts: 0,
+        campaigns: 0,
+        other: 0,
+        total: user.points || 0
+      }
+      
+      // Ensure total matches the sum
+      breakdown.total = breakdown.discord + breakdown.contests + 
+                       breakdown.scouts + breakdown.campaigns + breakdown.other
+      
+      return breakdown
+    } catch (error) {
+      console.error('Error getting user points:', error)
       return null
     }
   }
 
   /**
-   * Get user's current points
+   * Get points history for a user
    */
-  static async getUserPoints(userIdentifier: string): Promise<number> {
+  async getUserPointsHistory(userId: string, limit = 50): Promise<any[]> {
     try {
-      const profile = await ProfileService.getProfileByHandle(userIdentifier) || 
-                     await ProfileService.getProfile(userIdentifier)
+      const history = await redis.zrange(
+        `points:history:${userId}`, 
+        -limit, 
+        -1,
+        { rev: true }
+      )
       
-      return profile?.points || 0
-    } catch (error) {
-      console.error('[PointsService] Error getting user points:', error)
-      return 0
-    }
-  }
-
-  /**
-   * Get points leaderboard
-   */
-  static async getLeaderboard(limit: number = 10): Promise<Array<{
-    userId: string
-    handle: string
-    name: string
-    points: number
-    rank: number
-  }>> {
-    try {
-      // Get top users from sorted set
-      const topUsers = await redis.zrange('idx:points:leaderboard', 0, limit - 1, {
-        rev: true,
-        withScores: true
-      })
-
-      const leaderboard = []
-      let rank = 1
-
-      for (let i = 0; i < topUsers.length; i += 2) {
-        const userId = topUsers[i] as string
-        const points = topUsers[i + 1] as number
-
-        // Get user profile
-        const profile = await ProfileService.getProfile(userId)
-        if (profile) {
-          leaderboard.push({
-            userId,
-            handle: profile.twitterHandle,
-            name: profile.name,
-            points,
-            rank: rank++
-          })
+      return history.map((entry: string) => {
+        try {
+          return JSON.parse(entry)
+        } catch {
+          return entry
         }
-      }
-
-      return leaderboard
+      })
     } catch (error) {
-      console.error('[PointsService] Error getting leaderboard:', error)
+      console.error('Error getting points history:', error)
       return []
     }
   }
 
   /**
-   * Update leaderboard sorted set
+   * Get leaderboard
    */
-  private static async updateLeaderboard(userId: string, points: number): Promise<void> {
+  async getLeaderboard(type: 'daily' | 'alltime' = 'alltime', limit = 100): Promise<Array<{userId: string, points: number}>> {
     try {
-      await redis.zadd('idx:points:leaderboard', {
-        score: points,
-        member: userId
+      const key = type === 'daily' 
+        ? `points:leaderboard:${new Date().toISOString().split('T')[0]}`
+        : 'points:leaderboard:alltime'
+      
+      const leaderboard = await redis.zrange(key, 0, limit - 1, {
+        rev: true,
+        withScores: true
       })
+      
+      // Convert to array of objects
+      const result: Array<{userId: string, points: number}> = []
+      for (let i = 0; i < leaderboard.length; i += 2) {
+        result.push({
+          userId: leaderboard[i] as string,
+          points: Number(leaderboard[i + 1])
+        })
+      }
+      
+      return result
     } catch (error) {
-      console.error('[PointsService] Error updating leaderboard:', error)
+      console.error('Error getting leaderboard:', error)
+      return []
     }
   }
 
   /**
-   * Log point transaction for audit trail
+   * Reset configuration cache (useful after updates)
    */
-  private static async logPointTransaction(transaction: PointTransaction): Promise<void> {
-    try {
-      const key = `points:transaction:${Date.now()}`
-      await redis.json.set(key, '$', transaction)
-      
-      // Add to user's transaction list
-      await redis.lpush(`points:transactions:${transaction.userId}`, key)
-      
-      // Keep only last 1000 transactions per user
-      await redis.ltrim(`points:transactions:${transaction.userId}`, 0, 999)
-    } catch (error) {
-      console.error('[PointsService] Error logging transaction:', error)
-    }
+  resetConfigCache() {
+    this.config = null
   }
+}
 
-  /**
-   * Award Discord points based on activity
-   */
-  static async awardDiscordPoints(
-    discordUserId: string,
-    discordUsername: string,
-    activity: 'message' | 'positiveMessage' | 'dailyBonus' | 'weeklyActive'
-  ): Promise<void> {
-    try {
-      // Map Discord user to platform user
-      const userKey = await redis.get(`discord:user:map:${discordUserId}`)
-      if (!userKey) {
-        console.log(`[PointsService] No platform user linked to Discord user ${discordUsername}`)
-        return
-      }
-
-      const points = this.POINT_VALUES.discord[activity]
-      const descriptions = {
-        message: 'Posted a message in Discord',
-        positiveMessage: 'Posted a positive message in Discord',
-        dailyBonus: 'Daily Discord activity bonus',
-        weeklyActive: 'Weekly Discord activity bonus'
-      }
-
-      await this.awardPoints(
-        userKey,
-        points,
-        'discord',
-        descriptions[activity],
-        { discordUserId, discordUsername }
-      )
-    } catch (error) {
-      console.error('[PointsService] Error awarding Discord points:', error)
-    }
-  }
-
-  /**
-   * Reset user points (admin only)
-   */
-  static async resetUserPoints(userId: string, adminId: string): Promise<boolean> {
-    try {
-      const profile = await ProfileService.getProfile(userId)
-      if (!profile) return false
-
-      profile.points = 0
-      profile.pointsBreakdown = {
-        discord: 0,
-        contests: 0,
-        scouts: 0,
-        campaigns: 0,
-        other: 0
-      }
-      profile.pointsHistory = [{
-        amount: 0,
-        source: 'other',
-        description: `Points reset by admin`,
-        timestamp: new Date(),
-        metadata: { adminId }
-      }]
-
-      await ProfileService.saveProfile(profile)
-      await redis.zrem('idx:points:leaderboard', userId)
-      
-      console.log(`[PointsService] Reset points for user ${userId} by admin ${adminId}`)
-      return true
-    } catch (error) {
-      console.error('[PointsService] Error resetting points:', error)
-      return false
-    }
-  }
-} 
+// Export singleton instance
+export const pointsService = new PointsService() 

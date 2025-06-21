@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import { Redis } from '@upstash/redis'
 import { GoogleGenerativeAI } from '@google/generative-ai'
+import fetch from 'node-fetch'
 
 // Get current directory (ES modules compatibility)
 const __filename = fileURLToPath(import.meta.url)
@@ -21,6 +22,11 @@ const redis = new Redis({
 })
 
 console.log('✅ Connected to Upstash Redis')
+
+// Points API configuration
+const POINTS_API_URL = process.env.POINTS_API_URL || 'http://localhost:3000/api/discord/award-points'
+const DISCORD_BOT_API_KEY = process.env.DISCORD_BOT_API_KEY || 'discord-bot-points-key-2024'
+console.log(`🎯 Points API configured: ${POINTS_API_URL}`)
 
 // Initialize Gemini AI for sentiment analysis
 let model = null
@@ -177,6 +183,42 @@ async function analyzeSentiment(content, projectId) {
   }
 }
 
+// Award points for Discord message via API
+async function awardPointsForMessage(discordUserId, discordUsername, projectId, projectName, messageId) {
+  try {
+    const response = await fetch(POINTS_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': DISCORD_BOT_API_KEY
+      },
+      body: JSON.stringify({
+        discordUserId,
+        discordUsername,
+        projectId,
+        projectName,
+        messageId
+      })
+    })
+    
+    const result = await response.json()
+    
+    if (result.success && result.points > 0) {
+      console.log(`💰 Awarded ${result.points} points to @${discordUsername}`)
+    } else if (result.success && result.points === 0) {
+      // User not linked or daily limit reached - silent skip
+    } else {
+      console.warn(`⚠️  Points API error: ${result.error || 'Unknown error'}`)
+    }
+    
+    return result
+  } catch (error) {
+    // Don't throw - we don't want points failures to affect message processing
+    console.error('❌ Points API call failed:', error.message)
+    return { success: false, error: error.message }
+  }
+}
+
 // Save message to Redis using the same structure as DiscordService
 async function saveMessage(message, projectId, projectData) {
   try {
@@ -239,6 +281,17 @@ async function saveMessage(message, projectId, projectData) {
     }[sentiment.score] || '😐'
     
     console.log(`${sentimentEmoji} [${projectData.name}] #${message.channel.name} @${message.author.username}: ${message.content.substring(0, 50)}${message.content.length > 50 ? '...' : ''}`)
+    
+    // Award points for the message (non-blocking)
+    awardPointsForMessage(
+      message.author.id,
+      message.author.username,
+      projectId,
+      projectData.name,
+      message.id
+    ).catch(err => {
+      console.error('⚠️  Failed to award points:', err.message)
+    })
     
     return messageData
   } catch (error) {

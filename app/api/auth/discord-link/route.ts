@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth-options'
 import { redis } from '@/lib/redis'
 import { nanoid } from 'nanoid'
+import { DiscordPointsBridge } from '@/lib/services/discord-points-bridge'
 
 export async function POST(request: NextRequest) {
   try {
@@ -164,6 +165,10 @@ export async function POST(request: NextRequest) {
     
     await redis.json.set(`engagement:connection:${discordId}`, '$', connection)
     await redis.set(`engagement:twitter:${twitterHandle}`, discordId)
+    
+    // Link Discord user to platform user for points system
+    const platformUserId = userId.replace('user:', '') // Extract just the ID part
+    await DiscordPointsBridge.linkDiscordUser(discordId, platformUserId)
     
     // Clean up verification session
     await redis.del(sessionKey)

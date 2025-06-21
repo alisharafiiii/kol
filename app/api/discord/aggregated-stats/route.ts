@@ -58,51 +58,169 @@ export async function GET(req: NextRequest) {
       topProjects: [] as any[]
     }
 
-    // For now, just return basic stats without detailed analytics
-    // This is a temporary fix to get the page loading
+    // Aggregate data from all projects
+    let totalSentimentScore = 0
+    let totalSentimentCount = 0
+
     for (const project of projects) {
+      if (!project.isActive) continue
+
       // Count tracked channels
       stats.totalChannels += project.trackedChannels?.length || 0
       
-      // Get basic stats from project
+      // Get project stats from stored data
       const projectStats = project.stats || { totalMessages: 0, totalUsers: 0 }
       stats.totalMessages += projectStats.totalMessages || 0
+      
+      // Get project users
+      const projectUserIds = await redis.smembers(`discord:users:project:${project.id}`)
+      projectUserIds.forEach((userId: string) => stats.totalUsers.add(userId))
+      
+      // Sample recent messages for sentiment analysis (limit to avoid performance issues)
+      const messageIndexKey = `discord:messages:project:${project.id}`
+      const allMessageIds = await redis.smembers(messageIndexKey)
+      
+      // Get a sample of recent messages (last 100)
+      const sampleMessageIds = allMessageIds.slice(-100)
+      let projectPositive = 0
+      let projectNeutral = 0
+      let projectNegative = 0
+      let projectSentimentTotal = 0
+      let projectMessageCount = 0
+      
+      for (const messageId of sampleMessageIds) {
+        try {
+          const message = await redis.json.get(messageId) as any
+          if (!message) continue
+          
+          // Filter by timeframe
+          const messageDate = new Date(message.timestamp)
+          if (messageDate < startDate) continue
+          
+          projectMessageCount++
+          
+          // Count sentiment
+          if (message.sentiment?.score) {
+            switch (message.sentiment.score) {
+              case 'positive':
+                projectPositive++
+                stats.sentimentBreakdown.positive++
+                projectSentimentTotal += 1
+                break
+              case 'negative':
+                projectNegative++
+                stats.sentimentBreakdown.negative++
+                projectSentimentTotal -= 1
+                break
+              case 'neutral':
+                projectNeutral++
+                stats.sentimentBreakdown.neutral++
+                break
+            }
+            totalSentimentCount++
+          }
+          
+          // Count hourly activity
+          const hour = messageDate.getHours()
+          stats.hourlyActivity[hour]++
+        } catch (err) {
+          // Skip invalid messages
+          continue
+        }
+      }
+      
+      // Calculate project sentiment average
+      const projectSentiment = projectMessageCount > 0 
+        ? projectSentimentTotal / projectMessageCount 
+        : 0
+      
+      totalSentimentScore += projectSentimentTotal
       
       // Add to project activity
       stats.projectActivity.push({
         projectId: project.id,
         name: project.name,
         messages: projectStats.totalMessages || 0,
-        users: projectStats.totalUsers || 0
+        users: projectStats.totalUsers || 0,
+        recentMessages: projectMessageCount,
+        sentiment: projectSentiment,
+        sentimentBreakdown: {
+          positive: projectPositive,
+          neutral: projectNeutral,
+          negative: projectNegative
+        }
       })
     }
 
-    // Get top projects by activity
+    // Calculate average sentiment
+    stats.avgSentiment = totalSentimentCount > 0 
+      ? totalSentimentScore / totalSentimentCount 
+      : 0
+
+    // Get top projects by recent activity
     stats.topProjects = stats.projectActivity
-      .sort((a, b) => b.messages - a.messages)
+      .sort((a, b) => b.recentMessages - a.recentMessages)
       .slice(0, 5)
       .map(p => ({
         id: p.projectId,
         name: p.name,
         messageCount: p.messages,
         userCount: p.users,
-        sentiment: 0
+        sentiment: p.sentiment
       }))
+
+    // Generate weekly trend data
+    const weeklyData = []
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date()
+      date.setDate(date.getDate() - i)
+      date.setHours(0, 0, 0, 0)
+      
+      let dayMessages = 0
+      let daySentiment = 0
+      let daySentimentCount = 0
+      
+      // Sample messages for this day
+      for (const project of projects) {
+        if (!project.isActive) continue
+        
+        const messageIds = await redis.smembers(`discord:messages:project:${project.id}`)
+        const sampleIds = messageIds.slice(-50) // Sample last 50 per project for performance
+        
+        for (const messageId of sampleIds) {
+          try {
+            const message = await redis.json.get(messageId) as any
+            if (!message) continue
+            
+            const messageDate = new Date(message.timestamp)
+            if (messageDate.toDateString() === date.toDateString()) {
+              dayMessages++
+              
+              if (message.sentiment?.score) {
+                daySentimentCount++
+                if (message.sentiment.score === 'positive') daySentiment += 1
+                else if (message.sentiment.score === 'negative') daySentiment -= 1
+              }
+            }
+          } catch (err) {
+            continue
+          }
+        }
+      }
+      
+      weeklyData.push({
+        date: date.toISOString().slice(0, 10),
+        messages: dayMessages,
+        sentiment: daySentimentCount > 0 ? daySentiment / daySentimentCount : 0
+      })
+    }
+    
+    stats.weeklyTrend = weeklyData
 
     // Convert sets to counts
     const aggregatedStats = {
       ...stats,
-      totalUsers: stats.projectActivity.reduce((sum, p) => sum + p.users, 0),
-      // Add some dummy data for the charts to render
-      weeklyTrend: Array.from({ length: 7 }, (_, i) => {
-        const date = new Date()
-        date.setDate(date.getDate() - (6 - i))
-        return {
-          date: date.toISOString().slice(0, 10),
-          messages: Math.floor(Math.random() * 100) + 50,
-          sentiment: Math.random() * 0.4 - 0.2
-        }
-      })
+      totalUsers: stats.totalUsers.size
     }
 
     return NextResponse.json(aggregatedStats)

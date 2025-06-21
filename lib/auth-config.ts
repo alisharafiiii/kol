@@ -175,7 +175,7 @@ export const authOptions: NextAuthOptions = {
           
           // Update follower count if available
           if (followerCount > 0) {
-            updatedProfile.followerCount = followerCount;
+            (updatedProfile as any).followerCount = followerCount;
           }
           
           // EXPLICITLY PRESERVE admin-controlled fields
@@ -208,6 +208,7 @@ export const authOptions: NextAuthOptions = {
             tags: [],
             campaigns: [],
             notes: [],
+            points: 0, // Initialize points
             createdAt: new Date(),
             updatedAt: new Date(),
             lastLoginAt: new Date(),
@@ -348,15 +349,24 @@ export const authOptions: NextAuthOptions = {
             }
           } catch (error) {
             log("Error fetching user profile in JWT:", error);
-            // Don't override approval status when API fails - keep existing values
-            // Only set defaults if this is a brand new token (no existing values)
-            if (!token.role) {
-              token.role = 'scout';
+            // CRITICAL FIX: Only set defaults for NEW users (first login)
+            // Check if this is a brand new token by looking at 'sub' (user ID)
+            // If token.sub exists but role/status don't, preserve what we have
+            const isNewUser = !token.sub || trigger === 'signUp';
+            
+            if (isNewUser) {
+              // Only for brand new users, set defaults
+              if (!token.role) {
+                token.role = 'user';
+              }
+              if (!token.approvalStatus) {
+                token.approvalStatus = 'pending';
+              }
+              log(`New user detected - Setting defaults - Role: ${token.role}, Status: ${token.approvalStatus}`);
+            } else {
+              // For existing users, preserve their current values
+              log(`API failed for existing user - Preserving values - Role: ${token.role || 'not set'}, Status: ${token.approvalStatus || 'not set'}`);
             }
-            if (!token.approvalStatus) {
-              token.approvalStatus = 'pending';
-            }
-            log(`API failed but preserved existing values - Role: ${token.role}, Status: ${token.approvalStatus}`);
           }
         }
       }
