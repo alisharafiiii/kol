@@ -70,9 +70,14 @@ The middleware correctly includes "core" in allowed roles for:
    - Only sets defaults for new users
    - Added points field for new profiles
 
-3. **Scripts Created**
+3. **`app/campaigns/page.tsx`**
+   - Fixed admin notice to show for both 'admin' and 'core' roles
+   - Changed from `userRole === 'admin'` to `(userRole === 'admin' || userRole === 'core')`
+
+4. **Scripts Created**
    - `scripts/fix-role-and-approval-issues.mjs` - Fix existing users
    - `scripts/check-core-role-access.mjs` - Verify core user access
+   - `scripts/verify-fixes.mjs` - Verify all fixes are working
 
 ## Testing
 

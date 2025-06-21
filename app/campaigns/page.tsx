@@ -284,7 +284,7 @@ export default function CampaignsPage() {
         </div>
 
         {/* Admin Notice */}
-        {userRole === 'admin' && (
+        {(userRole === 'admin' || userRole === 'core') && (
           <div className="mb-4 p-3 border border-purple-500 bg-purple-900/20 text-purple-300 text-sm">
             <span className="font-bold">Admin Mode:</span> You have access to all campaigns
           </div>
