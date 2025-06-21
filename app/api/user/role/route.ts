@@ -49,8 +49,24 @@ export async function GET(req: NextRequest) {
       });
     }
     
-    // Try to get user from Redis
+    // Try to get user from ProfileService first, then fall back to Redis
     try {
+      // CRITICAL FIX: Check ProfileService first (like user/profile API does)
+      const { ProfileService } = await import('@/lib/services/profile-service');
+      const profileData = await ProfileService.getProfileByHandle(normalizedHandle);
+      
+      if (profileData) {
+        console.log('USER ROLE API: Found user in ProfileService');
+        const response = { 
+          role: profileData.role,
+          handle: checkHandle,
+          approvalStatus: profileData.approvalStatus
+        };
+        console.log('USER ROLE API: Returning ProfileService data:', response);
+        return NextResponse.json(response);
+      }
+      
+      // Fall back to old Redis system if not found in ProfileService
       const user = await findUserByUsername(normalizedHandle);
       console.log('USER ROLE API: User found in Redis:', user ? 'Yes' : 'No');
       
