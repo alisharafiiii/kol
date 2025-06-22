@@ -122,24 +122,45 @@ export async function middleware(request: NextRequest) {
       })
       
       // Determine the correct cookie name based on environment
+      // Try multiple cookie names as NextAuth might use different ones
+      const possibleCookieNames = [
+        'next-auth.session-token',
+        '__Secure-next-auth.session-token',
+        '__Host-next-auth.session-token',
+        process.env.NODE_ENV === 'production' ? '__Secure-next-auth.session-token' : 'next-auth.session-token'
+      ]
+      
       const isProduction = process.env.NODE_ENV === 'production'
       const isHttps = request.url.startsWith('https://')
-      const cookieName = isHttps && isProduction ? '__Secure-next-auth.session-token' : 'next-auth.session-token'
       
       console.log('[Middleware] Cookie configuration:', {
         isProduction,
         isHttps,
-        expectedCookieName: cookieName,
+        possibleCookieNames,
         nodeEnv: process.env.NODE_ENV,
         url: request.url
       })
       
-      const token = await getToken({ 
-        req: request,
-        secret: process.env.NEXTAUTH_SECRET,
-        cookieName: cookieName,
-        debug: true // Enable debug mode for getToken
-      })
+      // Try to get token with different cookie names
+      let token = null
+      for (const cookieName of possibleCookieNames) {
+        try {
+          console.log('[Middleware] Trying cookie name:', cookieName)
+          token = await getToken({ 
+            req: request,
+            secret: process.env.NEXTAUTH_SECRET,
+            cookieName: cookieName,
+            debug: false // Disable debug for cleaner logs
+          })
+          
+          if (token) {
+            console.log('[Middleware] Token found with cookie name:', cookieName)
+            break
+          }
+        } catch (err) {
+          console.log('[Middleware] Error with cookie name', cookieName, ':', err)
+        }
+      }
       
       console.log('[Middleware] Token check result:', {
         exists: !!token,
