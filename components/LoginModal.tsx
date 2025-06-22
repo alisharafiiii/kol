@@ -97,6 +97,9 @@ export default function LoginModal() {
   const taps = useRef(0)
   const timer = useRef<number>()
   
+  // Track if modal was explicitly triggered (via triple-click) vs automatic
+  const [explicitlyTriggered, setExplicitlyTriggered] = useState(false)
+  
   // Wallet connection state
   const [walletConnectionPending, setWalletConnectionPending] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
@@ -143,16 +146,19 @@ export default function LoginModal() {
             setUserProfile(data.user);
             setHasProfile(true);
             
-            // IMPORTANT: Hide modal after successful login for admin/core users
-            if (data.user.role === 'admin' || data.user.role === 'core') {
-              console.log('[LoginModal] Admin/Core user detected, hiding modal');
-              setStage('hidden');
-            }
-            
-            // Also hide for approved users if they're not in an active flow
-            if (data.user.approvalStatus === 'approved' && stage === 'choice') {
-              console.log('[LoginModal] Approved user detected, hiding modal');
-              setStage('hidden');
+            // Only auto-hide modal if it wasn't explicitly triggered
+            if (!explicitlyTriggered) {
+              // IMPORTANT: Hide modal after successful login for admin/core users
+              if (data.user.role === 'admin' || data.user.role === 'core') {
+                console.log('[LoginModal] Admin/Core user detected, hiding modal automatically');
+                setStage('hidden');
+              }
+              
+              // Also hide for approved users if they're not in an active flow
+              if (data.user.approvalStatus === 'approved' && stage === 'choice') {
+                console.log('[LoginModal] Approved user detected, hiding modal automatically');
+                setStage('hidden');
+              }
             }
           } else if (data) {
             setUserProfile(data);
@@ -172,7 +178,7 @@ export default function LoginModal() {
     const interval = setInterval(fetchUserProfile, 5000)
     
     return () => clearInterval(interval)
-  }, [session, stage])
+  }, [session, stage, explicitlyTriggered])
 
   // Update wallet state when Wagmi account changes
   useEffect(() => {
@@ -251,6 +257,7 @@ export default function LoginModal() {
   // Replace with this much simpler approach
   if (typeof window !== 'undefined') {
     (window as any).openLogin = function() {
+      setExplicitlyTriggered(true)
       setStage('choice')
     }
   }
@@ -263,14 +270,14 @@ export default function LoginModal() {
     // Don't automatically show anything on load
     // Let the triple-click mechanism handle showing the modal
     
-    // But ensure admin users don't get stuck with modal open
-    if (isLoggedIn && userProfile && stage === 'choice') {
+    // But ensure admin users don't get stuck with modal open (only if not explicitly triggered)
+    if (!explicitlyTriggered && isLoggedIn && userProfile && stage === 'choice') {
       if (userProfile.role === 'admin' || userProfile.role === 'core') {
         console.log('[LoginModal] Admin/Core user on load, ensuring modal is hidden');
         setStage('hidden');
       }
     }
-  }, [isLoggedIn, stage, userProfile]);
+  }, [isLoggedIn, stage, userProfile, explicitlyTriggered]);
 
   // Keep handleTripleTap, but remove the global assignment
   const handleTripleTap = () => {
@@ -279,6 +286,7 @@ export default function LoginModal() {
     timer.current = window.setTimeout(() => (taps.current = 0), 500)
     if (taps.current === 3) {
       // Show choice screen on triple tap
+      setExplicitlyTriggered(true)
       setStage('choice')
     }
   }
@@ -287,6 +295,8 @@ export default function LoginModal() {
   const handleClose = () => {
     // Fully hide the modal
     setStage('hidden')
+    // Reset the explicitly triggered flag
+    setExplicitlyTriggered(false)
     // Reset any internal state as needed
     taps.current = 0
     if (timer.current) {
