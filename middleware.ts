@@ -112,20 +112,61 @@ export async function middleware(request: NextRequest) {
   
   if (isProtectedPath) {
     try {
-      const token = await getToken({ 
-        req: request,
-        secret: process.env.NEXTAUTH_SECRET 
+      // Enhanced logging for token detection
+      console.log('[Middleware] Checking protected path:', pathname)
+      console.log('[Middleware] Request URL:', request.url)
+      console.log('[Middleware] Request headers:', {
+        cookie: request.headers.get('cookie')?.substring(0, 100) + '...',
+        host: request.headers.get('host'),
+        referer: request.headers.get('referer')
       })
       
-      console.log('[Middleware] Protected path:', pathname)
-      console.log('[Middleware] Token exists:', !!token)
+      // Determine the correct cookie name based on environment
+      const isProduction = process.env.NODE_ENV === 'production'
+      const isHttps = request.url.startsWith('https://')
+      const cookieName = isHttps && isProduction ? '__Secure-next-auth.session-token' : 'next-auth.session-token'
+      
+      console.log('[Middleware] Cookie configuration:', {
+        isProduction,
+        isHttps,
+        expectedCookieName: cookieName,
+        nodeEnv: process.env.NODE_ENV,
+        url: request.url
+      })
+      
+      const token = await getToken({ 
+        req: request,
+        secret: process.env.NEXTAUTH_SECRET,
+        cookieName: cookieName,
+        debug: true // Enable debug mode for getToken
+      })
+      
+      console.log('[Middleware] Token check result:', {
+        exists: !!token,
+        tokenData: token ? {
+          sub: token.sub,
+          name: token.name,
+          twitterHandle: token.twitterHandle,
+          role: token.role,
+          iat: token.iat,
+          exp: token.exp
+        } : null
+      })
+      
+      // Check cookie names specifically
+      const cookies = request.headers.get('cookie') || ''
+      console.log('[Middleware] Session cookie check:', {
+        hasSessionToken: cookies.includes('next-auth.session-token'),
+        hasSecureSessionToken: cookies.includes('__Secure-next-auth.session-token'),
+        hasHostPrefixedToken: cookies.includes('__Host-next-auth.session-token')
+      })
       
       if (!token) {
         // Preserve the original URL for callback after login
         const url = new URL('/auth/signin', request.url)
         url.searchParams.set('callbackUrl', request.url)
         
-        console.log('[Middleware] Redirecting to signin with callback:', request.url)
+        console.log('[Middleware] No token found, redirecting to signin with callback:', request.url)
         return NextResponse.redirect(url)
       }
       

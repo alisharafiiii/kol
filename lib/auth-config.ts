@@ -467,16 +467,72 @@ export const authOptions: NextAuthOptions = {
   },
   cookies: {
     sessionToken: {
-      name: `next-auth.session-token`,
+      name: (() => {
+        const url = process.env.NEXTAUTH_URL || "http://localhost:3000";
+        const isHttps = url.startsWith("https://");
+        // Use secure-prefixed cookie name in production
+        if (isHttps && process.env.NODE_ENV === 'production') {
+          return '__Secure-next-auth.session-token';
+        }
+        return 'next-auth.session-token';
+      })(),
+      options: (() => {
+        const url = process.env.NEXTAUTH_URL || "http://localhost:3000";
+        const isHttps = url.startsWith("https://");
+        
+        console.log('[Auth Config] Cookie settings:', {
+          url,
+          isHttps,
+          nodeEnv: process.env.NODE_ENV,
+          cookieName: isHttps && process.env.NODE_ENV === 'production' ? '__Secure-next-auth.session-token' : 'next-auth.session-token'
+        });
+        
+        return {
+          httpOnly: true,
+          sameSite: isHttps ? "lax" : "lax", // Use lax for better compatibility
+          secure: isHttps,
+          path: "/",
+          domain: undefined, // Let browser handle domain
+        } as const;
+      })(),
+    },
+    callbackUrl: {
+      name: (() => {
+        const url = process.env.NEXTAUTH_URL || "http://localhost:3000";
+        const isHttps = url.startsWith("https://");
+        if (isHttps && process.env.NODE_ENV === 'production') {
+          return '__Secure-next-auth.callback-url';
+        }
+        return 'next-auth.callback-url';
+      })(),
       options: (() => {
         const url = process.env.NEXTAUTH_URL || "http://localhost:3000";
         const isHttps = url.startsWith("https://");
         return {
           httpOnly: true,
-          sameSite: isHttps ? "none" : "lax", // none requires secure
+          sameSite: isHttps ? "lax" : "lax",
           secure: isHttps,
           path: "/",
-          domain: undefined,
+        } as const;
+      })(),
+    },
+    csrfToken: {
+      name: (() => {
+        const url = process.env.NEXTAUTH_URL || "http://localhost:3000";
+        const isHttps = url.startsWith("https://");
+        if (isHttps && process.env.NODE_ENV === 'production') {
+          return '__Host-next-auth.csrf-token';
+        }
+        return 'next-auth.csrf-token';
+      })(),
+      options: (() => {
+        const url = process.env.NEXTAUTH_URL || "http://localhost:3000";
+        const isHttps = url.startsWith("https://");
+        return {
+          httpOnly: true,
+          sameSite: isHttps ? "lax" : "lax",
+          secure: isHttps,
+          path: "/",
         } as const;
       })(),
     },

@@ -3,7 +3,7 @@
 import { signIn, useSession } from 'next-auth/react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Twitter } from 'lucide-react'
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState, Suspense, useRef } from 'react'
 
 function SignInContent() {
   const searchParams = useSearchParams()
@@ -13,11 +13,19 @@ function SignInContent() {
   const [isSigningIn, setIsSigningIn] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [testMode, setTestMode] = useState(false)
+  const redirectAttempted = useRef(false)
   
   console.log('SignIn Page: Mounted')
   console.log('SignIn Page: Callback URL:', callbackUrl)
   console.log('SignIn Page: Full URL:', typeof window !== 'undefined' ? window.location.href : 'SSR')
   console.log('SignIn Page: Origin:', typeof window !== 'undefined' ? window.location.origin : 'SSR')
+  console.log('SignIn Page: Session status on mount:', status)
+  console.log('SignIn Page: Session data on mount:', session)
+  
+  // Check cookies on client side
+  if (typeof window !== 'undefined') {
+    console.log('SignIn Page: Document cookies:', document.cookie.split(';').map(c => c.trim().split('=')[0]))
+  }
   
   useEffect(() => {
     // Check for any errors in URL params
@@ -37,9 +45,39 @@ function SignInContent() {
   
   // If already authenticated, redirect immediately
   useEffect(() => {
-    if (status === 'authenticated' && session) {
-      console.log('SignIn Page: Already authenticated, redirecting to:', callbackUrl)
-      router.push(callbackUrl)
+    console.log('SignIn Page: Auth check effect', {
+      status,
+      hasSession: !!session,
+      sessionData: session ? {
+        user: session.user,
+        expires: session.expires
+      } : null,
+      callbackUrl,
+      redirectAttempted: redirectAttempted.current
+    })
+    
+    if (status === 'authenticated' && session && !redirectAttempted.current) {
+      console.log('SignIn Page: Already authenticated, attempting redirect to:', callbackUrl)
+      redirectAttempted.current = true
+      
+      // Add a small delay to ensure we're not in a render cycle
+      const timer = setTimeout(() => {
+        console.log('SignIn Page: Executing redirect to:', callbackUrl)
+        
+        // Use window.location for more reliable redirect in production
+        if (typeof window !== 'undefined') {
+          // Clear any redirect counts
+          sessionStorage.removeItem('signin_redirect_count')
+          
+          // Force redirect using window.location
+          console.log('SignIn Page: Using window.location.href for redirect')
+          window.location.href = callbackUrl
+        } else {
+          router.push(callbackUrl)
+        }
+      }, 100)
+      
+      return () => clearTimeout(timer)
     }
   }, [status, session, callbackUrl, router])
   
@@ -63,7 +101,7 @@ function SignInContent() {
         console.log('SignIn Page: TEST MODE - Would sign in with:', {
           provider: 'twitter',
           callbackUrl,
-          redirect: true
+          redirect: false
         })
         setTimeout(() => {
           console.log('SignIn Page: TEST MODE - Would redirect to:', callbackUrl)
@@ -98,7 +136,16 @@ function SignInContent() {
             
             if (sessionData && sessionData.user) {
               console.log('SignIn Page: Session established, redirecting to:', callbackUrl)
-              router.push(callbackUrl)
+              
+              // Clear redirect count on successful auth
+              sessionStorage.removeItem('signin_redirect_count')
+              
+              // Use window.location for production redirect
+              if (typeof window !== 'undefined') {
+                window.location.href = callbackUrl
+              } else {
+                router.push(callbackUrl)
+              }
               return
             }
             
@@ -108,7 +155,11 @@ function SignInContent() {
           
           // If we couldn't establish session after max attempts, still redirect
           console.warn('SignIn Page: Session not established after max attempts, redirecting anyway')
-          router.push(callbackUrl)
+          if (typeof window !== 'undefined') {
+            window.location.href = callbackUrl
+          } else {
+            router.push(callbackUrl)
+          }
         }
         
         await waitForSession()
@@ -123,6 +174,15 @@ function SignInContent() {
       setIsSigningIn(false)
       sessionStorage.removeItem('signin_redirect_count')
     }
+  }
+  
+  // Show loading state while checking authentication
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center p-4">
+        <div className="text-gray-400">Checking authentication...</div>
+      </div>
+    )
   }
   
   return (
@@ -185,6 +245,8 @@ function SignInContent() {
               <p>Callback URL: {callbackUrl}</p>
               <p>Current URL: {typeof window !== 'undefined' ? window.location.href : 'SSR'}</p>
               <p>Search Params: {searchParams.toString()}</p>
+              <p>Auth Status: {status}</p>
+              <p>Has Session: {session ? 'Yes' : 'No'}</p>
               <label className="flex items-center gap-2 mt-4 text-yellow-400">
                 <input 
                   type="checkbox" 
