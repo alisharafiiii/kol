@@ -467,15 +467,7 @@ export const authOptions: NextAuthOptions = {
   },
   cookies: {
     sessionToken: {
-      name: (() => {
-        const url = process.env.NEXTAUTH_URL || "http://localhost:3000";
-        const isHttps = url.startsWith("https://");
-        // Use secure-prefixed cookie name in production
-        if (isHttps && process.env.NODE_ENV === 'production') {
-          return '__Secure-next-auth.session-token';
-        }
-        return 'next-auth.session-token';
-      })(),
+      name: 'next-auth.session-token', // Let NextAuth handle secure prefixing automatically
       options: (() => {
         const url = process.env.NEXTAUTH_URL || "http://localhost:3000";
         const isHttps = url.startsWith("https://");
@@ -496,46 +488,7 @@ export const authOptions: NextAuthOptions = {
         } as const;
       })(),
     },
-    callbackUrl: {
-      name: (() => {
-        const url = process.env.NEXTAUTH_URL || "http://localhost:3000";
-        const isHttps = url.startsWith("https://");
-        if (isHttps && process.env.NODE_ENV === 'production') {
-          return '__Secure-next-auth.callback-url';
-        }
-        return 'next-auth.callback-url';
-      })(),
-      options: (() => {
-        const url = process.env.NEXTAUTH_URL || "http://localhost:3000";
-        const isHttps = url.startsWith("https://");
-        return {
-          httpOnly: true,
-          sameSite: isHttps ? "lax" : "lax",
-          secure: isHttps,
-          path: "/",
-        } as const;
-      })(),
-    },
-    csrfToken: {
-      name: (() => {
-        const url = process.env.NEXTAUTH_URL || "http://localhost:3000";
-        const isHttps = url.startsWith("https://");
-        if (isHttps && process.env.NODE_ENV === 'production') {
-          return '__Host-next-auth.csrf-token';
-        }
-        return 'next-auth.csrf-token';
-      })(),
-      options: (() => {
-        const url = process.env.NEXTAUTH_URL || "http://localhost:3000";
-        const isHttps = url.startsWith("https://");
-        return {
-          httpOnly: true,
-          sameSite: isHttps ? "lax" : "lax",
-          secure: isHttps,
-          path: "/",
-        } as const;
-      })(),
-    },
+
   },
   events: {
     async signIn(message: any) {
