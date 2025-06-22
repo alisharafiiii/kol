@@ -1,6 +1,6 @@
 'use client'
 
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Twitter } from 'lucide-react'
 import { useEffect, useState, Suspense } from 'react'
@@ -8,6 +8,7 @@ import { useEffect, useState, Suspense } from 'react'
 function SignInContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { data: session, status } = useSession()
   const callbackUrl = searchParams.get('callbackUrl') || '/'
   const [isSigningIn, setIsSigningIn] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -33,6 +34,14 @@ function SignInContent() {
       sessionStorage.removeItem('signin_redirect_count')
     }
   }, [searchParams])
+  
+  // If already authenticated, redirect immediately
+  useEffect(() => {
+    if (status === 'authenticated' && session) {
+      console.log('SignIn Page: Already authenticated, redirecting to:', callbackUrl)
+      router.push(callbackUrl)
+    }
+  }, [status, session, callbackUrl, router])
   
   const handleSignIn = async () => {
     try {
@@ -63,12 +72,51 @@ function SignInContent() {
         return
       }
       
+      // Use redirect: false to handle redirect manually after ensuring session is set
       const result = await signIn('twitter', {
         callbackUrl,
-        redirect: true
+        redirect: false
       })
       
       console.log('SignIn Page: Sign in result:', result)
+      
+      if (result?.ok) {
+        console.log('SignIn Page: Sign in successful, waiting for session...')
+        
+        // Wait for session to be established (poll for up to 5 seconds)
+        let sessionCheckCount = 0
+        const maxChecks = 10
+        const checkInterval = 500
+        
+        const waitForSession = async () => {
+          while (sessionCheckCount < maxChecks) {
+            // Force a session refresh by calling the session endpoint
+            const sessionRes = await fetch('/api/auth/session')
+            const sessionData = await sessionRes.json()
+            
+            console.log(`SignIn Page: Session check ${sessionCheckCount + 1}/${maxChecks}:`, sessionData)
+            
+            if (sessionData && sessionData.user) {
+              console.log('SignIn Page: Session established, redirecting to:', callbackUrl)
+              router.push(callbackUrl)
+              return
+            }
+            
+            sessionCheckCount++
+            await new Promise(resolve => setTimeout(resolve, checkInterval))
+          }
+          
+          // If we couldn't establish session after max attempts, still redirect
+          console.warn('SignIn Page: Session not established after max attempts, redirecting anyway')
+          router.push(callbackUrl)
+        }
+        
+        await waitForSession()
+      } else if (result?.error) {
+        console.error('SignIn Page: Sign in failed:', result.error)
+        setError(`Sign in failed: ${result.error}`)
+        setIsSigningIn(false)
+      }
     } catch (err) {
       console.error('SignIn Page: Sign in error:', err)
       setError('Failed to sign in. Please try again.')
