@@ -183,9 +183,9 @@ export async function POST(request: NextRequest) {
     await redis.set(`engagement:twitter:${twitterHandle}`, discordId)
     
     // Link Discord user to platform user for points system
-    const platformUserId = userId.replace('user:', '').replace('user_', '') // Extract just the ID part
-    console.log(`Linking Discord user ${discordId} to platform user ${platformUserId} (from ${userId})`)
-    const linkResult = await DiscordPointsBridge.linkDiscordUser(discordId, platformUserId)
+    // Keep the full userId as it's the actual key in Redis
+    console.log(`Linking Discord user ${discordId} to platform user ${userId}`)
+    const linkResult = await DiscordPointsBridge.linkDiscordUser(discordId, userId)
     console.log(`Discord points bridge link result: ${linkResult}`)
     
     // Clean up verification session

@@ -214,7 +214,8 @@ export class DiscordPointsBridge {
     platformUserId: string
   ): Promise<boolean> {
     try {
-      await redis.set(`discord:user:map:${discordUserId}`, `user:${platformUserId}`)
+      // platformUserId already contains the full key (e.g., "user_madmatt3m")
+      await redis.set(`discord:user:map:${discordUserId}`, platformUserId)
       console.log(`[DiscordPointsBridge] Linked Discord user ${discordUserId} to platform user ${platformUserId}`)
       return true
     } catch (error) {

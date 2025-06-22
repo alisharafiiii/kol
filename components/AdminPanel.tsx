@@ -1021,7 +1021,7 @@ function ProfileModal({
                       />
                     ) : (
                       <div className="w-8 h-8 rounded-full bg-green-900 border border-green-400 flex items-center justify-center text-xs font-bold">
-                        {note.authorName.substring(0, 2).toUpperCase()}
+                        {(note.authorName || 'U').substring(0, 2).toUpperCase()}
                       </div>
                     )}
                     <div className="flex-1">
@@ -2920,7 +2920,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                           className="w-full h-full object-cover" 
                         />
                       ) : user.handle?.startsWith('@') ? (
-                        <div className="text-2xl font-bold text-green-300">{user.handle.substring(1, 3).toUpperCase()}</div>
+                        <div className="text-2xl font-bold text-green-300">{user.handle?.substring(1, 3).toUpperCase()}</div>
                       ) : (
                         <div className="text-2xl font-bold text-green-300">{(user.name || "User").substring(0, 2).toUpperCase()}</div>
                       )}

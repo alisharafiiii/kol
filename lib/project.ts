@@ -193,25 +193,35 @@ export async function getAllProjects(): Promise<Project[]> {
     // Fetch projects individually instead of using pipeline
     const projects: Project[] = [];
     
+    // ✅ STABLE & VERIFIED — DO NOT MODIFY WITHOUT CODE REVIEW
+    // Handle Redis key type mismatches gracefully
     for (const id of ids) {
       try {
+        // Try to get as JSON first
         const project = await redis.json.get(`project:${id}`) as Project;
         if (project) {
           projects.push(project);
         } else {
           console.log(`🔍 getAllProjects: Project ${id} returned null`);
         }
-      } catch (error) {
-        console.log(`🔍 getAllProjects: Failed to fetch project ${id}:`, error);
-        // Try to get as string and parse
-        try {
-          const projectStr = await redis.get(`project:${id}`) as string | null;
-          if (projectStr && typeof projectStr === 'string') {
-            const project = JSON.parse(projectStr) as Project;
-            projects.push(project);
+      } catch (error: any) {
+        // Check if it's a WRONGTYPE error
+        if (error?.message?.includes('WRONGTYPE')) {
+          // This is expected when the key exists but is not JSON type
+          // Try to get as string silently
+          try {
+            const projectStr = await redis.get(`project:${id}`) as string | null;
+            if (projectStr && typeof projectStr === 'string') {
+              const project = JSON.parse(projectStr) as Project;
+              projects.push(project);
+              console.log(`🔍 getAllProjects: Successfully retrieved ${id} as string`);
+            }
+          } catch (parseError) {
+            console.log(`🔍 getAllProjects: Failed to parse project ${id} as string:`, parseError);
           }
-        } catch (parseError) {
-          console.log(`🔍 getAllProjects: Also failed to get project ${id} as string:`, parseError);
+        } else {
+          // Log other types of errors
+          console.log(`🔍 getAllProjects: Failed to fetch project ${id}:`, error);
         }
       }
     }

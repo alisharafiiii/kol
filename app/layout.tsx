@@ -43,6 +43,7 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
         <link rel="icon" href="/logo.png" sizes="any" />
         <link rel="icon" href="/logo.png" type="image/png" sizes="1024x1024" />
         <link rel="icon" href="/logo.png" type="image/png" sizes="512x512" />

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { Plus, Settings, Bot, TrendingUp, MessageSquare, Users, Calendar, Brain, Activity, BarChart3, PieChart, Hash, Clock } from 'lucide-react'
+import { Plus, Settings, Bot, TrendingUp, MessageSquare, Users, Calendar, Brain, Activity, BarChart3, PieChart, Hash, Clock, Trophy, Twitter } from 'lucide-react'
 import { Line, Doughnut, Bar } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
@@ -81,6 +81,22 @@ export default function DiscordAdminPage() {
   const [botStatus, setBotStatus] = useState<any>(null)
   const [botLoading, setBotLoading] = useState(false)
   const [rebooting, setRebooting] = useState(false)
+  const [activeView, setActiveView] = useState<'analytics' | 'engagement'>('analytics')
+  const [engagementStats, setEngagementStats] = useState<{
+    totalTweets: number
+    totalEngagements: number
+    activeParticipants: number
+    totalPoints: number
+  }>({
+    totalTweets: 0,
+    totalEngagements: 0,
+    activeParticipants: 0,
+    totalPoints: 0
+  })
+  
+  // [ENGAGEMENT STATE PERSISTENCE] - Preserve state when tab loses focus
+  const [lastEngagementFetch, setLastEngagementFetch] = useState<number>(0)
+  const [isEngagementStale, setIsEngagementStale] = useState(false)
 
   // Check admin access
   useEffect(() => {
@@ -112,8 +128,13 @@ export default function DiscordAdminPage() {
       fetchScoutProjects()
       fetchAggregatedStats()
       fetchBotStatus()
+      
+      // Fetch engagement stats if on engagement view
+      if (activeView === 'engagement') {
+        fetchEngagementStats()
+      }
     }
-  }, [status, selectedTimeframe])
+  }, [status, selectedTimeframe, activeView])
 
   // Refresh bot status every 30 seconds
   useEffect(() => {
@@ -122,6 +143,46 @@ export default function DiscordAdminPage() {
       return () => clearInterval(interval)
     }
   }, [status])
+
+  // [ENGAGEMENT REAL-TIME UPDATES] - Auto-refresh engagement data
+  useEffect(() => {
+    if (status === 'authenticated' && activeView === 'engagement') {
+      // Initial fetch
+      if (Date.now() - lastEngagementFetch > 5000) {
+        fetchEngagementStats()
+      }
+      
+      // Set up real-time refresh (every 10 seconds for new tweets)
+      const refreshInterval = setInterval(() => {
+        if (document.visibilityState === 'visible') {
+          fetchEngagementStats()
+        } else {
+          setIsEngagementStale(true)
+        }
+      }, 10000)
+      
+      return () => clearInterval(refreshInterval)
+    }
+  }, [status, activeView])
+
+  // [ENGAGEMENT TAB FOCUS HANDLER] - Refresh stale data when tab regains focus
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && isEngagementStale && activeView === 'engagement') {
+        // Only refresh if data is older than 10 seconds
+        if (Date.now() - lastEngagementFetch > 10000) {
+          fetchEngagementStats()
+        }
+        setIsEngagementStale(false)
+      }
+    }
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [isEngagementStale, activeView, lastEngagementFetch])
 
   const fetchAggregatedStats = async () => {
     setStatsLoading(true)
@@ -255,6 +316,58 @@ export default function DiscordAdminPage() {
     }
   }
 
+  const fetchEngagementStats = async () => {
+    try {
+      // [ENGAGEMENT REAL-TIME FETCH] - Track last fetch time
+      setLastEngagementFetch(Date.now())
+      
+      // Fetch overall engagement stats
+      const [tweetsRes, leaderboardRes] = await Promise.all([
+        fetch('/api/engagement/tweets', { cache: 'no-store' }), // Force fresh data
+        fetch('/api/engagement/leaderboard', { cache: 'no-store' })
+      ])
+
+      let totalTweets = 0
+      let totalEngagements = 0
+      let activeParticipants = 0
+      let totalPoints = 0
+
+      if (tweetsRes.ok) {
+        const tweetsData = await tweetsRes.json()
+        totalTweets = tweetsData.total || tweetsData.tweets?.length || 0
+        
+        // Calculate total engagements from tweets
+        if (tweetsData.tweets) {
+          totalEngagements = tweetsData.tweets.reduce((sum: number, tweet: any) => {
+            const metrics = tweet.metrics || {}
+            return sum + (metrics.likes || 0) + (metrics.retweets || 0) + (metrics.replies || 0)
+          }, 0)
+        }
+      }
+
+      if (leaderboardRes.ok) {
+        const leaderboardData = await leaderboardRes.json()
+        activeParticipants = leaderboardData.total || leaderboardData.leaderboard?.length || 0
+        
+        // Calculate total points
+        if (leaderboardData.leaderboard) {
+          totalPoints = leaderboardData.leaderboard.reduce((sum: number, user: any) => 
+            sum + (user.totalPoints || 0), 0
+          )
+        }
+      }
+
+      setEngagementStats({
+        totalTweets,
+        totalEngagements,
+        activeParticipants,
+        totalPoints
+      })
+    } catch (error) {
+      console.error('Error fetching engagement stats:', error)
+    }
+  }
+
   // Chart configurations
   const sentimentChartData = {
     labels: ['Positive', 'Neutral', 'Negative'],
@@ -324,9 +437,57 @@ export default function DiscordAdminPage() {
   return (
     <div className="container mx-auto p-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-green-400 mb-2">Discord Analytics Hub</h1>
-        <p className="text-gray-400">Comprehensive insights across all Discord servers</p>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-3xl font-bold text-green-400 mb-2">Discord Management Hub</h1>
+            <p className="text-gray-400">Analytics and engagement tracking across Discord servers</p>
+          </div>
+          
+          {/* View Toggle Tabs */}
+          <div className="flex bg-gray-900 border border-gray-700 rounded-lg p-1">
+            <button
+              onClick={() => setActiveView('analytics')}
+              className={`px-6 py-2 rounded-md font-medium transition-colors ${
+                activeView === 'analytics'
+                  ? 'bg-purple-600 text-white'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <BarChart3 className="w-4 h-4" />
+                Analytics
+              </div>
+            </button>
+            <button
+              onClick={() => setActiveView('engagement')}
+              className={`px-6 py-2 rounded-md font-medium transition-colors ${
+                activeView === 'engagement'
+                  ? 'bg-green-600 text-white'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <TrendingUp className="w-4 h-4" />
+                Engagement
+              </div>
+            </button>
+          </div>
+        </div>
       </div>
+
+      {/* Analytics View */}
+      {activeView === 'analytics' && (
+        <>
+          {/* Section Header */}
+          <div className="mb-6 p-4 bg-purple-900/20 border border-purple-700 rounded-lg">
+            <h2 className="text-lg font-semibold text-purple-300 flex items-center gap-2">
+              <Brain className="w-5 h-5" />
+              Discord Analytics Dashboard
+            </h2>
+            <p className="text-sm text-gray-400 mt-1">
+              Monitor message sentiment, user activity, and server metrics powered by AI
+            </p>
+          </div>
 
       {/* Overall Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -802,6 +963,275 @@ export default function DiscordAdminPage() {
             fetchAggregatedStats()
           }}
         />
+      )}
+        </>
+      )}
+
+      {/* Engagement View */}
+      {activeView === 'engagement' && (
+        <>
+          {/* Overall Engagement Stats Cards - Mirror Analytics Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+              <div className="flex items-center justify-between mb-2">
+                <Twitter className="w-8 h-8 text-blue-400" />
+                <span className="text-2xl font-bold text-white">
+                  {engagementStats.totalTweets.toLocaleString()}
+                </span>
+              </div>
+              <p className="text-gray-400">Tweets Tracked</p>
+              <p className="text-xs text-gray-500 mt-1">From Discord users</p>
+            </div>
+
+            <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+              <div className="flex items-center justify-between mb-2">
+                <Activity className="w-8 h-8 text-green-400" />
+                <span className="text-2xl font-bold text-white">{engagementStats.totalEngagements.toLocaleString()}</span>
+              </div>
+              <p className="text-gray-400">Total Engagements</p>
+              <p className="text-xs text-gray-500 mt-1">Likes, RTs, Comments</p>
+            </div>
+
+            <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+              <div className="flex items-center justify-between mb-2">
+                <Users className="w-8 h-8 text-purple-400" />
+                <span className="text-2xl font-bold text-white">{engagementStats.activeParticipants.toLocaleString()}</span>
+              </div>
+              <p className="text-gray-400">Active Participants</p>
+              <p className="text-xs text-gray-500 mt-1">Discord users engaging</p>
+            </div>
+
+            <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+              <div className="flex items-center justify-between mb-2">
+                <Trophy className="w-8 h-8 text-yellow-400" />
+                <span className="text-2xl font-bold text-white">{engagementStats.totalPoints.toLocaleString()}</span>
+              </div>
+              <p className="text-gray-400">Points Awarded</p>
+              <p className="text-xs text-gray-500 mt-1">Total engagement points</p>
+            </div>
+          </div>
+
+          {/* Recent Activity Summary */}
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6 mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-green-300">Recent Activity</h2>
+              <a 
+                href="/admin/engagement" 
+                className="text-sm text-gray-400 hover:text-green-300"
+              >
+                View Full Dashboard →
+              </a>
+            </div>
+            <p className="text-sm text-gray-400">
+              Monitor real-time Twitter engagement activity from Discord users across all servers
+            </p>
+          </div>
+
+          {/* Discord Projects Engagement Section */}
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-green-300">Discord Projects Engagement</h2>
+            <div className="text-sm text-gray-400">
+              Click on a server to view detailed engagement metrics
+            </div>
+          </div>
+
+          {projects.length === 0 ? (
+            <div className="text-center py-12 bg-gray-900 rounded-lg border border-gray-700 mb-8">
+              <Twitter className="w-16 h-16 mx-auto text-gray-600 mb-4" />
+              <p className="text-gray-400 mb-4">No Discord servers connected yet</p>
+              <p className="text-sm text-gray-500">
+                Connect servers in the Analytics tab to track engagement
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              {projects.map((project) => {
+                const scoutProject = scoutProjects.find(sp => sp.id === project.scoutProjectId)
+                // TODO: Fetch actual engagement stats per server
+                const engagementStats = {
+                  totalEngagements: 0,
+                  totalTweets: 0,
+                  activeParticipants: 0
+                }
+                
+                return (
+                  <div
+                    key={project.id}
+                    className="bg-gray-900 border border-gray-700 rounded-lg p-6 hover:border-green-500 transition-colors cursor-pointer"
+                    onClick={() => router.push(`/admin/discord/${project.id.replace(/:/g, '--')}/engagement`)}
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        {scoutProject?.profileImageUrl ? (
+                          <img
+                            src={scoutProject.profileImageUrl}
+                            alt={scoutProject.twitterHandle}
+                            className="w-12 h-12 rounded-full"
+                          />
+                        ) : project.iconUrl ? (
+                          <img
+                            src={project.iconUrl}
+                            alt={project.name}
+                            className="w-12 h-12 rounded-full"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center">
+                            <Twitter className="w-6 h-6 text-gray-500" />
+                          </div>
+                        )}
+                        <div>
+                          <h3 className="font-semibold text-white">{project.name}</h3>
+                          <p className="text-xs text-gray-400">{project.serverName}</p>
+                          {scoutProject && (
+                            <p className="text-xs text-green-400 mt-0.5">{scoutProject.twitterHandle}</p>
+                          )}
+                        </div>
+                      </div>
+                      <TrendingUp className="w-4 h-4 text-green-500" />
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2 mb-4 text-center">
+                      <div className="bg-black/50 rounded p-2">
+                        <p className="text-lg font-bold text-green-300">{engagementStats.totalEngagements}</p>
+                        <p className="text-xs text-gray-500">Engagements</p>
+                      </div>
+                      <div className="bg-black/50 rounded p-2">
+                        <p className="text-lg font-bold text-blue-300">{engagementStats.totalTweets}</p>
+                        <p className="text-xs text-gray-500">Tweets</p>
+                      </div>
+                      <div className="bg-black/50 rounded p-2">
+                        <p className="text-lg font-bold text-purple-300">{engagementStats.activeParticipants}</p>
+                        <p className="text-xs text-gray-500">Active</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs">
+                      <span className={`px-2 py-1 rounded ${project.isActive ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300'}`}>
+                        {project.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                      <span className="text-gray-500">
+                        View Details →
+                      </span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+
+          {/* Bot Status Section (Engagement Bot Only) */}
+          {botStatus && (
+            <div className="bg-gray-900 border border-gray-700 rounded-lg p-6 mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Bot className="w-5 h-5 text-green-400" />
+                  <h2 className="text-xl font-semibold text-green-400">Engagement Bot Status</h2>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm ${
+                    botStatus.status === 'running' 
+                      ? 'bg-green-900/50 text-green-300 border border-green-700' 
+                      : 'bg-red-900/50 text-red-300 border border-red-700'
+                  }`}>
+                    <div className={`w-2 h-2 rounded-full ${
+                      botStatus.status === 'running' ? 'bg-green-400 animate-pulse' : 'bg-red-400'
+                    }`} />
+                    {botStatus.status === 'running' ? 'Running' : 'Stopped'}
+                  </div>
+                  <button
+                    onClick={fetchBotStatus}
+                    disabled={botLoading}
+                    className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded font-medium disabled:opacity-50 flex items-center gap-2"
+                  >
+                    {botLoading ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    ) : (
+                      <Activity className="w-4 h-4" />
+                    )}
+                    Refresh
+                  </button>
+                </div>
+              </div>
+
+              {/* Engagement Bot Details */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="bg-black/50 border border-gray-800 rounded-lg p-4">
+                  <div className="text-xs text-gray-500 mb-1">Uptime</div>
+                  <div className="text-lg font-semibold text-white">{botStatus.uptime || 'N/A'}</div>
+                </div>
+                <div className="bg-black/50 border border-gray-800 rounded-lg p-4">
+                  <div className="text-xs text-gray-500 mb-1">Discord Token</div>
+                  <div className={`text-lg font-semibold ${botStatus.hasToken ? 'text-green-400' : 'text-red-400'}`}>
+                    {botStatus.hasToken ? '✓ Configured' : '✗ Missing'}
+                  </div>
+                </div>
+                {botStatus.process && (
+                  <>
+                    <div className="bg-black/50 border border-gray-800 rounded-lg p-4">
+                      <div className="text-xs text-gray-500 mb-1">CPU Usage</div>
+                      <div className="text-lg font-semibold text-white">{botStatus.process.cpu}%</div>
+                    </div>
+                    <div className="bg-black/50 border border-gray-800 rounded-lg p-4">
+                      <div className="text-xs text-gray-500 mb-1">Memory</div>
+                      <div className="text-lg font-semibold text-white">{botStatus.process.memory}%</div>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Recent Logs */}
+              {botStatus.lastLogs && botStatus.lastLogs.length > 0 && (
+                <div className="mt-4 bg-black/50 border border-gray-800 rounded-lg p-4">
+                  <h4 className="text-sm font-medium text-gray-400 mb-2">Recent Activity Logs</h4>
+                  <div className="space-y-1 text-xs font-mono max-h-40 overflow-y-auto">
+                    {botStatus.lastLogs.map((log: string, index: number) => (
+                      <div key={index} className="text-gray-300">
+                        {log}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Quick Links Section */}
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-green-300 mb-4">Engagement Management</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <a
+                href="/admin/engagement"
+                className="flex items-center gap-3 p-4 bg-black/50 border border-gray-800 rounded-lg hover:border-green-700 transition-colors"
+              >
+                <Settings className="w-5 h-5 text-gray-400" />
+                <div>
+                  <p className="text-sm font-medium text-white">Manage Rules</p>
+                  <p className="text-xs text-gray-500">Configure point rules and tiers</p>
+                </div>
+              </a>
+              <a
+                href="/admin/engagement#tweets"
+                className="flex items-center gap-3 p-4 bg-black/50 border border-gray-800 rounded-lg hover:border-green-700 transition-colors"
+              >
+                <MessageSquare className="w-5 h-5 text-gray-400" />
+                <div>
+                  <p className="text-sm font-medium text-white">View Tweets</p>
+                  <p className="text-xs text-gray-500">All submitted tweets</p>
+                </div>
+              </a>
+              <a
+                href="/admin/engagement#leaderboard"
+                className="flex items-center gap-3 p-4 bg-black/50 border border-gray-800 rounded-lg hover:border-green-700 transition-colors"
+              >
+                <Trophy className="w-5 h-5 text-gray-400" />
+                <div>
+                  <p className="text-sm font-medium text-white">Full Leaderboard</p>
+                  <p className="text-xs text-gray-500">Complete rankings</p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </>
       )}
     </div>
   )
