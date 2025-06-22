@@ -4,6 +4,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { redis } from '@/lib/redis'
 import { DiscordService } from '@/lib/services/discord-service'
 import type { DiscordProject } from '@/lib/types/discord'
+import { hasCoreAccess } from '@/lib/session-utils'
 
 export async function GET(req: NextRequest) {
   try {
@@ -13,9 +14,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check admin/core role
-    const userRole = (session as any).role || (session.user as any)?.role
-    if (!['admin', 'core'].includes(userRole)) {
+    // Check admin/core role using standardized utility
+    if (!hasCoreAccess(session)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 

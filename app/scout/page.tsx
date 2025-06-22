@@ -7,6 +7,7 @@ import ProjectModal from '@/components/ProjectModal'
 import { Project } from '@/lib/project'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import { getTwitterHandleFromSession } from '@/lib/auth-utils'
 
 export default function ScoutPage() {
   const { data: session, status } = useSession()
@@ -23,22 +24,23 @@ export default function ScoutPage() {
   const [userRole, setUserRole] = useState<string>('scout')
   const [isApproved, setIsApproved] = useState<boolean | null>(null)
 
-  const userHandle = (session as any)?.twitterHandle || session?.user?.name
+  const userHandle = getTwitterHandleFromSession(session) || ''
   const userImage = session?.user?.image
-
-  // Redirect if not logged in with Twitter or not approved
+  
+  // Debug logging for scout page
   useEffect(() => {
-    // Don't redirect while loading
+    console.log('[Scout Page] Session status:', status);
+    console.log('[Scout Page] Session data:', session);
+    console.log('[Scout Page] User handle:', userHandle);
+  }, [session, status, userHandle]);
+
+  // FIXED: Removed duplicate auth check - middleware already handles authentication
+  // Only check approval status if we have a session
+  useEffect(() => {
     if (status === 'loading') return
     
-    // Only redirect if we're sure there's no session
-    if (status === 'unauthenticated' || (status === 'authenticated' && !userHandle)) {
-      console.log('Scout page: No Twitter session, redirecting to login')
-      router.push('/login')
-      return
-    }
-
-    // If authenticated, check approval status once
+    // Trust that middleware has already validated authentication
+    // We only need to check approval status
     if (status === 'authenticated' && userHandle && isApproved === null) {
       ;(async () => {
         try {

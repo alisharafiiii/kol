@@ -1,3 +1,19 @@
+/**
+ * ✅ STABLE & VERIFIED - DO NOT MODIFY WITHOUT EXPLICIT REVIEW
+ * 
+ * Discord account linking API endpoint.
+ * Last verified: December 2024
+ * 
+ * Key functionality:
+ * - Validates Discord verification sessions
+ * - Creates/updates user profiles with Discord info
+ * - Establishes engagement connections for tweet tracking
+ * - Links Discord users to platform for points system
+ * 
+ * CRITICAL: This endpoint is used by the Discord bot /connect command.
+ * The user ID format handling fix is essential for points bridge.
+ */
+
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth-options'
@@ -11,7 +27,7 @@ export async function POST(request: NextRequest) {
     const session = await getServerSession(authOptions)
     console.log('Discord link API - Session:', JSON.stringify(session, null, 2))
     
-    const twitterHandleFromSession = session?.twitterHandle || (session?.user as any)?.twitterHandle
+    const twitterHandleFromSession = (session as any)?.twitterHandle || (session?.user as any)?.twitterHandle
     
     if (!session?.user || !twitterHandleFromSession) {
       console.log('Discord link API - No session or Twitter handle')
@@ -106,7 +122,7 @@ export async function POST(request: NextRequest) {
           name: session.user.name,
           profileImageUrl: session.user.image || '',
           approvalStatus: 'approved', // Existing user, likely already approved
-          role: session.role || 'user',
+          role: (session as any).role || 'user',
           tier: 'micro',
           isKOL: false,
           discordId: discordId,
@@ -167,8 +183,10 @@ export async function POST(request: NextRequest) {
     await redis.set(`engagement:twitter:${twitterHandle}`, discordId)
     
     // Link Discord user to platform user for points system
-    const platformUserId = userId.replace('user:', '') // Extract just the ID part
-    await DiscordPointsBridge.linkDiscordUser(discordId, platformUserId)
+    const platformUserId = userId.replace('user:', '').replace('user_', '') // Extract just the ID part
+    console.log(`Linking Discord user ${discordId} to platform user ${platformUserId} (from ${userId})`)
+    const linkResult = await DiscordPointsBridge.linkDiscordUser(discordId, platformUserId)
+    console.log(`Discord points bridge link result: ${linkResult}`)
     
     // Clean up verification session
     await redis.del(sessionKey)

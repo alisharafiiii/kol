@@ -83,7 +83,10 @@ export async function GET(req: NextRequest) {
           kolMetrics: profile.kolMetrics,
           notes: profile.notes || [],
           points: profile.points || 0,
-          pointsBreakdown: profile.pointsBreakdown
+          pointsBreakdown: profile.pointsBreakdown,
+          // Ensure Discord fields are included
+          discordId: (profile as any).discordId,
+          discordUsername: (profile as any).discordUsername
         })
       })
       

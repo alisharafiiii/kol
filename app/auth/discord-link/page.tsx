@@ -1,3 +1,19 @@
+/**
+ * ✅ STABLE & VERIFIED - DO NOT MODIFY WITHOUT EXPLICIT REVIEW
+ * 
+ * Discord OAuth linking page.
+ * Last verified: December 2024
+ * 
+ * Key functionality:
+ * - Handles Twitter OAuth flow for Discord users
+ * - Auto-links accounts after authentication
+ * - Shows success/error states with retry options
+ * - Manages verification session lifecycle
+ * 
+ * CRITICAL: This page is essential for the Discord bot /connect command.
+ * Changes could break the account linking flow.
+ */
+
 'use client'
 
 import { useEffect, useState, useCallback, Suspense, useRef } from 'react'

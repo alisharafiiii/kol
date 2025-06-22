@@ -101,6 +101,17 @@ To get started building your own frame, follow these steps:
    - Cast your frame to see it in action
    - Share your frame with others to start building your community
 
+## Stable Code Registry
+
+⚠️ **IMPORTANT**: This project contains verified stable code sections that should not be modified without careful review. See [`STABLE_CODE_REGISTRY.md`](./STABLE_CODE_REGISTRY.md) for:
+- List of all stable code sections
+- Modification guidelines
+- Testing requirements
+
+Key stable sections include:
+- Authentication flow (middleware, JWT, session handling)
+- Tweet sync functionality
+
 ## Learn More
 
 - [MiniKit Documentation](https://docs.base.org/builderkits/minikit/overview)

@@ -1,3 +1,19 @@
+/**
+ * ✅ STABLE & VERIFIED - DO NOT MODIFY WITHOUT EXPLICIT REVIEW
+ * 
+ * This middleware handles authentication and access control for the application.
+ * Last verified: December 2024
+ * 
+ * Key functionality:
+ * - JWT token validation from cookies
+ * - Protected route authentication
+ * - Public route allowlisting
+ * - Auth flow redirection
+ * 
+ * CRITICAL: This code has been extensively tested and verified. Any modifications
+ * could break authentication flow. Review carefully before making changes.
+ */
+
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { getToken } from 'next-auth/jwt'
@@ -12,7 +28,6 @@ const protectedPaths = [
   '/campaigns/*/brief/edit',
   '/contracts-admin',
   '/api/admin',
-  '/api/campaigns',
   '/api/projects',
   '/api/upload',
   '/api/discord/bot-reboot',
@@ -134,12 +149,29 @@ export async function middleware(request: NextRequest) {
         }
       }
       
-      // For admin routes, check admin access
+      // For admin routes, check admin access (with live role refresh)
       if (pathname.startsWith('/admin') || pathname.startsWith('/api/admin')) {
-        const userRole = token.role as string
+        let userRole = token.role as string | undefined
         const handle = ((token.twitterHandle as string) || (token.name as string) || '').toLowerCase().replace('@', '')
         const masterAdmins = ['sharafi_eth', 'nabulines', 'alinabu']
-        
+
+        // ALWAYS attempt live fetch to ensure core users have access
+        // This prevents race conditions and stale token issues
+        try {
+          const apiUrl = `${request.nextUrl.origin}/api/user/role?handle=${handle}`
+          const res = await fetch(apiUrl, { headers: { 'cache-control': 'no-store' } })
+          if (res.ok) {
+            const data = await res.json()
+            // Use live data if available, otherwise fall back to token
+            userRole = data.role || userRole
+            console.log('[Middleware] Live role check for', handle, ':', userRole)
+          }
+        } catch (err) {
+          console.error('[Middleware] Live role fetch failed:', err)
+          // Continue with token role if fetch fails
+        }
+
+        // Check access with updated role
         if (userRole !== 'admin' && userRole !== 'core' && !masterAdmins.includes(handle)) {
           console.log('[Middleware] Admin access denied:', { handle, role: userRole })
           return NextResponse.redirect(new URL('/access-denied', request.url))

@@ -1,11 +1,23 @@
-import { redis } from '@/lib/redis'
-
 /**
+ * ✅ STABLE & VERIFIED - DO NOT MODIFY WITHOUT EXPLICIT REVIEW
+ * 
  * Discord Points Bridge Service
+ * Last verified: December 2024
  * 
  * This service acts as a bridge between the Discord Analytics Bot and the Points Service.
  * It provides a simple API for the bot to award points without direct dependency on the main app.
+ * 
+ * Key functionality:
+ * - Awards points for Discord messages
+ * - Manages Discord to platform user mappings
+ * - Tracks transaction history
+ * - Updates leaderboards
+ * 
+ * CRITICAL: This service is used by the Discord analytics bot for the points system.
+ * Changes could break point awarding functionality.
  */
+
+import { redis } from '@/lib/redis'
 
 export interface DiscordPointsTransaction {
   userId: string

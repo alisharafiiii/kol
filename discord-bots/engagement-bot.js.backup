@@ -1,25 +1,19 @@
+const { Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle, REST, Routes } = require('discord.js')
+const { config } = require('dotenv')
+const { Redis } = require('@upstash/redis')
+const { GoogleGenerativeAI } = require('@google/generative-ai')
 const path = require('path')
 const { nanoid } = require('nanoid')
 
 // Load environment variables from parent directory
 const envPath = path.join(__dirname, '..', '.env.local')
 console.log('🔍 Loading environment from:', envPath)
-require('dotenv').config({ path: envPath })
-
-const { Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle, REST, Routes } = require('discord.js')
-const { Redis } = require('@upstash/redis')
-const { GoogleGenerativeAI } = require('@google/generative-ai')
+config({ path: envPath })
 
 // Check required environment variables
-const requiredVars = ['UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN']
+const requiredVars = ['UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN', 'DISCORD_BOT_TOKEN']
 const optionalVars = ['GEMINI_API_KEY', 'GOOGLE_AI_API_KEY'] // Try both for compatibility
 const missingVars = requiredVars.filter(v => !process.env[v])
-
-// Check for Discord bot token (either name)
-const hasDiscordToken = process.env.DISCORD_ENGAGEMENT_BOT_TOKEN || process.env.DISCORD_BOT_TOKEN
-if (!hasDiscordToken) {
-  missingVars.push('DISCORD_ENGAGEMENT_BOT_TOKEN or DISCORD_BOT_TOKEN')
-}
 
 // Check for Gemini/Google AI key
 const hasAiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY
@@ -158,8 +152,8 @@ async function isUserApproved(twitterHandle) {
       return { approved: false, userData: null, exists: false }
     }
     
-    // Get user data - use the ID directly without prefixing
-    const userData = await redis.json.get(userIds[0])
+    // Get user data
+    const userData = await redis.json.get(`user:${userIds[0]}`)
     if (!userData) {
       return { approved: false, userData: null, exists: false }
     }
@@ -193,7 +187,7 @@ async function updateUserRole(twitterHandle, newRole) {
     const userIds = await redis.smembers(`idx:username:${normalizedHandle}`)
     
     if (userIds && userIds.length > 0) {
-      await redis.json.set(userIds[0], '$.role', newRole)
+      await redis.json.set(`user:${userIds[0]}`, '$.role', newRole)
       return true
     }
     return false
@@ -635,7 +629,6 @@ client.on('interactionCreate', async (interaction) => {
       
       const url = interaction.options.getString('url')
       const category = interaction.options.getString('category')
-      console.log(`[SUBMIT] User ${interaction.user.tag} submitting tweet: ${url}`)
       
       // Validate URL
       const tweetId = extractTweetId(url)
@@ -643,7 +636,6 @@ client.on('interactionCreate', async (interaction) => {
         await interaction.editReply('❌ Invalid tweet URL. Please provide a valid Twitter/X URL.')
         return
       }
-      console.log(`[SUBMIT] Tweet ID extracted: ${tweetId}`)
       
       // Check if user is connected
       const connection = await redis.json.get(`engagement:connection:${interaction.user.id}`)
@@ -651,21 +643,16 @@ client.on('interactionCreate', async (interaction) => {
         await interaction.editReply('❌ Please connect your Twitter account first using `/connect`')
         return
       }
-      console.log(`[SUBMIT] User connected as @${connection.twitterHandle}`)
       
       // Check if user is still approved
-      console.log(`[SUBMIT] Checking approval status for @${connection.twitterHandle}...`)
       const { approved } = await isUserApproved(connection.twitterHandle)
-      console.log(`[SUBMIT] Approval status: ${approved}`)
       if (!approved) {
         await interaction.editReply('❌ Your Twitter account is no longer approved. Please contact an admin.')
         return
       }
       
       // Check tier scenarios
-      console.log(`[SUBMIT] Getting tier scenarios for tier: ${connection.tier}`)
       const scenarios = await getTierScenarios(connection.tier)
-      console.log(`[SUBMIT] Tier scenarios loaded: daily limit = ${scenarios.dailyTweetLimit}`)
       
       // Check daily limit
       const today = new Date().toISOString().split('T')[0]
@@ -708,6 +695,7 @@ client.on('interactionCreate', async (interaction) => {
       
       // Submit tweet
       try {
+        const { nanoid } = await import('nanoid')
         // Try to fetch tweet content from Twitter API
         let tweetContent = null
         try {
@@ -992,7 +980,7 @@ client.on('interactionCreate', async (interaction) => {
       // Save scenarios
       await redis.json.set(`engagement:scenarios:${tier}`, '$', currentScenarios)
       
-            await interaction.reply({ 
+      await interaction.reply({ 
         content: `✅ Updated ${tier.toUpperCase()} tier scenarios:\n` +
                  `Daily Limit: ${currentScenarios.dailyTweetLimit}\n` +
                  `Min Followers: ${currentScenarios.minFollowers}\n` +
@@ -1121,20 +1109,6 @@ client.on('interactionCreate', async (interaction) => {
         content: message, 
         flags: 64 
       })
-    }
-  }
-  } catch (error) {
-    console.error('❌ Error handling interaction:', error)
-    
-    // Try to respond to the user
-    try {
-      if (interaction.deferred) {
-        await interaction.editReply({ content: '❌ An error occurred processing your request. Please try again.' })
-      } else if (!interaction.replied) {
-        await interaction.reply({ content: '❌ An error occurred processing your request. Please try again.', flags: 64 })
-      }
-    } catch (replyError) {
-      console.error('Could not send error message to user:', replyError)
     }
   }
 })

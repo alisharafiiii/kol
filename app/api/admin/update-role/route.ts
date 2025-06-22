@@ -58,9 +58,14 @@ export async function POST(req: NextRequest) {
       
       console.log('UPDATE ROLE API: Profile updated successfully in ProfileService');
       
+      // CRITICAL: Invalidate user's session to force JWT refresh
+      const invalidationKey = `auth:invalidate:${normalizedHandle}`;
+      await redis.set(invalidationKey, Date.now(), { ex: 86400 }); // Expire after 24 hours
+      console.log('UPDATE ROLE API: Session invalidated for user to force JWT refresh');
+      
       return NextResponse.json({ 
         success: true,
-        message: 'Role updated successfully',
+        message: 'Role updated successfully. User will need to log in again.',
         profile: {
           id: profile.id,
           handle: profile.twitterHandle,
@@ -97,9 +102,14 @@ export async function POST(req: NextRequest) {
     
     console.log('UPDATE ROLE API: User updated successfully in old Redis system');
     
+    // CRITICAL: Invalidate user's session to force JWT refresh
+    const invalidationKey = `auth:invalidate:${normalizedHandle}`;
+    await redis.set(invalidationKey, Date.now(), { ex: 86400 }); // Expire after 24 hours
+    console.log('UPDATE ROLE API: Session invalidated for user to force JWT refresh');
+    
     return NextResponse.json({ 
       success: true,
-      message: 'Role updated successfully',
+      message: 'Role updated successfully. User will need to log in again.',
       profile: {
         id: userId,
         handle: user.twitterHandle,

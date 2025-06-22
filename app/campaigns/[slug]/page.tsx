@@ -204,21 +204,35 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
   }
 
   const syncTweets = async () => {
-    if (!campaign) return
+    console.log('\n🔄 CLIENT: Sync button clicked')
+    console.log('Campaign:', campaign?.id, campaign?.slug)
+    console.log('Session:', session)
+    console.log('User role:', userRole)
+    
+    if (!campaign) {
+      console.error('No campaign loaded')
+      return
+    }
     
     setSyncing(true)
+    console.log('Making API call to:', `/api/campaigns/${campaign.id}/sync-tweets`)
+    
     try {
       const res = await fetch(`/api/campaigns/${campaign.id}/sync-tweets`, {
         method: 'POST'
       })
       
+      console.log('Response status:', res.status)
+      console.log('Response headers:', Object.fromEntries(res.headers.entries()))
+      
       if (!res.ok) {
         const data = await res.json()
+        console.error('Error response:', data)
         throw new Error(data.error || 'Failed to sync tweets')
       }
       
       const data = await res.json()
-      console.log('Sync response:', data) // Debug log
+      console.log('Sync response data:', JSON.stringify(data, null, 2))
       
       // Extract result - handle different response structures
       const result = data.result || data
@@ -226,6 +240,8 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
       const failed = result.failed ?? 0
       const rateLimited = result.rateLimited ?? false
       const queued = data.queued ?? false
+      
+      console.log('Parsed results:', { synced, failed, rateLimited, queued })
       
       // Show appropriate message based on result
       if (queued) {
@@ -242,12 +258,18 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
       }
       
       // Reload campaign to show updated metrics
+      console.log('Refreshing campaign data...')
       await fetchCampaign()
     } catch (err: any) {
-      console.error('Sync error:', err)
+      console.error('CLIENT: Sync error:', {
+        message: err.message,
+        stack: err.stack,
+        error: err
+      })
       alert(err.message || 'Failed to sync tweets')
     } finally {
       setSyncing(false)
+      console.log('CLIENT: Sync operation completed')
     }
   }
 

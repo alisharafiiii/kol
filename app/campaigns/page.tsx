@@ -7,6 +7,7 @@ import CampaignModal from '@/components/CampaignModal'
 import CampaignCard from '@/components/CampaignCard'
 import type { Campaign } from '@/lib/campaign'
 import { isMasterAdmin } from '@/lib/admin-config'
+import { getTwitterHandleFromSession } from '@/lib/auth-utils'
 
 export default function CampaignsPage() {
   const { data: session, status } = useSession()
@@ -41,8 +42,11 @@ export default function CampaignsPage() {
       }
       
       // Check if user is a master admin
-      const handle = (session as any)?.twitterHandle || session.user?.name || ''
+      const handle = getTwitterHandleFromSession(session) || ''
       console.log('CAMPAIGNS PAGE: User handle:', handle);
+      console.log('CAMPAIGNS PAGE: Session twitterHandle:', (session as any)?.twitterHandle);
+      console.log('CAMPAIGNS PAGE: Session user.name:', session.user?.name);
+      console.log('CAMPAIGNS PAGE: Full session structure:', JSON.stringify(session, null, 2));
       
       const isUserMasterAdmin = isMasterAdmin(handle)
       
@@ -65,7 +69,7 @@ export default function CampaignsPage() {
       try {
         setLoading(true)
         
-        const handle = (session as any)?.twitterHandle || session.user?.name || ''
+        const handle = getTwitterHandleFromSession(session) || ''
         const normalized = encodeURIComponent(handle.replace('@',''))
         console.log('CAMPAIGNS PAGE: Checking profile for handle:', normalized);
         
@@ -84,7 +88,7 @@ export default function CampaignsPage() {
         try {
           const [profileRes, roleRes] = await Promise.all([
             fetchWithTimeout(`/api/user/profile?handle=${normalized}`),
-            fetchWithTimeout('/api/user/role')
+            fetchWithTimeout(`/api/user/role?handle=${normalized}`)
           ])
           
           console.log('CAMPAIGNS PAGE: Profile API status:', profileRes.status);
@@ -121,17 +125,27 @@ export default function CampaignsPage() {
         let allCampaigns = []
         try {
           const campaignsRes = await fetchWithTimeout('/api/campaigns')
+          console.log('CAMPAIGNS PAGE: Campaign API response status:', campaignsRes.status);
+          
           if (campaignsRes.ok) {
             const data = await campaignsRes.json()
             allCampaigns = Array.isArray(data) ? data : []
+            console.log('CAMPAIGNS PAGE: Loaded', allCampaigns.length, 'campaigns');
           } else {
-            console.warn('Failed to fetch campaigns, using empty array')
+            console.warn('CAMPAIGNS PAGE: Campaign API returned:', campaignsRes.status, campaignsRes.statusText);
+            // Try to read error response
+            try {
+              const errorText = await campaignsRes.text();
+              console.error('CAMPAIGNS PAGE: Error response:', errorText.substring(0, 200));
+            } catch (e) {
+              console.error('CAMPAIGNS PAGE: Could not read error response');
+            }
           }
         } catch (campaignError) {
-          console.error('Error fetching campaigns:', campaignError)
-          // Continue with empty campaigns for master admins
-          if (roleData.role === 'admin') {
-            console.log('Admin user, continuing with empty campaigns')
+          console.error('CAMPAIGNS PAGE: Error fetching campaigns:', campaignError)
+          // For approved users, continue with empty campaigns instead of throwing error
+          if (roleData.role === 'admin' || profileData.user?.approvalStatus === 'approved') {
+            console.log('CAMPAIGNS PAGE: Approved user, continuing with empty campaigns')
             allCampaigns = []
           } else {
             throw campaignError
@@ -139,7 +153,7 @@ export default function CampaignsPage() {
         }
         
         // Check if user is a team member in any campaign
-        const userHandle = (session as any)?.twitterHandle || session.user.name
+        const userHandle = getTwitterHandleFromSession(session) || ''
         const isTeamMember = allCampaigns.some((campaign: Campaign) => 
           campaign.teamMembers.includes(userHandle) || 
           campaign.createdBy === userHandle
