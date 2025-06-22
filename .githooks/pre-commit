@@ -1,0 +1,74 @@
+#!/bin/bash
+
+# 🔒 LOCKED SECTION MONITOR - Git Pre-commit Hook
+# This hook monitors changes to protected code sections marked with 🔒 LOCKED SECTION
+# To bypass this check, use: git commit --no-verify
+
+echo "🔒 Checking for modifications to LOCKED SECTIONS..."
+
+# Check if components/KOLTable.tsx is being modified
+if git diff --cached --name-only | grep -q "components/KOLTable.tsx"; then
+    echo "📋 Detected changes to components/KOLTable.tsx"
+    
+    # Get the line numbers of locked sections in the current file
+    LOCKED_START=$(grep -n "🔒 LOCKED SECTION" components/KOLTable.tsx | head -1 | cut -d: -f1)
+    LOCKED_END=$(grep -n "🔒 END LOCKED SECTION" components/KOLTable.tsx | head -1 | cut -d: -f1)
+    
+    if [ -n "$LOCKED_START" ] && [ -n "$LOCKED_END" ]; then
+        echo "   Found LOCKED SECTION at lines $LOCKED_START-$LOCKED_END"
+        
+        # Check if any changes are within the locked section
+        CHANGES=$(git diff --cached -U0 components/KOLTable.tsx | grep "^@@" | while read -r line; do
+            # Extract line numbers from diff output
+            if [[ $line =~ \+([0-9]+)(,([0-9]+))? ]]; then
+                START_LINE=${BASH_REMATCH[1]}
+                if [ -n "${BASH_REMATCH[3]}" ]; then
+                    NUM_LINES=${BASH_REMATCH[3]}
+                else
+                    NUM_LINES=1
+                fi
+                END_LINE=$((START_LINE + NUM_LINES - 1))
+                
+                # Check if change overlaps with locked section
+                if [ $START_LINE -le $LOCKED_END ] && [ $END_LINE -ge $LOCKED_START ]; then
+                    echo "LOCKED"
+                    break
+                fi
+            fi
+        done)
+        
+        if [ "$CHANGES" = "LOCKED" ]; then
+            echo ""
+            echo "❌ ERROR: Attempting to modify LOCKED SECTION!"
+            echo "   Lines $LOCKED_START-$LOCKED_END in components/KOLTable.tsx are protected."
+            echo ""
+            echo "   This section contains critical KOL deduplication logic."
+            echo "   DO NOT MODIFY WITHOUT CODE REVIEW"
+            echo ""
+            echo "   To proceed anyway (NOT RECOMMENDED):"
+            echo "   1. Get code review approval"
+            echo "   2. Use: git commit --no-verify"
+            echo ""
+            echo "   Changes detected in locked section:"
+            git diff --cached components/KOLTable.tsx | grep -A5 -B5 "LOCKED SECTION"
+            exit 1
+        fi
+    fi
+fi
+
+# Also check server-side file
+if git diff --cached --name-only | grep -q "app/api/campaigns/\[id\]/kols/route.ts"; then
+    echo "📋 Detected changes to app/api/campaigns/[id]/kols/route.ts"
+    
+    # Check for modifications to STABLE & VERIFIED sections
+    if git diff --cached app/api/campaigns/\[id\]/kols/route.ts | grep -E "(STABLE & VERIFIED|CRITICAL FIX)" > /dev/null; then
+        echo ""
+        echo "⚠️  WARNING: Modifying STABLE & VERIFIED sections!"
+        echo "   These sections contain critical deduplication logic."
+        echo "   Make sure changes are reviewed and tested."
+        echo ""
+    fi
+fi
+
+echo "✅ Pre-commit check passed"
+exit 0 

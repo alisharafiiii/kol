@@ -1,0 +1,85 @@
+name: Monitor Locked Sections
+
+on:
+  pull_request:
+    paths:
+      - 'components/KOLTable.tsx'
+      - 'app/api/campaigns/[id]/kols/route.ts'
+
+jobs:
+  check-locked-sections:
+    runs-on: ubuntu-latest
+    name: Check for modifications to locked sections
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    
+    - name: Check for LOCKED SECTION modifications
+      run: |
+        echo "🔒 Checking for modifications to LOCKED SECTIONS..."
+        
+        # Check if KOLTable.tsx has changes
+        if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q "components/KOLTable.tsx"; then
+          echo "📋 Detected changes to components/KOLTable.tsx"
+          
+          # Get line numbers of locked sections
+          LOCKED_START=$(grep -n "🔒 LOCKED SECTION" components/KOLTable.tsx | head -1 | cut -d: -f1)
+          LOCKED_END=$(grep -n "🔒 END LOCKED SECTION" components/KOLTable.tsx | head -1 | cut -d: -f1)
+          
+          if [ -n "$LOCKED_START" ] && [ -n "$LOCKED_END" ]; then
+            echo "Found LOCKED SECTION at lines $LOCKED_START-$LOCKED_END"
+            
+            # Check if changes are in locked section
+            if git diff origin/${{ github.base_ref }}...HEAD -- components/KOLTable.tsx | grep -A5 -B5 "LOCKED SECTION" > locked_changes.txt; then
+              if [ -s locked_changes.txt ]; then
+                echo "::error file=components/KOLTable.tsx,line=$LOCKED_START::🔒 LOCKED SECTION detected in changes! This section contains critical KOL deduplication logic and requires code review."
+                echo ""
+                echo "❌ Changes detected in LOCKED SECTION:"
+                cat locked_changes.txt
+                exit 1
+              fi
+            fi
+          fi
+        fi
+        
+        # Check server-side file
+        if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q "app/api/campaigns/\[id\]/kols/route.ts"; then
+          echo "📋 Detected changes to kols/route.ts"
+          
+          if git diff origin/${{ github.base_ref }}...HEAD -- "app/api/campaigns/\[id\]/kols/route.ts" | grep -E "(STABLE & VERIFIED|CRITICAL FIX)"; then
+            echo "::warning::⚠️ Modifying STABLE & VERIFIED sections! Ensure proper code review."
+          fi
+        fi
+        
+        echo "✅ Check completed"
+    
+    - name: Comment on PR
+      if: failure()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `## 🔒 Protected Section Modified
+
+This PR attempts to modify a LOCKED SECTION in \`components/KOLTable.tsx\`.
+
+These sections contain critical KOL deduplication logic that prevents duplicate entries when adding products to campaigns.
+
+### Required Actions:
+1. **Get code review** from a senior developer
+2. **Document the reason** for modifying the locked section
+3. **Update tests** to ensure deduplication still works
+4. **Update the lock markers** if the modification is approved
+
+The locked sections are marked with:
+- \`🔒 LOCKED SECTION - DO NOT MODIFY WITHOUT CODE REVIEW\`
+- \`✅ STABLE & VERIFIED — DO NOT MODIFY WITHOUT CODE REVIEW\`
+
+If this change is absolutely necessary, please explain why in this PR.`
+          }) 
