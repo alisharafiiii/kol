@@ -106,10 +106,12 @@ function extractTwitterHandle(url) {
 }
 
 // Create a new user profile (pending approval)
-async function createUserProfile(twitterHandle, discordId) {
+async function createUserProfile(twitterHandle, discordId, discordUsername = null) {
   try {
     const normalizedHandle = twitterHandle.toLowerCase().replace('@', '')
     const userId = `user_${normalizedHandle}`
+    
+    console.log(`[createUserProfile] Creating profile for @${normalizedHandle} with Discord: ${discordUsername || 'Unknown'}`)
     
     const newUser = {
       id: userId,
@@ -119,6 +121,7 @@ async function createUserProfile(twitterHandle, discordId) {
       role: 'user', // Default to user role
       tier: 'micro', // Default tier
       discordId: discordId,
+      discordUsername: discordUsername, // Add Discord username
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       socialAccounts: {
@@ -126,6 +129,15 @@ async function createUserProfile(twitterHandle, discordId) {
           handle: normalizedHandle,
           connected: true
         }
+      }
+    }
+    
+    // Add Discord to social accounts if we have the username
+    if (discordUsername) {
+      newUser.socialAccounts.discord = {
+        id: discordId,
+        username: discordUsername,
+        connected: true
       }
     }
     
@@ -138,7 +150,7 @@ async function createUserProfile(twitterHandle, discordId) {
     // Add to pending users set (not approved)
     await redis.sadd('users:pending', userId)
     
-    console.log(`✅ Created new user profile (pending) for @${normalizedHandle}`)
+    console.log(`✅ Created new user profile (pending) for @${normalizedHandle} with Discord: ${discordUsername || 'Not provided'}`)
     return newUser
   } catch (error) {
     console.error('Error creating user profile:', error)
@@ -1014,8 +1026,8 @@ client.on('interactionCreate', async (interaction) => {
       // If user doesn't exist, create a new profile (pending approval)
       if (!exists) {
         try {
-          const newUser = await createUserProfile(cleanHandle, interaction.user.id)
-          console.log(`✅ Created new profile (pending) for @${cleanHandle}`)
+          const newUser = await createUserProfile(cleanHandle, interaction.user.id, interaction.user.username)
+          console.log(`✅ Created new profile (pending) for @${cleanHandle} with Discord: ${interaction.user.username}`)
           
           await interaction.reply({ 
             content: `📝 Your Twitter account @${cleanHandle} has been registered!\n\n` +
