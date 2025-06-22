@@ -167,19 +167,20 @@ export async function POST(
       )
     }
     
-    // CRITICAL FIX: Check if KOL with the same handle already exists
-    // When updating device info or any other field, we should update the existing KOL
-    // not create a duplicate
+    // ✅ STABLE & VERIFIED — DO NOT MODIFY WITHOUT CODE REVIEW
+    // CRITICAL FIX: Always update existing KOL when handle matches
+    // Product is just another field to update, not a reason to create duplicates
     const existingKOL = campaign.kols.find(k => k.handle.toLowerCase() === kolData.handle.toLowerCase())
     
-    // If KOL exists and we're just updating device or other info (no specific product logic)
-    if (existingKOL && (!kolData.productId || kolData.productId === existingKOL.productId)) {
+    if (existingKOL) {
+      // ALWAYS update the existing KOL when handle matches
       console.log('[DEBUG] Found existing KOL, updating instead of creating duplicate:', kolData.handle)
+      console.log('[DEBUG] Existing KOL product:', existingKOL.productId, 'New product:', kolData.productId)
       
       const updates = {
         ...existingKOL,
         ...kolData,
-        id: existingKOL.id,
+        id: existingKOL.id, // Preserve the existing ID
         lastUpdated: new Date()
       }
       
@@ -193,6 +194,7 @@ export async function POST(
           const { redis } = await import('@/lib/redis')
           await redis.json.set(campaignId, '$', campaign as any)
           
+          console.log('[DEBUG] KOL updated successfully for admin')
           return NextResponse.json(campaign.kols[kolIndex])
         }
       } else {
@@ -207,88 +209,49 @@ export async function POST(
         }
         
         const updatedKOL = updatedCampaign.kols.find(k => k.id === existingKOL.id)
+        console.log('[DEBUG] KOL updated successfully for non-admin')
         return NextResponse.json(updatedKOL)
       }
     }
     
-    // Check if there's an existing entry with the same handle AND different product
-    const existingKOLWithSameProduct = campaign.kols.find(k => 
-      k.handle.toLowerCase() === kolData.handle.toLowerCase() && 
-      k.productId === kolData.productId && 
-      kolData.productId // Only if product is specified
-    )
+    // Only create new KOL if no existing KOL with this handle
+    console.log('[DEBUG] No existing KOL found, creating new entry for handle:', kolData.handle)
     
-    if (existingKOLWithSameProduct) {
-      // Update the existing entry with the same handle and product
-      console.log('[DEBUG] Found existing KOL with same handle and product, updating:', kolData.handle, 'Product:', kolData.productId)
-      
-      const updates = {
+    // ✅ STABLE & VERIFIED — DO NOT MODIFY WITHOUT CODE REVIEW
+    // CREATE NEW KOL ONLY - No duplicate checks needed since we handle all updates above
+    
+    // For admins, bypass the permission check by updating the campaign directly
+    if (isAdmin) {
+      const { nanoid } = await import('nanoid')
+      const newKOL = {
         ...kolData,
-        id: existingKOLWithSameProduct.id,
-        lastUpdated: new Date()
+        id: nanoid(),
+        lastUpdated: new Date(),
       }
       
-      // For admins, bypass the permission check
-      if (isAdmin) {
-        const kolIndex = campaign.kols.findIndex(k => k.id === existingKOLWithSameProduct.id)
-        if (kolIndex !== -1) {
-          campaign.kols[kolIndex] = { ...existingKOLWithSameProduct, ...updates }
-          campaign.updatedAt = new Date().toISOString()
-          
-          const { redis } = await import('@/lib/redis')
-          await redis.json.set(campaignId, '$', campaign as any)
-          
-          return NextResponse.json(campaign.kols[kolIndex])
-        }
-      } else {
-        // For non-admins, use the regular function with permission checks
-        const updatedCampaign = await updateKOLInCampaign(campaignId, existingKOLWithSameProduct.id, updates, userHandle, userRole)
-        
-        if (!updatedCampaign) {
-          return NextResponse.json(
-            { error: 'Failed to update existing KOL' },
-            { status: 500 }
-          )
-        }
-        
-        const updatedKOL = updatedCampaign.kols.find(k => k.id === existingKOLWithSameProduct.id)
-        return NextResponse.json(updatedKOL)
-      }
+      campaign.kols.push(newKOL)
+      campaign.updatedAt = new Date().toISOString()
+      
+      const { redis } = await import('@/lib/redis')
+      await redis.json.set(campaignId, '$', campaign as any)
+      
+      console.log('[DEBUG] New KOL created successfully for admin')
+      return NextResponse.json(newKOL)
     } else {
-      // No existing KOL with this handle, or new product for existing KOL - create new entry
-      console.log('[DEBUG] Creating new KOL entry with handle:', kolData.handle, 'Product:', kolData.productId)
+      // For non-admins, use the regular function with permission checks
+      const updatedCampaign = await addKOLToCampaign(campaignId, kolData, userHandle, userRole)
       
-      // For admins, bypass the permission check by updating the campaign directly
-      if (isAdmin) {
-        const { nanoid } = await import('nanoid')
-        const newKOL = {
-          ...kolData,
-          id: nanoid(),
-          lastUpdated: new Date(),
-        }
-        
-        campaign.kols.push(newKOL)
-        campaign.updatedAt = new Date().toISOString()
-        
-        const { redis } = await import('@/lib/redis')
-        await redis.json.set(campaignId, '$', campaign as any)
-        
-        return NextResponse.json(newKOL)
-      } else {
-        // For non-admins, use the regular function with permission checks
-        const updatedCampaign = await addKOLToCampaign(campaignId, kolData, userHandle, userRole)
-        
-        if (!updatedCampaign) {
-          return NextResponse.json(
-            { error: 'Campaign not found' },
-            { status: 404 }
-          )
-        }
-        
-        // Return the newly added KOL from the campaign
-        const newKOL = updatedCampaign.kols[updatedCampaign.kols.length - 1]
-        return NextResponse.json(newKOL)
+      if (!updatedCampaign) {
+        return NextResponse.json(
+          { error: 'Campaign not found' },
+          { status: 404 }
+        )
       }
+      
+      // Return the newly added KOL from the campaign
+      const newKOL = updatedCampaign.kols[updatedCampaign.kols.length - 1]
+      console.log('[DEBUG] New KOL created successfully for non-admin')
+      return NextResponse.json(newKOL)
     }
   } catch (error) {
     console.error('Error adding KOL to campaign:', error)

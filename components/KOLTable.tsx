@@ -26,6 +26,15 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
   const [selectedProducts, setSelectedProducts] = useState<string[]>([])
   const [newLinkInput, setNewLinkInput] = useState('')
 
+  // Debug logging
+  console.log('[KOLTable] Rendered with:', { 
+    canEdit, 
+    kolsCount: kols.length, 
+    campaignId,
+    hasOnUpdate: !!onUpdate,
+    hasOnDelete: !!onDelete 
+  })
+
   const stages: KOL['stage'][] = ['reached out', 'preparing', 'posted', 'done', 'cancelled']
   const devices: KOL['device'][] = ['na', 'on the way', 'received', 'owns', 'sent before', 'problem']
   const payments: KOL['payment'][] = ['pending', 'approved', 'paid', 'rejected']
@@ -52,7 +61,11 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
   }
 
   const startEdit = (kolId: string, field: string, value: any) => {
-    if (!canEdit) return
+    console.log('[KOLTable] startEdit called:', { kolId, field, value, canEdit })
+    if (!canEdit) {
+      console.log('[KOLTable] Edit blocked - canEdit is false')
+      return
+    }
     setEditingId(kolId)
     setEditingField(field)
     setEditValue(value)
@@ -455,7 +468,15 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
                   ) : (
                     <span 
                       className="text-xs cursor-pointer"
-                      onClick={() => canEdit && startEdit(kol.id, 'budget', kol.budget)}
+                      onClick={(e) => {
+                        console.log('[KOLTable] Budget cell clicked!', { 
+                          canEdit, 
+                          kolId: kol.id, 
+                          currentBudget: kol.budget,
+                          event: e 
+                        })
+                        canEdit && startEdit(kol.id, 'budget', kol.budget)
+                      }}
                     >
                       {kol.budget}
                     </span>
@@ -588,42 +609,75 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
                                           return
                                         }
                                         
-                                        // Create a new KOL entry with this product
+                                        // ✅ FIXED: Update existing KOL with product instead of creating duplicate
                                         try {
-                                          const res = await fetch(`/api/campaigns/${campaignId}/kols`, {
-                                            method: 'POST',
-                                            headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({
-                                              handle: kol.handle,
-                                              name: kol.name,
-                                              pfp: kol.pfp,
-                                              tier: kol.tier,
-                                              stage: kol.stage,
-                                              device: kol.device,
-                                              budget: "0",
-                                              payment: kol.payment,
-                                              platform: kol.platform || ['x'],
-                                              contact: kol.contact || '',
-                                              links: kol.links || [],
-                                              views: kol.views || 0,
+                                          // 🔒 LOCKED SECTION - DO NOT MODIFY WITHOUT CODE REVIEW
+                                          // This logic prevents duplicate KOL entries when adding products
+                                          
+                                          // Disable button to prevent double-clicks
+                                          setUpdatingProduct(kol.id)
+                                          
+                                          // Check if this KOL already has any products
+                                          const hasProducts = kolProducts.length > 0
+                                          
+                                          console.log('[KOLTable] Adding product:', {
+                                            kolHandle: kol.handle,
+                                            kolId: kol.id,
+                                            productId: p.id,
+                                            hasProducts,
+                                            existingProductCount: kolProducts.length
+                                          })
+                                          
+                                          if (!hasProducts && kol.id) {
+                                            // No products yet - update the existing entry
+                                            console.log('[KOLTable] Updating existing KOL with first product')
+                                            await onUpdate(kol.id, {
                                               productId: p.id,
                                               productCost: p.price,
                                               productQuantity: quantity
                                             })
-                                          })
-                                          if (res.ok) {
-                                            // Close modal and trigger parent refresh
-                                            setShowProductModal(null)
-                                            // Call the parent's fetch function if available
-                                            if ((window as any).refreshCampaignData) {
-                                              (window as any).refreshCampaignData()
-                                            } else {
-                                              // Fallback to reload if no refresh function
-                                              window.location.reload()
-                                            }
                                           } else {
-                                            const error = await res.json()
-                                            alert(error.error || 'Failed to add product')
+                                            // Already has products - need to create additional entry
+                                            // This is the ONLY case where we create a new entry
+                                            console.log('[KOLTable] Creating additional product entry for KOL with existing products')
+                                            const res = await fetch(`/api/campaigns/${campaignId}/kols`, {
+                                              method: 'POST',
+                                              headers: { 'Content-Type': 'application/json' },
+                                              body: JSON.stringify({
+                                                handle: kol.handle,
+                                                name: kol.name,
+                                                pfp: kol.pfp,
+                                                tier: kol.tier,
+                                                stage: kol.stage,
+                                                device: kol.device,
+                                                budget: "0",
+                                                payment: kol.payment,
+                                                platform: kol.platform || ['x'],
+                                                contact: kol.contact || '',
+                                                links: kol.links || [],
+                                                views: kol.views || 0,
+                                                productId: p.id,
+                                                productCost: p.price,
+                                                productQuantity: quantity
+                                              })
+                                            })
+                                            if (!res.ok) {
+                                              const error = await res.json()
+                                              console.error('[KOLTable] Failed to add product:', error)
+                                              throw new Error(error.error || 'Failed to add product')
+                                            }
+                                          }
+                                          
+                                          // 🔒 END LOCKED SECTION
+                                          
+                                          // Close modal and trigger parent refresh
+                                          setShowProductModal(null)
+                                          // Call the parent's fetch function if available
+                                          if ((window as any).refreshCampaignData) {
+                                            await (window as any).refreshCampaignData()
+                                          } else {
+                                            // Fallback to reload if no refresh function
+                                            window.location.reload()
                                           }
                                         } catch (error) {
                                           console.error('Error adding product:', error)

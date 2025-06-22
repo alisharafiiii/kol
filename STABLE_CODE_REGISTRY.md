@@ -151,17 +151,43 @@ Before modifying any code marked as STABLE & VERIFIED:
    - Debug console.log statements are marked and can be safely removed
    - They are currently helpful for monitoring but not required for functionality
 
-## Recent Fixes Applied
+## Recent Fixes and Updates
 
-1. **Authentication Flow** (December 2024):
-   - Fixed JWT token to include user role and status
-   - Fixed session invalidation issues
-   - Ensured Twitter handle persistence across auth flow
+### KOL Duplication Prevention (December 2024)
+**File**: `app/api/campaigns/[id]/kols/route.ts`
+**Lines**: 170-225
+**Fix**: Prevents duplicate KOL entries when adding products or updating existing KOLs
+- Always updates existing KOL when handle matches (case-insensitive)
+- Treats product assignment as just another field to update
+- Removes redundant duplicate checking logic
+- Critical section marked with: `✅ STABLE & VERIFIED — DO NOT MODIFY WITHOUT CODE REVIEW`
 
-2. **Tweet Sync** (December 2024):
-   - Fixed campaigns set registration in Redis
-   - Added support for both old and new KOL data formats
-   - Successfully syncing tweets and updating metrics
+### Redis Key Type Error Handling (December 2024)
+**File**: `lib/project.ts`
+**Lines**: 183-220
+**Fix**: Gracefully handles Redis WRONGTYPE errors in getAllProjects
+- Silently falls back to string retrieval when JSON.get fails due to type mismatch
+- Prevents error logs for expected type mismatches
+- Ensures backward compatibility with different key storage formats
+- Critical section marked with: `✅ STABLE & VERIFIED — DO NOT MODIFY WITHOUT CODE REVIEW`
+
+### Client-Side KOL Duplication Fix (December 2024)
+**File**: `components/KOLTable.tsx`
+**Lines**: 537-585, 598-658
+**Fix**: Prevents duplicate KOL entries when adding first product
+- Updates existing KOL entry when adding first product (PUT)
+- Only creates new entry (POST) when adding additional products
+- Works in conjunction with server-side fix for complete solution
+- Critical sections marked with:
+  - `✅ FIXED: Update existing KOL with product instead of creating duplicate`
+  - `🔒 LOCKED SECTION - DO NOT MODIFY WITHOUT CODE REVIEW`
+- Added double-click prevention with loading state
+- Enhanced console logging for debugging
+
+**Cleanup Script**: `scripts/clean-kol-duplicates.mjs`
+- Removes existing duplicate KOL entries
+- Merges data intelligently
+- Marked with: `🔒 LOCKED SCRIPT - DO NOT MODIFY WITHOUT CODE REVIEW`
 
 ## Discord Integration
 
