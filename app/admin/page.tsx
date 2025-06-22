@@ -184,6 +184,25 @@ export default function AdminPage() {
                          
     console.log('ADMIN PAGE: Rendering access denied. Handle:', twitterHandle, 'Role:', userRole);
     
+    // If we're still checking authentication, don't show access denied yet
+    if (status === 'loading') {
+      return (
+        <div className="flex min-h-screen items-center justify-center bg-black font-mono text-green-300">
+          <div className="animate-pulse">Checking authentication...</div>
+        </div>
+      )
+    }
+    
+    // If no session at all, redirect to sign in
+    if (!session) {
+      // Use window.location.replace to ensure clean redirect without modal issues
+      if (typeof window !== 'undefined') {
+        const signInUrl = `/auth/signin?callbackUrl=${encodeURIComponent(window.location.href)}`;
+        window.location.replace(signInUrl);
+      }
+      return null;
+    }
+    
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-black font-mono text-red-400 p-6">
         <div className="border border-red-500 p-6 max-w-md text-center">

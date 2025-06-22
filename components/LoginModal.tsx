@@ -5,7 +5,6 @@ import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { getNames, getCode } from 'country-list'
 import { useRouter } from 'next/navigation'
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom'
-import { identifyUser } from "@/lib/user-identity"
 import ProfileModal from '@/components/ProfileModal'
 
 // Define custom types for wallet interfaces
@@ -143,6 +142,18 @@ export default function LoginModal() {
           if (data.user) {
             setUserProfile(data.user);
             setHasProfile(true);
+            
+            // IMPORTANT: Hide modal after successful login for admin/core users
+            if (data.user.role === 'admin' || data.user.role === 'core') {
+              console.log('[LoginModal] Admin/Core user detected, hiding modal');
+              setStage('hidden');
+            }
+            
+            // Also hide for approved users if they're not in an active flow
+            if (data.user.approvalStatus === 'approved' && stage === 'choice') {
+              console.log('[LoginModal] Approved user detected, hiding modal');
+              setStage('hidden');
+            }
           } else if (data) {
             setUserProfile(data);
             setHasProfile(true);
@@ -161,10 +172,15 @@ export default function LoginModal() {
     const interval = setInterval(fetchUserProfile, 5000)
     
     return () => clearInterval(interval)
-  }, [session])
+  }, [session, stage])
 
   // Update wallet state when Wagmi account changes
   useEffect(() => {
+    // Skip this effect if we're not on the wallet connection stage
+    if (stage !== 'enter' && stage !== 'wallet') {
+      return;
+    }
+    
     if (isConnected && address) {
       // Only update Coinbase if we're connecting via Wagmi and no MetaMask connection exists
       console.log('Wagmi connection detected:', { address, isConnected });
@@ -193,8 +209,8 @@ export default function LoginModal() {
           coinbase: address // Preserve original case for display
         }
       }));
-    } else if (!isConnected) {
-      // If disconnected, clear the coinbase wallet only
+    } else if (!isConnected && stage === 'enter') {
+      // Only clear if we're explicitly on the wallet connection stage
       console.log('Wagmi disconnected, clearing Coinbase wallet state');
       setConnectedWallets(prev => ({
         ...prev,
@@ -205,7 +221,7 @@ export default function LoginModal() {
         }
       }));
     }
-  }, [isConnected, address, connectedWallets.metamask, connectedWallets.addresses.metamask]);
+  }, [isConnected, address, connectedWallets.metamask, connectedWallets.addresses.metamask, stage]);
 
   // Step 1 - Campaign Fit state
   const [countrySearch, setCountrySearch] = useState('')
@@ -242,11 +258,19 @@ export default function LoginModal() {
   // Check if the user is logged in with Twitter/X
   const isLoggedIn = !!session?.user;
   
-  // Show license view by default if logged in
+  // Handle initial state for logged-in users
   useEffect(() => {
     // Don't automatically show anything on load
     // Let the triple-click mechanism handle showing the modal
-  }, [isLoggedIn, stage]);
+    
+    // But ensure admin users don't get stuck with modal open
+    if (isLoggedIn && userProfile && stage === 'choice') {
+      if (userProfile.role === 'admin' || userProfile.role === 'core') {
+        console.log('[LoginModal] Admin/Core user on load, ensuring modal is hidden');
+        setStage('hidden');
+      }
+    }
+  }, [isLoggedIn, stage, userProfile]);
 
   // Keep handleTripleTap, but remove the global assignment
   const handleTripleTap = () => {
@@ -376,7 +400,16 @@ export default function LoginModal() {
             role: "user" as const
           };
           
-          await identifyUser(walletData);
+          // Call API endpoint instead of directly using identifyUser
+          try {
+            await fetch('/api/user/identify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(walletData)
+            });
+          } catch (err) {
+            console.error('Failed to identify user:', err);
+          }
         }
         
         setWalletConnectionPending(false);
@@ -536,7 +569,12 @@ export default function LoginModal() {
               role: "user" as const
             };
             
-            await identifyUser(walletData);
+            // Call API endpoint instead of directly using identifyUser
+            await fetch('/api/user/identify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(walletData)
+            });
           } catch (identifyError) {
             console.error('Error identifying user after wallet connection:', identifyError);
             // Don't show error to user since the wallet is connected
@@ -1041,8 +1079,18 @@ export default function LoginModal() {
         role: "user" as const
       };
       
-      // Identify or create user
-      const { user, isNewUser } = await identifyUser(walletData);
+      // Identify or create user via API endpoint
+      const response = await fetch('/api/user/identify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(walletData)
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to identify user');
+      }
+      
+      const { user, isNewUser } = await response.json();
       
       // Update state with user info
       setConnectedWallets(prev => ({

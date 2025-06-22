@@ -76,98 +76,104 @@ async function processBatch() {
         })
         
         // Get users who liked the tweet
-        const likers = await readOnlyClient.v2.tweetLikedBy(tweet.tweetId, {
+        const likersResponse = await readOnlyClient.v2.tweetLikedBy(tweet.tweetId, {
           max_results: 100,
           'user.fields': ['username']
         })
         
-        for await (const liker of likers) {
-          const connection = await redis.get(`engagement:twitter:${liker.username.toLowerCase()}`)
-          if (connection) {
-            // User is connected, award points
-            const userConnection = await redis.json.get(`engagement:connection:${connection}`)
-            if (userConnection) {
-              const pointRule = await redis.json.get(`engagement:rules:${userConnection.tier}-like`)
-              const basePoints = pointRule?.points || 1
-              
-              // Get tier scenarios for bonus multiplier
-              const scenarios = await redis.json.get(`engagement:scenarios:tier${userConnection.tier}`)
-              const bonusMultiplier = scenarios?.bonusMultiplier || 1.0
-              const points = Math.round(basePoints * bonusMultiplier)
-              
-              // Check if already logged
-              const existingLog = await redis.get(`engagement:interaction:${tweet.tweetId}:${connection}:like`)
-              if (!existingLog) {
-                // Log engagement
-                const logId = nanoid()
-                const log = {
-                  id: logId,
-                  tweetId: tweet.tweetId,
-                  userDiscordId: connection,
-                  interactionType: 'like',
-                  points,
-                  timestamp: new Date(),
-                  batchId,
-                  bonusMultiplier
+        // Handle paginated response
+        if (likersResponse.data && likersResponse.data.length > 0) {
+          for (const liker of likersResponse.data) {
+            const connection = await redis.get(`engagement:twitter:${liker.username.toLowerCase()}`)
+            if (connection) {
+              // User is connected, award points
+              const userConnection = await redis.json.get(`engagement:connection:${connection}`)
+              if (userConnection) {
+                const pointRule = await redis.json.get(`engagement:rules:${userConnection.tier}-like`)
+                const basePoints = pointRule?.points || 1
+                
+                // Get tier scenarios for bonus multiplier
+                const scenarios = await redis.json.get(`engagement:scenarios:tier${userConnection.tier}`)
+                const bonusMultiplier = scenarios?.bonusMultiplier || 1.0
+                const points = Math.round(basePoints * bonusMultiplier)
+                
+                // Check if already logged
+                const existingLog = await redis.get(`engagement:interaction:${tweet.tweetId}:${connection}:like`)
+                if (!existingLog) {
+                  // Log engagement
+                  const logId = nanoid()
+                  const log = {
+                    id: logId,
+                    tweetId: tweet.tweetId,
+                    userDiscordId: connection,
+                    interactionType: 'like',
+                    points,
+                    timestamp: new Date(),
+                    batchId,
+                    bonusMultiplier
+                  }
+                  
+                  await redis.json.set(`engagement:log:${logId}`, '$', log)
+                  await redis.zadd(`engagement:user:${connection}:logs`, { score: Date.now(), member: logId })
+                  await redis.zadd(`engagement:tweet:${tweet.tweetId}:logs`, { score: Date.now(), member: logId })
+                  await redis.set(`engagement:interaction:${tweet.tweetId}:${connection}:like`, logId)
+                  
+                  // Update user points
+                  await redis.json.numincrby(`engagement:connection:${connection}`, '$.totalPoints', points)
+                  
+                  engagementsFound++
+                  console.log(`✅ Awarded ${points} points to ${liker.username} for liking (x${bonusMultiplier} bonus)`)
                 }
-                
-                await redis.json.set(`engagement:log:${logId}`, '$', log)
-                await redis.zadd(`engagement:user:${connection}:logs`, { score: Date.now(), member: logId })
-                await redis.zadd(`engagement:tweet:${tweet.tweetId}:logs`, { score: Date.now(), member: logId })
-                await redis.set(`engagement:interaction:${tweet.tweetId}:${connection}:like`, logId)
-                
-                // Update user points
-                await redis.json.numincrby(`engagement:connection:${connection}`, '$.totalPoints', points)
-                
-                engagementsFound++
-                console.log(`✅ Awarded ${points} points to ${liker.username} for liking (x${bonusMultiplier} bonus)`)
               }
             }
           }
         }
         
         // Get users who retweeted
-        const retweeters = await readOnlyClient.v2.tweetRetweetedBy(tweet.tweetId, {
+        const retweetersResponse = await readOnlyClient.v2.tweetRetweetedBy(tweet.tweetId, {
           max_results: 100,
           'user.fields': ['username']
         })
         
-        for await (const retweeter of retweeters) {
-          const connection = await redis.get(`engagement:twitter:${retweeter.username.toLowerCase()}`)
-          if (connection) {
-            const userConnection = await redis.json.get(`engagement:connection:${connection}`)
-            if (userConnection) {
-              const pointRule = await redis.json.get(`engagement:rules:${userConnection.tier}-retweet`)
-              const basePoints = pointRule?.points || 2
-              
-              // Get tier scenarios for bonus multiplier
-              const scenarios = await redis.json.get(`engagement:scenarios:tier${userConnection.tier}`)
-              const bonusMultiplier = scenarios?.bonusMultiplier || 1.0
-              const points = Math.round(basePoints * bonusMultiplier)
-              
-              const existingLog = await redis.get(`engagement:interaction:${tweet.tweetId}:${connection}:retweet`)
-              if (!existingLog) {
-                const logId = nanoid()
-                const log = {
-                  id: logId,
-                  tweetId: tweet.tweetId,
-                  userDiscordId: connection,
-                  interactionType: 'retweet',
-                  points,
-                  timestamp: new Date(),
-                  batchId,
-                  bonusMultiplier
+        // Handle paginated response
+        if (retweetersResponse.data && retweetersResponse.data.length > 0) {
+          for (const retweeter of retweetersResponse.data) {
+            const connection = await redis.get(`engagement:twitter:${retweeter.username.toLowerCase()}`)
+            if (connection) {
+              const userConnection = await redis.json.get(`engagement:connection:${connection}`)
+              if (userConnection) {
+                const pointRule = await redis.json.get(`engagement:rules:${userConnection.tier}-retweet`)
+                const basePoints = pointRule?.points || 2
+                
+                // Get tier scenarios for bonus multiplier
+                const scenarios = await redis.json.get(`engagement:scenarios:tier${userConnection.tier}`)
+                const bonusMultiplier = scenarios?.bonusMultiplier || 1.0
+                const points = Math.round(basePoints * bonusMultiplier)
+                
+                const existingLog = await redis.get(`engagement:interaction:${tweet.tweetId}:${connection}:retweet`)
+                if (!existingLog) {
+                  const logId = nanoid()
+                  const log = {
+                    id: logId,
+                    tweetId: tweet.tweetId,
+                    userDiscordId: connection,
+                    interactionType: 'retweet',
+                    points,
+                    timestamp: new Date(),
+                    batchId,
+                    bonusMultiplier
+                  }
+                  
+                  await redis.json.set(`engagement:log:${logId}`, '$', log)
+                  await redis.zadd(`engagement:user:${connection}:logs`, { score: Date.now(), member: logId })
+                  await redis.zadd(`engagement:tweet:${tweet.tweetId}:logs`, { score: Date.now(), member: logId })
+                  await redis.set(`engagement:interaction:${tweet.tweetId}:${connection}:retweet`, logId)
+                  
+                  await redis.json.numincrby(`engagement:connection:${connection}`, '$.totalPoints', points)
+                  
+                  engagementsFound++
+                  console.log(`✅ Awarded ${points} points to ${retweeter.username} for retweeting (x${bonusMultiplier} bonus)`)
                 }
-                
-                await redis.json.set(`engagement:log:${logId}`, '$', log)
-                await redis.zadd(`engagement:user:${connection}:logs`, { score: Date.now(), member: logId })
-                await redis.zadd(`engagement:tweet:${tweet.tweetId}:logs`, { score: Date.now(), member: logId })
-                await redis.set(`engagement:interaction:${tweet.tweetId}:${connection}:retweet`, logId)
-                
-                await redis.json.numincrby(`engagement:connection:${connection}`, '$.totalPoints', points)
-                
-                engagementsFound++
-                console.log(`✅ Awarded ${points} points to ${retweeter.username} for retweeting (x${bonusMultiplier} bonus)`)
               }
             }
           }
