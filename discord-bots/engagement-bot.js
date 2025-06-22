@@ -1110,6 +1110,38 @@ client.on('interactionCreate', async (interaction) => {
         }
       }
       
+      // IMPORTANT: Update main user profile with Discord info
+      console.log(`[CONNECT] Updating user profile for @${cleanHandle} with Discord info...`)
+      
+      // Get the user ID from the profile
+      const userIds = await redis.smembers(`idx:username:${cleanHandle}`)
+      if (userIds && userIds.length > 0) {
+        const userId = userIds[0]
+        const profile = await redis.json.get(userId)
+        
+        if (profile) {
+          console.log(`[CONNECT] Found profile ${userId}, adding Discord info...`)
+          
+          // Update profile with Discord info
+          await redis.json.set(userId, '$.discordId', interaction.user.id)
+          await redis.json.set(userId, '$.discordUsername', interaction.user.username)
+          
+          // Ensure socialAccounts exists and update Discord info
+          if (!profile.socialAccounts) {
+            await redis.json.set(userId, '$.socialAccounts', {})
+          }
+          
+          await redis.json.set(userId, '$.socialAccounts.discord', {
+            id: interaction.user.id,
+            username: interaction.user.username,
+            tag: interaction.user.tag || interaction.user.username,
+            connected: true
+          })
+          
+          console.log(`✅ Updated main profile with Discord: ${interaction.user.username}`)
+        }
+      }
+      
       // Create connection - get tier from user profile
       const userTier = userData.tier || 'micro'  // Default to micro if no tier
       const connection = {
@@ -1123,6 +1155,12 @@ client.on('interactionCreate', async (interaction) => {
       
       await redis.json.set(`engagement:connection:${interaction.user.id}`, '$', connection)
       await redis.set(`engagement:twitter:${cleanHandle}`, interaction.user.id)
+      
+      // Also link for Discord points bridge
+      console.log(`[CONNECT] Linking Discord user ${interaction.user.id} to platform user ${userIds?.[0] || cleanHandle}`)
+      if (userIds && userIds.length > 0) {
+        await redis.set(`discord:user:map:${interaction.user.id}`, userIds[0])
+      }
       
       let message = `✅ Successfully connected Twitter account @${cleanHandle}!`
       if (finalRole === 'kol' && currentRole !== 'kol') {
