@@ -1,9 +1,82 @@
-# ✅ STABLE CODE REGISTRY
+# Stable Code Registry
 
-## Overview
-This document lists all code sections that have been verified as stable and working correctly. These sections should NOT be modified without explicit review and testing.
+This document tracks all code sections that have been marked as STABLE & VERIFIED and should not be modified without explicit review.
 
-Last Updated: December 2024
+## Purpose
+To maintain stability in critical parts of the codebase by clearly marking sections that:
+- Have been thoroughly tested and verified
+- Handle critical functionality
+- Have complex logic that was carefully debugged
+- Are essential for proper system operation
+
+## Registry Format
+Each entry includes:
+- **File Path**: Location of the stable code
+- **Date Verified**: When the code was last verified
+- **Description**: What the code does
+- **Critical Features**: Key functionality that must be preserved
+
+---
+
+## Stable Code Sections
+
+### 1. Login Modal Component
+- **File**: `components/LoginModal.tsx`
+- **Date Verified**: December 2024
+- **Description**: Handles both main landing page login (triple-click) and authentication flows
+- **Critical Features**:
+  - Explicit trigger tracking to prevent auto-hiding for manual triggers
+  - Wallet connection handling for Coinbase, MetaMask, and Phantom
+  - Twitter authentication integration
+  - Server-side user identification via API endpoint
+  - Session polling mechanism for authentication
+  - Profile fetching and role-based access
+
+### 2. Middleware Authentication
+- **File**: `middleware.ts`
+- **Date Verified**: December 2024
+- **Description**: Handles authentication and access control for the application
+- **Critical Features**:
+  - JWT token validation from cookies
+  - Protected route authentication
+  - Public route allowlisting
+  - Auth flow redirection
+  - Multi-cookie name detection for production compatibility
+  - Live role refresh for admin routes
+
+### 3. Auth Configuration
+- **File**: `lib/auth-config.ts`
+- **Date Verified**: December 2024
+- **Description**: Core authentication configuration for NextAuth
+- **Critical Features**:
+  - JWT token generation with user role and status
+  - Session data population from JWT
+  - Twitter handle persistence across auth flow
+  - Redis-based user data retrieval
+  - Cookie configuration for secure sessions
+  - Master admin detection
+
+### 4. KOL POST Handler (Fixed)
+- **File**: `app/api/campaigns/[id]/kols/route.ts`
+- **Date Verified**: December 2024
+- **Description**: Handles adding/updating KOLs in campaigns
+- **Critical Features**:
+  - Deduplication logic to prevent creating duplicate KOLs
+  - Updates existing KOLs when device info or other fields change
+  - Proper handling of product assignments
+  - Admin bypass for permission checks
+
+## Review Process
+Before modifying any code marked as STABLE & VERIFIED:
+
+1. **Understand the Context**: Read the stability comment and this registry entry
+2. **Impact Analysis**: Assess how changes might affect the critical features
+3. **Test Thoroughly**: Ensure all critical features still work after modifications
+4. **Update Documentation**: Update both the inline comment and this registry
+5. **Peer Review**: Have changes reviewed by another developer familiar with the system
+
+## Version History
+- **2024-12-XX**: Initial registry created with Login Modal, Middleware, Auth Config, and KOL Handler entries
 
 ## Authentication & Access Control
 

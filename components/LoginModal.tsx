@@ -1,3 +1,12 @@
+// ✅ STABLE & VERIFIED – DO NOT MODIFY WITHOUT REVIEW
+// This component handles both main landing page login (triple-click) and authentication flows
+// Last verified: December 2024
+// Critical functionality:
+// - Explicit trigger tracking to prevent auto-hiding for manual triggers
+// - Wallet connection handling for Coinbase, MetaMask, and Phantom
+// - Twitter authentication integration
+// - Server-side user identification via API endpoint
+
 'use client'
 import React, { useState, useRef, useMemo, useEffect } from 'react'
 import { useSession, signIn, signOut } from 'next-auth/react'
