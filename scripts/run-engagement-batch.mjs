@@ -9,7 +9,8 @@ const execAsync = promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-console.log('🚀 Engagement Batch Processor Runner\n');
+console.log('🚀 Engagement Batch Processor Runner');
+console.log('📝 This script now includes detailed logging to help diagnose issues\n');
 
 async function runBatchProcessor() {
   try {

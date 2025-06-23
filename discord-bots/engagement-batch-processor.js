@@ -25,6 +25,10 @@ const readOnlyClient = twitterClient.readOnly
 // Process batch job
 async function processBatch() {
   console.log('🔄 Starting batch processing...')
+  console.log('📋 Configuration:')
+  console.log(`   - Redis configured: ${!!process.env.UPSTASH_REDIS_REST_URL}`)
+  console.log(`   - Twitter API Key: ${process.env.TWITTER_API_KEY ? process.env.TWITTER_API_KEY.substring(0, 8) + '...' : 'NOT SET'}`)
+  console.log(`   - Twitter Access Token: ${process.env.TWITTER_ACCESS_TOKEN ? process.env.TWITTER_ACCESS_TOKEN.substring(0, 8) + '...' : 'NOT SET'}`)
   
   // Create batch job
   const batchId = nanoid()
@@ -50,25 +54,41 @@ async function processBatch() {
     let engagementsFound = 0
     
     for (const tweetId of tweetIds) {
+      let tweetEngagements = 0 // Track engagements per tweet
       try {
         const tweet = await redis.json.get(`engagement:tweet:${tweetId}`)
-        if (!tweet) continue
+        if (!tweet) {
+          console.log(`⚠️  Tweet data not found in Redis for ID: ${tweetId}`)
+          continue
+        }
         
-        console.log(`Processing tweet ${tweet.tweetId}...`)
+        console.log(`\n📌 Processing tweet ${tweet.tweetId}...`)
+        console.log(`   Author: @${tweet.authorHandle}`)
+        console.log(`   URL: ${tweet.url}`)
+        console.log(`   Submitted: ${new Date(tweet.submittedAt).toLocaleString()}`)
         
         // Get tweet metrics and engagements from Twitter API
+        console.log(`   🔍 Fetching tweet data from Twitter API...`)
         const tweetData = await readOnlyClient.v2.singleTweet(tweet.tweetId, {
           'tweet.fields': ['public_metrics', 'author_id'],
           expansions: ['author_id']
         })
         
         if (!tweetData.data) {
-          console.log(`Tweet ${tweet.tweetId} not found`)
+          console.log(`   ❌ Tweet ${tweet.tweetId} not found on Twitter`)
+          console.log(`   API Response:`, JSON.stringify(tweetData, null, 2))
           continue
         }
         
+        console.log(`   ✅ Tweet found on Twitter`)
+        
         // Update tweet metrics
         const metrics = tweetData.data.public_metrics
+        console.log(`   📊 Tweet metrics:`)
+        console.log(`      - Likes: ${metrics.like_count}`)
+        console.log(`      - Retweets: ${metrics.retweet_count}`)
+        console.log(`      - Replies: ${metrics.reply_count}`)
+        
         await redis.json.set(`engagement:tweet:${tweetId}`, '$.metrics', {
           likes: metrics.like_count,
           retweets: metrics.retweet_count,
@@ -76,16 +96,37 @@ async function processBatch() {
         })
         
         // Get users who liked the tweet
-        const likersResponse = await readOnlyClient.v2.tweetLikedBy(tweet.tweetId, {
-          max_results: 100,
-          'user.fields': ['username']
-        })
+        console.log(`\n   👍 Attempting to get users who liked the tweet...`)
+        let likersResponse
+        try {
+          likersResponse = await readOnlyClient.v2.tweetLikedBy(tweet.tweetId, {
+            max_results: 100,
+            'user.fields': ['username']
+          })
+          console.log(`   📥 Likes API Response:`, {
+            hasData: !!likersResponse.data,
+            dataLength: likersResponse.data?.length || 0,
+            errors: likersResponse.errors,
+            rateLimit: likersResponse.rateLimit
+          })
+        } catch (likeError) {
+          console.log(`   ❌ ERROR getting likes:`, likeError.message)
+          if (likeError.code) {
+            console.log(`      Error code: ${likeError.code}`)
+          }
+          if (likeError.data) {
+            console.log(`      Error details:`, JSON.stringify(likeError.data, null, 2))
+          }
+          likersResponse = { data: [] }
+        }
         
         // Handle paginated response
         if (likersResponse.data && likersResponse.data.length > 0) {
+          console.log(`   ✅ Found ${likersResponse.data.length} users who liked the tweet`)
           for (const liker of likersResponse.data) {
             const connection = await redis.get(`engagement:twitter:${liker.username.toLowerCase()}`)
             if (connection) {
+              console.log(`      👤 User @${liker.username} is connected (Discord ID: ${connection})`)
               // User is connected, award points
               const userConnection = await redis.json.get(`engagement:connection:${connection}`)
               if (userConnection) {
@@ -122,24 +163,54 @@ async function processBatch() {
                   await redis.json.numincrby(`engagement:connection:${connection}`, '$.totalPoints', points)
                   
                   engagementsFound++
+                  tweetEngagements++
                   console.log(`✅ Awarded ${points} points to ${liker.username} for liking (x${bonusMultiplier} bonus)`)
+                } else {
+                  console.log(`      ⏭️  Skipping @${liker.username} - already awarded points for this like`)
                 }
+              } else {
+                console.log(`      ⚠️  Connection data not found for Discord ID: ${connection}`)
               }
+            } else {
+              console.log(`      ❌ User @${liker.username} not connected to Discord`)
             }
           }
+        } else {
+          console.log(`   ⚠️  No likes found or unable to retrieve likes data`)
         }
         
         // Get users who retweeted
-        const retweetersResponse = await readOnlyClient.v2.tweetRetweetedBy(tweet.tweetId, {
-          max_results: 100,
-          'user.fields': ['username']
-        })
+        console.log(`\n   🔁 Attempting to get users who retweeted...`)
+        let retweetersResponse
+        try {
+          retweetersResponse = await readOnlyClient.v2.tweetRetweetedBy(tweet.tweetId, {
+            max_results: 100,
+            'user.fields': ['username']
+          })
+          console.log(`   📥 Retweets API Response:`, {
+            hasData: !!retweetersResponse.data,
+            dataLength: retweetersResponse.data?.length || 0,
+            errors: retweetersResponse.errors,
+            rateLimit: retweetersResponse.rateLimit
+          })
+        } catch (retweetError) {
+          console.log(`   ❌ ERROR getting retweets:`, retweetError.message)
+          if (retweetError.code) {
+            console.log(`      Error code: ${retweetError.code}`)
+          }
+          if (retweetError.data) {
+            console.log(`      Error details:`, JSON.stringify(retweetError.data, null, 2))
+          }
+          retweetersResponse = { data: [] }
+        }
         
         // Handle paginated response
         if (retweetersResponse.data && retweetersResponse.data.length > 0) {
+          console.log(`   ✅ Found ${retweetersResponse.data.length} users who retweeted`)
           for (const retweeter of retweetersResponse.data) {
             const connection = await redis.get(`engagement:twitter:${retweeter.username.toLowerCase()}`)
             if (connection) {
+              console.log(`      👤 User @${retweeter.username} is connected (Discord ID: ${connection})`)
               const userConnection = await redis.json.get(`engagement:connection:${connection}`)
               if (userConnection) {
                 const pointRule = await redis.json.get(`engagement:rules:${userConnection.tier}-retweet`)
@@ -172,17 +243,37 @@ async function processBatch() {
                   await redis.json.numincrby(`engagement:connection:${connection}`, '$.totalPoints', points)
                   
                   engagementsFound++
+                  tweetEngagements++
                   console.log(`✅ Awarded ${points} points to ${retweeter.username} for retweeting (x${bonusMultiplier} bonus)`)
+                } else {
+                  console.log(`      ⏭️  Skipping @${retweeter.username} - already awarded points for this retweet`)
                 }
+              } else {
+                console.log(`      ⚠️  Connection data not found for Discord ID: ${connection}`)
               }
+            } else {
+              console.log(`      ❌ User @${retweeter.username} not connected to Discord`)
             }
           }
+        } else {
+          console.log(`   ⚠️  No retweets found or unable to retrieve retweet data`)
         }
+        
+        console.log(`\n   ✅ Finished processing tweet ${tweet.tweetId}`)
+        console.log(`   Total engagements awarded for this tweet: ${tweetEngagements}`)
         
         tweetsProcessed++
         
       } catch (error) {
-        console.error(`Error processing tweet ${tweetId}:`, error)
+        console.error(`\n❌ Error processing tweet ${tweetId}:`)
+        console.error(`   Message: ${error.message}`)
+        if (error.code) {
+          console.error(`   Code: ${error.code}`)
+        }
+        if (error.stack) {
+          console.error(`   Stack trace:`)
+          console.error(error.stack.split('\n').map(line => `     ${line}`).join('\n'))
+        }
       }
     }
     
@@ -195,7 +286,12 @@ async function processBatch() {
       engagementsFound
     })
     
-    console.log(`✅ Batch processing completed: ${tweetsProcessed} tweets, ${engagementsFound} engagements`)
+    console.log(`\n📊 Batch Processing Summary:`)
+    console.log(`   - Batch ID: ${batchId}`)
+    console.log(`   - Tweets processed: ${tweetsProcessed}`)
+    console.log(`   - Total engagements awarded: ${engagementsFound}`)
+    console.log(`   - Status: Completed successfully`)
+    console.log(`\n✅ Batch processing completed!`)
     
   } catch (error) {
     console.error('Batch processing error:', error)
