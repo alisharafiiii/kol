@@ -20,6 +20,7 @@ export default function CampaignsPage() {
   const [statusFilter, setStatusFilter] = useState<Campaign['status'] | 'all'>('all')
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null)
   const [userRole, setUserRole] = useState<string | null>(null)
+  const [isInitialLoad, setIsInitialLoad] = useState(true)
 
   // Combined access check and data fetching
   useEffect(() => {
@@ -59,9 +60,11 @@ export default function CampaignsPage() {
         fetch('/api/campaigns').then(res => res.json()).then(data => {
           console.log('CAMPAIGNS PAGE: Campaigns data received:', data);
           setCampaigns(Array.isArray(data) ? data : [])
+          setIsInitialLoad(false)
         }).catch(err => {
           console.error('CAMPAIGNS PAGE: Failed to fetch campaigns for master admin:', err)
           setCampaigns([])
+          setIsInitialLoad(false)
         })
         return
       }
@@ -163,6 +166,7 @@ export default function CampaignsPage() {
         if (isAdmin || isApproved || isTeamMember) {
           setIsAuthorized(true)
           setCampaigns(allCampaigns)
+          setIsInitialLoad(false)
         } else {
           console.log('Access denied - not admin, not approved, not team member')
           setIsAuthorized(false)
@@ -183,7 +187,7 @@ export default function CampaignsPage() {
 
   // Refetch campaigns when tab changes
   useEffect(() => {
-    if (!isAuthorized || loading) return
+    if (!isAuthorized || loading || isInitialLoad) return
     
     const fetchCampaigns = async () => {
       try {
@@ -200,7 +204,7 @@ export default function CampaignsPage() {
     }
     
     fetchCampaigns()
-  }, [activeTab, isAuthorized, loading])
+  }, [activeTab, isAuthorized, loading, isInitialLoad])
 
   // Filter campaigns based on search and status
   const filteredCampaigns = (Array.isArray(campaigns) ? campaigns : [])
@@ -239,7 +243,12 @@ export default function CampaignsPage() {
       
       if (response.ok) {
         const newCampaign = await response.json()
-        setCampaigns([...campaigns, newCampaign])
+        // Refresh campaigns from server to avoid duplicates
+        const refreshRes = await fetch(activeTab === 'my' ? '/api/campaigns?user=true' : '/api/campaigns')
+        if (refreshRes.ok) {
+          const data = await refreshRes.json()
+          setCampaigns(Array.isArray(data) ? data : [])
+        }
         setShowModal(false)
       }
     } catch (error) {
