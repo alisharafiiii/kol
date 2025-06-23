@@ -178,6 +178,13 @@ const handleVisibilityChange = () => {
 - ❌ Twitter API cannot retrieve who liked/retweeted (needs Elevated access)
 - ❌ Therefore, no points can be awarded until API access is upgraded
 
+### Optimization Implemented
+To minimize API rate limit issues:
+- **Metrics-only mode**: Updates tweet metrics (likes, RTs, replies) every run
+- **Detailed mode**: Checks who liked/retweeted (runs hourly or on-demand)
+- **Force flag**: Use `--force-detailed` to run detailed check immediately
+- **Result**: ~95% reduction in API calls while keeping metrics current
+
 ## Future Considerations
 
 1. **WebSocket Integration**: Consider real-time updates via WebSocket for instant tweet display

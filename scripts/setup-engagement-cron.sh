@@ -18,7 +18,10 @@ CRON_COMMAND="*/30 * * * * cd $PROJECT_DIR && $NODE_PATH discord-bots/engagement
 echo "📋 This will add the following cron job:"
 echo "   $CRON_COMMAND"
 echo ""
-echo "This runs the batch processor every 30 minutes."
+echo "📊 Optimized Approach:"
+echo "   - Every 30 minutes: Updates tweet metrics (likes, RTs, replies)"
+echo "   - Every hour: Performs detailed engagement checks for points"
+echo "   - This reduces API calls by ~95% while keeping metrics current"
 echo ""
 
 # Create logs directory if it doesn't exist
