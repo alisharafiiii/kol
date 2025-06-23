@@ -84,6 +84,19 @@ async function processBatch() {
         
         console.log(`   ✅ Tweet found on Twitter`)
         
+        // Log rate limit info
+        const tweetRateLimit = tweetData._rateLimit || tweetData.rateLimit || 
+                               tweetData._realData?._rateLimit || tweetData._realData?.rateLimit;
+        if (tweetRateLimit) {
+          console.log(`   📊 Rate Limit (singleTweet):`)
+          console.log(`      Limit: ${tweetRateLimit.limit}`)
+          console.log(`      Remaining: ${tweetRateLimit.remaining}`)
+          console.log(`      Reset: ${new Date(tweetRateLimit.reset * 1000).toLocaleTimeString()}`)
+          if (tweetRateLimit.remaining === 0) {
+            console.log(`      ⚠️ RATE LIMIT REACHED! Reset at ${new Date(tweetRateLimit.reset * 1000).toLocaleTimeString()}`)
+          }
+        }
+        
         // Update tweet metrics
         const metrics = tweetData.data.public_metrics
         console.log(`   📊 Tweet metrics:`)
@@ -133,6 +146,19 @@ async function processBatch() {
             meta: likersResponse.meta,
             errors: likersResponse.errors
           }, null, 2))
+          
+          // Log rate limit info
+          const likesRateLimit = likersResponse._rateLimit || likersResponse.rateLimit || 
+                                 likersResponse._realData?._rateLimit || likersResponse._realData?.rateLimit;
+          if (likesRateLimit) {
+            console.log(`   📊 Rate Limit (liking_users):`)
+            console.log(`      Limit: ${likesRateLimit.limit}`)
+            console.log(`      Remaining: ${likesRateLimit.remaining}`)
+            console.log(`      Reset: ${new Date(likesRateLimit.reset * 1000).toLocaleTimeString()}`)
+            if (likesRateLimit.remaining === 0) {
+              console.log(`      ⚠️ RATE LIMIT REACHED! Reset at ${new Date(likesRateLimit.reset * 1000).toLocaleTimeString()}`)
+            }
+          }
         } catch (likeError) {
           console.log(`   ❌ ERROR getting likes:`)
           console.log(`      Message: ${likeError.message}`)
@@ -249,6 +275,19 @@ async function processBatch() {
             meta: retweetersResponse.meta,
             errors: retweetersResponse.errors
           }, null, 2))
+          
+          // Log rate limit info
+          const retweetsRateLimit = retweetersResponse._rateLimit || retweetersResponse.rateLimit || 
+                                    retweetersResponse._realData?._rateLimit || retweetersResponse._realData?.rateLimit;
+          if (retweetsRateLimit) {
+            console.log(`   📊 Rate Limit (retweeted_by):`)
+            console.log(`      Limit: ${retweetsRateLimit.limit}`)
+            console.log(`      Remaining: ${retweetsRateLimit.remaining}`)
+            console.log(`      Reset: ${new Date(retweetsRateLimit.reset * 1000).toLocaleTimeString()}`)
+            if (retweetsRateLimit.remaining === 0) {
+              console.log(`      ⚠️ RATE LIMIT REACHED! Reset at ${new Date(retweetsRateLimit.reset * 1000).toLocaleTimeString()}`)
+            }
+          }
         } catch (retweetError) {
           console.log(`   ❌ ERROR getting retweets:`)
           console.log(`      Message: ${retweetError.message}`)
@@ -357,6 +396,12 @@ async function processBatch() {
     console.log(`   - Tweets processed: ${tweetsProcessed}`)
     console.log(`   - Total engagements awarded: ${engagementsFound}`)
     console.log(`   - Status: Completed successfully`)
+    
+    // Add rate limit summary
+    console.log(`\n🔑 Rate Limit Note:`)
+    console.log(`   If you see "⚠️ RATE LIMIT REACHED!" above, wait until reset time.`)
+    console.log(`   Twitter API rate limits may prevent retrieving engagement data.`)
+    
     console.log(`\n✅ Batch processing completed!`)
     
   } catch (error) {
