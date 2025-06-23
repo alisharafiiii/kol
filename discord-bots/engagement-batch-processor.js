@@ -32,6 +32,63 @@ async function processBatch(forceDetailedCheck = false) {
   console.log(`   - Twitter API Version: v2`)
   console.log(`   - Authentication Type: OAuth 1.0a (User Context)`)
   
+  // DEBUG: Check for pending batch jobs created by the API
+  console.log(`\n🔍 DEBUG: Checking for pending batch jobs from API...`)
+  const pendingJobIds = await redis.zrange('engagement:batches', 0, 5, { rev: true })
+  for (const jobId of pendingJobIds) {
+    const job = await redis.json.get(`engagement:batch:${jobId}`)
+    if (job && job.status === 'pending') {
+      console.log(`   ⚠️  Found pending job: ${jobId}`)
+      console.log(`      Created: ${new Date(job.startedAt).toLocaleString()}`)
+      console.log(`      Status: ${job.status}`)
+      console.log(`      NOTE: This job was created by the API but not processed!`)
+      
+      // Update this pending job instead of creating a new one
+      console.log(`   🔄 Updating pending job to 'running' status...`)
+      job.status = 'running'
+      await redis.json.set(`engagement:batch:${jobId}`, '$', job)
+      
+      // Use this job ID for processing
+      const batchId = jobId
+      const batchJob = job
+      
+      // Skip creating a new job and proceed with this one
+      console.log(`   ✅ Using existing job ${batchId} for processing`)
+      
+      // Continue processing with this batch ID
+      return processBatchWithId(batchId, batchJob, forceDetailedCheck)
+    }
+  }
+  
+  // No pending jobs found, create a new one
+  const batchId = nanoid()
+  const batchStartTime = new Date()
+  const batchJob = {
+    id: batchId,
+    startedAt: batchStartTime,
+    status: 'running',
+    tweetsProcessed: 0,
+    engagementsFound: 0
+  }
+  
+  console.log(`\n🆕 Creating new batch job (no pending jobs found)...`)
+  console.log(`   Batch ID: ${batchId}`)
+  console.log(`   Started at: ${batchStartTime.toLocaleString()}`)
+  console.log(`   Initial status: running`)
+  
+  await redis.json.set(`engagement:batch:${batchId}`, '$', batchJob)
+  await redis.zadd('engagement:batches', { score: Date.now(), member: batchId })
+  
+  console.log(`   ✅ Batch job created and stored in Redis`)
+  console.log(`   Key: engagement:batch:${batchId}`)
+  console.log(`   ⚠️  NOTE: This job is separate from any jobs created via the API!`)
+  
+  // Continue with the new batch job
+  return processBatchWithId(batchId, batchJob, forceDetailedCheck)
+}
+
+// Separate function to process with a specific batch ID
+async function processBatchWithId(batchId, batchJob, forceDetailedCheck) {
   // Declare variable in proper scope
   let hoursSinceLastCheck = 0
   
@@ -50,40 +107,80 @@ async function processBatch(forceDetailedCheck = false) {
     console.log(`\n📊 Running METRICS ONLY update (next detailed check in ${(1 - hoursSinceLastCheck).toFixed(1)} hours)`)
   }
   
-  // Create batch job
-  const batchId = nanoid()
-  const batchJob = {
-    id: batchId,
-    startedAt: new Date(),
-    status: 'running',
-    tweetsProcessed: 0,
-    engagementsFound: 0
-  }
-  
-  await redis.json.set(`engagement:batch:${batchId}`, '$', batchJob)
-  await redis.zadd('engagement:batches', { score: Date.now(), member: batchId })
-  
   try {
     // Get recent tweets from last 24 hours (stored as sorted set)
     const cutoff = Date.now() - (24 * 60 * 60 * 1000)
+    const currentTime = Date.now()
+    
+    console.log(`\n🔍 DEBUG: Fetching tweets from Redis...`)
+    console.log(`   Current time: ${new Date(currentTime).toLocaleString()} (${currentTime})`)
+    console.log(`   Cutoff time: ${new Date(cutoff).toLocaleString()} (${cutoff})`)
+    console.log(`   Time window: Last 24 hours`)
+    
     const tweetIds = await redis.zrange('engagement:tweets:recent', cutoff, '+inf', { byScore: true })
     
-    console.log(`📊 Found ${tweetIds.length} tweets from last 24 hours to process`)
+    console.log(`\n📊 Found ${tweetIds.length} tweets from last 24 hours to process`)
+    
+    // Debug: Show all tweet IDs found
+    if (tweetIds.length > 0) {
+      console.log(`   Tweet IDs found: ${tweetIds.join(', ')}`)
+      
+      // Get details of all tweets to debug
+      console.log(`\n📋 Tweet Details:`)
+      for (const tweetId of tweetIds) {
+        const tweetScore = await redis.zscore('engagement:tweets:recent', tweetId)
+        const tweet = await redis.json.get(`engagement:tweet:${tweetId}`)
+        if (tweet) {
+          console.log(`   - ID: ${tweetId}`)
+          console.log(`     Tweet ID: ${tweet.tweetId}`)
+          console.log(`     Author: @${tweet.authorHandle}`)
+          console.log(`     Submitted: ${new Date(tweet.submittedAt).toLocaleString()} (${tweet.submittedAt})`)
+          console.log(`     Score in sorted set: ${tweetScore}`)
+          console.log(`     URL: ${tweet.url}`)
+        } else {
+          console.log(`   - ID: ${tweetId} - ⚠️ WARNING: Tweet data missing in Redis!`)
+        }
+      }
+    } else {
+      console.log(`   ⚠️ No tweets found in the time window`)
+      
+      // Debug: Check if there are any tweets at all
+      const allTweetIds = await redis.zrange('engagement:tweets:recent', 0, -1, { rev: true, withScores: true })
+      if (allTweetIds.length > 0) {
+        console.log(`\n   🔍 DEBUG: Found ${allTweetIds.length / 2} total tweets in Redis (showing latest 5):`)
+        for (let i = 0; i < Math.min(10, allTweetIds.length); i += 2) {
+          const id = allTweetIds[i]
+          const score = allTweetIds[i + 1]
+          const tweet = await redis.json.get(`engagement:tweet:${id}`)
+          if (tweet) {
+            console.log(`     - @${tweet.authorHandle}: ${new Date(parseInt(score)).toLocaleString()} (score: ${score})`)
+          }
+        }
+      }
+    }
     
     let tweetsProcessed = 0
     let engagementsFound = 0
     let metricsUpdated = 0
     
+    console.log(`\n🔄 Starting to process ${tweetIds.length} tweets...`)
+    
     for (const tweetId of tweetIds) {
       let tweetEngagements = 0 // Track engagements per tweet
+      const tweetIndex = tweetIds.indexOf(tweetId) + 1
+      
+      console.log(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`)
+      console.log(`📌 Processing tweet ${tweetIndex}/${tweetIds.length} (Redis key: ${tweetId})`)
+      
       try {
         const tweet = await redis.json.get(`engagement:tweet:${tweetId}`)
         if (!tweet) {
-          console.log(`⚠️  Tweet data not found in Redis for ID: ${tweetId}`)
+          console.log(`⚠️  SKIPPED: Tweet data not found in Redis for ID: ${tweetId}`)
+          console.log(`   This tweet will not be processed or appear in admin panel`)
           continue
         }
         
-        console.log(`\n📌 Processing tweet ${tweet.tweetId}...`)
+        console.log(`   Tweet ID: ${tweet.tweetId}`)
         console.log(`   Author: @${tweet.authorHandle}`)
         console.log(`   URL: ${tweet.url}`)
         console.log(`   Submitted: ${new Date(tweet.submittedAt).toLocaleString()}`)
@@ -477,11 +574,12 @@ async function processBatch(forceDetailedCheck = false) {
         
         console.log(`\n   ✅ Finished processing tweet ${tweet.tweetId}`)
         console.log(`   Total engagements awarded for this tweet: ${tweetEngagements}`)
+        console.log(`   Status: SUCCESS - Tweet processed and metrics updated`)
         
         tweetsProcessed++
         
       } catch (error) {
-        console.error(`\n❌ Error processing tweet ${tweetId}:`)
+        console.error(`\n❌ FAILED: Error processing tweet ${tweetId}`)
         console.error(`   Message: ${error.message}`)
         if (error.code) {
           console.error(`   Code: ${error.code}`)
@@ -490,17 +588,37 @@ async function processBatch(forceDetailedCheck = false) {
           console.error(`   Stack trace:`)
           console.error(error.stack.split('\n').map(line => `     ${line}`).join('\n'))
         }
+        console.error(`   Status: FAILED - Tweet NOT processed`)
       }
+      
+      console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`)
     }
     
+    // Final summary of processing
+    console.log(`\n📊 Processing Complete:`)
+    console.log(`   - Total tweets found: ${tweetIds.length}`)
+    console.log(`   - Successfully processed: ${tweetsProcessed}`)
+    console.log(`   - Failed/Skipped: ${tweetIds.length - tweetsProcessed}`)
+    
     // Update batch job
-    await redis.json.set(`engagement:batch:${batchId}`, '$', {
+    console.log(`\n🔄 DEBUG: Updating batch job status...`)
+    console.log(`   Batch ID: ${batchId}`)
+    console.log(`   New status: completed`)
+    
+    const updatedBatchJob = {
       ...batchJob,
       completedAt: new Date(),
       status: 'completed',
       tweetsProcessed,
       engagementsFound
-    })
+    }
+    
+    await redis.json.set(`engagement:batch:${batchId}`, '$', updatedBatchJob)
+    
+    // Verify the update
+    const verifyJob = await redis.json.get(`engagement:batch:${batchId}`)
+    console.log(`   ✅ Batch job updated successfully`)
+    console.log(`   Verified status: ${verifyJob?.status || 'UNKNOWN'}`)
     
     console.log(`\n📊 Batch Processing Summary:`)
     console.log(`   - Batch ID: ${batchId}`)
@@ -511,6 +629,7 @@ async function processBatch(forceDetailedCheck = false) {
       console.log(`   - Total engagements awarded: ${engagementsFound}`)
     }
     console.log(`   - Status: Completed successfully`)
+    console.log(`   - Job stored at: engagement:batch:${batchId}`)
     
     // Add rate limit summary
     console.log(`\n🔑 API Usage Note:`)
@@ -528,11 +647,28 @@ async function processBatch(forceDetailedCheck = false) {
     console.log(`\n✅ Batch processing completed!`)
     
   } catch (error) {
-    console.error('Batch processing error:', error)
+    console.error('\n❌ CRITICAL: Batch processing error:', error)
+    console.error(`   Error type: ${error.constructor.name}`)
+    console.error(`   Error message: ${error.message}`)
     
-    // Update batch job with error
-    await redis.json.set(`engagement:batch:${batchId}`, '$.status', 'failed')
-    await redis.json.set(`engagement:batch:${batchId}`, '$.error', error.message)
+    try {
+      // Update batch job with error
+      console.log(`\n🔄 DEBUG: Updating batch job with error status...`)
+      const errorJobData = await redis.json.get(`engagement:batch:${batchId}`)
+      if (errorJobData) {
+        errorJobData.status = 'failed'
+        errorJobData.error = error.message
+        await redis.json.set(`engagement:batch:${batchId}`, '$', errorJobData)
+      }
+      
+      // Verify the error update
+      const errorJob = await redis.json.get(`engagement:batch:${batchId}`)
+      console.log(`   Batch job updated with error`)
+      console.log(`   Status: ${errorJob?.status || 'UNKNOWN'}`)
+      console.log(`   Error: ${errorJob?.error || 'UNKNOWN'}`)
+    } catch (updateError) {
+      console.error(`   ❌ Failed to update batch job with error:`, updateError.message)
+    }
   }
 }
 

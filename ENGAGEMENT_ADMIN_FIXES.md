@@ -233,4 +233,44 @@ When the auth system can't find the profile in the expected location, it default
 Created a "bridge" by copying the profile data from the new location to where the old auth system expects it:
 - Source: `profile:user_sharafi_eth` (has correct admin role)
 - Bridge: `user:user_sharafi_eth` (copy for auth system)
-- Updated `idx:username:sharafi_eth` to point to correct ID 
+- Updated `idx:username:sharafi_eth` to point to correct ID
+
+## Debug Enhancements Added (June 23, 2025)
+
+### Issue Identified:
+- Batch jobs created via API were showing as "pending" because the batch processor was creating separate jobs instead of processing existing ones
+- Redis JSON path updates (e.g., `$.status`) were failing with "invalid character 'r'" error
+
+### Debug Features Added:
+
+1. **Enhanced Tweet Fetching Logs**:
+   - Shows current time, cutoff time, and time window
+   - Lists all tweet IDs found with full details
+   - Shows tweet submission timestamps and sorted set scores
+   - If no tweets found in time window, shows latest 5 tweets in Redis
+
+2. **Detailed Processing Logs**:
+   - Progress counter (e.g., "Processing tweet 1/3")
+   - Clear SUCCESS/FAILED/SKIPPED status for each tweet
+   - Final summary showing total processed vs failed/skipped
+
+3. **Batch Job Coordination**:
+   - Checks for pending jobs created by API before creating new ones
+   - Updates existing pending jobs to "running" status
+   - Shows clear messaging about which job is being used
+
+4. **Batch Job Status Tracking**:
+   - Logs batch job creation with ID and timestamp
+   - Verifies status updates after completion
+   - Shows where job is stored in Redis
+
+### Technical Fixes:
+
+1. **Redis JSON Update Fix**:
+   - Changed from path-based updates (`$.status`) to full object updates
+   - Prevents "invalid character" parsing errors
+   - Applied to both success and error scenarios
+
+2. **Environment Loading**:
+   - Conditional loading of .env only when run directly
+   - Uses `.env.local` for local development 
