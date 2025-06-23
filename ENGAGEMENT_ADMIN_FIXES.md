@@ -185,6 +185,15 @@ To minimize API rate limit issues:
 - **Force flag**: Use `--force-detailed` to run detailed check immediately
 - **Result**: ~95% reduction in API calls while keeping metrics current
 
+### Twitter API Update (Latest)
+Due to Twitter API changes:
+- **Removed**: `/liking_users` endpoint calls (Twitter no longer provides this data)
+- **New Logic**: Users who comment or retweet automatically get like points too
+- **Points System**:
+  - Reply: Awards reply points + like points
+  - Retweet: Awards retweet points + like points
+  - Both: Awards reply + retweet + single set of like points (no duplicates)
+
 ## Future Considerations
 
 1. **WebSocket Integration**: Consider real-time updates via WebSocket for instant tweet display

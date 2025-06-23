@@ -141,137 +141,12 @@ async function processBatch(forceDetailedCheck = false) {
         
         console.log(`   🎯 Proceeding with detailed engagement processing...`)
         
-        // Get users who liked the tweet
-        console.log(`\n   👍 Attempting to get users who liked the tweet...`)
-        let likersResponse
-        try {
-          // Log the API request details
-          const likesParams = {
-            max_results: 100,
-            'user.fields': ['username']
-          }
-          console.log(`   📤 API Request:`)
-          console.log(`      Endpoint: GET /2/tweets/${tweet.tweetId}/liking_users`)
-          console.log(`      Full URL: https://api.twitter.com/2/tweets/${tweet.tweetId}/liking_users`)
-          console.log(`      Parameters:`, JSON.stringify(likesParams, null, 2))
-          
-          likersResponse = await readOnlyClient.v2.tweetLikedBy(tweet.tweetId, likesParams)
-          
-          // Log the full response
-          console.log(`   📥 API Response:`)
-          console.log(`      HTTP Status: ${likersResponse._realData?._response?.statusCode || 'Unknown'}`)
-          console.log(`      Has Data: ${!!likersResponse.data}`)
-          console.log(`      Data Length: ${likersResponse.data?.length || 0}`)
-          
-          if (likersResponse.data && likersResponse.data.length > 0) {
-            console.log(`      First 3 users: ${likersResponse.data.slice(0, 3).map(u => u.username).join(', ')}`)
-          }
-          
-          if (likersResponse.errors) {
-            console.log(`      Errors:`, JSON.stringify(likersResponse.errors, null, 2))
-          }
-          
-          // Log raw response for debugging
-          console.log(`      Raw Response Body:`, JSON.stringify({
-            data: likersResponse.data?.length ? `Array[${likersResponse.data.length}]` : likersResponse.data,
-            meta: likersResponse.meta,
-            errors: likersResponse.errors
-          }, null, 2))
-          
-          // Log rate limit info
-          const likesRateLimit = likersResponse._rateLimit || likersResponse.rateLimit || 
-                                 likersResponse._realData?._rateLimit || likersResponse._realData?.rateLimit;
-          if (likesRateLimit) {
-            console.log(`   📊 Rate Limit (liking_users):`)
-            console.log(`      Limit: ${likesRateLimit.limit}`)
-            console.log(`      Remaining: ${likesRateLimit.remaining}`)
-            console.log(`      Reset: ${new Date(likesRateLimit.reset * 1000).toLocaleTimeString()}`)
-            if (likesRateLimit.remaining === 0) {
-              console.log(`      ⚠️ RATE LIMIT REACHED! Reset at ${new Date(likesRateLimit.reset * 1000).toLocaleTimeString()}`)
-            }
-          } else {
-            // Rate limit info not available - likely due to API access level
-            console.log(`   📊 Rate Limit: Not available (Essential API access may not provide rate limit headers)`);
-          }
-        } catch (likeError) {
-          console.log(`   ❌ ERROR getting likes:`)
-          console.log(`      Message: ${likeError.message}`)
-          console.log(`      Error Code: ${likeError.code || 'N/A'}`)
-          console.log(`      HTTP Status: ${likeError.statusCode || likeError.status || 'N/A'}`)
-          
-          if (likeError.data) {
-            console.log(`      Error Response Body:`, JSON.stringify(likeError.data, null, 2))
-          }
-          
-          if (likeError.errors) {
-            console.log(`      Twitter API Errors:`, JSON.stringify(likeError.errors, null, 2))
-          }
-          
-          likersResponse = { data: [] }
-        }
+        // Skip likes endpoint - Twitter no longer provides this data
+        console.log(`\n   ℹ️  Skipping likes endpoint (Twitter API no longer provides this data)`)
+        console.log(`   📌 Will award like points automatically with comments/retweets`)
         
-        // Handle paginated response
-        if (likersResponse.data && likersResponse.data.length > 0) {
-          console.log(`   ✅ Found ${likersResponse.data.length} users who liked the tweet`)
-          for (const liker of likersResponse.data) {
-            const connection = await redis.get(`engagement:twitter:${liker.username.toLowerCase()}`)
-            if (connection) {
-              console.log(`      👤 User @${liker.username} is connected (Discord ID: ${connection})`)
-              // User is connected, award points
-              const userConnection = await redis.json.get(`engagement:connection:${connection}`)
-              if (userConnection) {
-                const pointRule = await redis.json.get(`engagement:rules:${userConnection.tier}-like`)
-                const basePoints = pointRule?.points || 1
-                
-                // Get tier scenarios for bonus multiplier
-                const scenarios = await redis.json.get(`engagement:scenarios:tier${userConnection.tier}`)
-                const bonusMultiplier = scenarios?.bonusMultiplier || 1.0
-                const points = Math.round(basePoints * bonusMultiplier)
-                
-                // Check if already logged
-                const existingLog = await redis.get(`engagement:interaction:${tweet.tweetId}:${connection}:like`)
-                if (!existingLog) {
-                  // Log engagement
-                  const logId = nanoid()
-                  const log = {
-                    id: logId,
-                    tweetId: tweet.tweetId,
-                    userDiscordId: connection,
-                    interactionType: 'like',
-                    points,
-                    timestamp: new Date(),
-                    batchId,
-                    bonusMultiplier
-                  }
-                  
-                  await redis.json.set(`engagement:log:${logId}`, '$', log)
-                  await redis.zadd(`engagement:user:${connection}:logs`, { score: Date.now(), member: logId })
-                  await redis.zadd(`engagement:tweet:${tweet.tweetId}:logs`, { score: Date.now(), member: logId })
-                  await redis.set(`engagement:interaction:${tweet.tweetId}:${connection}:like`, logId)
-                  
-                  // Update user points
-                  await redis.json.numincrby(`engagement:connection:${connection}`, '$.totalPoints', points)
-                  
-                  engagementsFound++
-                  tweetEngagements++
-                  console.log(`✅ Awarded ${points} points to ${liker.username} for liking (x${bonusMultiplier} bonus)`)
-                } else {
-                  console.log(`      ⏭️  Skipping @${liker.username} - already awarded points for this like`)
-                }
-              } else {
-                console.log(`      ⚠️  Connection data not found for Discord ID: ${connection}`)
-              }
-            } else {
-              console.log(`      ❌ User @${liker.username} not connected to Discord`)
-            }
-          }
-        } else {
-          console.log(`   ⚠️  No likes found or unable to retrieve likes data`)
-          if (metrics.like_count > 0) {
-            console.log(`   🚫 ISSUE: Tweet has ${metrics.like_count} likes but API returned 0 results`)
-            console.log(`      This indicates Twitter API access level limitation (need Elevated access)`)
-          }
-        }
+        // Track users who have been awarded like points to avoid duplicates
+        const usersAwardedLikePoints = new Set()
         
         // Get users who retweeted
         console.log(`\n   🔁 Attempting to get users who retweeted...`)
@@ -351,38 +226,73 @@ async function processBatch(forceDetailedCheck = false) {
               console.log(`      👤 User @${retweeter.username} is connected (Discord ID: ${connection})`)
               const userConnection = await redis.json.get(`engagement:connection:${connection}`)
               if (userConnection) {
-                const pointRule = await redis.json.get(`engagement:rules:${userConnection.tier}-retweet`)
-                const basePoints = pointRule?.points || 2
+                // Award retweet points
+                const retweetRule = await redis.json.get(`engagement:rules:${userConnection.tier}-retweet`)
+                const retweetBasePoints = retweetRule?.points || 2
                 
                 // Get tier scenarios for bonus multiplier
                 const scenarios = await redis.json.get(`engagement:scenarios:tier${userConnection.tier}`)
                 const bonusMultiplier = scenarios?.bonusMultiplier || 1.0
-                const points = Math.round(basePoints * bonusMultiplier)
+                const retweetPoints = Math.round(retweetBasePoints * bonusMultiplier)
                 
-                const existingLog = await redis.get(`engagement:interaction:${tweet.tweetId}:${connection}:retweet`)
-                if (!existingLog) {
-                  const logId = nanoid()
-                  const log = {
-                    id: logId,
+                const existingRetweetLog = await redis.get(`engagement:interaction:${tweet.tweetId}:${connection}:retweet`)
+                if (!existingRetweetLog) {
+                  const retweetLogId = nanoid()
+                  const retweetLog = {
+                    id: retweetLogId,
                     tweetId: tweet.tweetId,
                     userDiscordId: connection,
                     interactionType: 'retweet',
-                    points,
+                    points: retweetPoints,
                     timestamp: new Date(),
                     batchId,
                     bonusMultiplier
                   }
                   
-                  await redis.json.set(`engagement:log:${logId}`, '$', log)
-                  await redis.zadd(`engagement:user:${connection}:logs`, { score: Date.now(), member: logId })
-                  await redis.zadd(`engagement:tweet:${tweet.tweetId}:logs`, { score: Date.now(), member: logId })
-                  await redis.set(`engagement:interaction:${tweet.tweetId}:${connection}:retweet`, logId)
+                  await redis.json.set(`engagement:log:${retweetLogId}`, '$', retweetLog)
+                  await redis.zadd(`engagement:user:${connection}:logs`, { score: Date.now(), member: retweetLogId })
+                  await redis.zadd(`engagement:tweet:${tweet.tweetId}:logs`, { score: Date.now(), member: retweetLogId })
+                  await redis.set(`engagement:interaction:${tweet.tweetId}:${connection}:retweet`, retweetLogId)
                   
-                  await redis.json.numincrby(`engagement:connection:${connection}`, '$.totalPoints', points)
+                  await redis.json.numincrby(`engagement:connection:${connection}`, '$.totalPoints', retweetPoints)
                   
                   engagementsFound++
                   tweetEngagements++
-                  console.log(`✅ Awarded ${points} points to ${retweeter.username} for retweeting (x${bonusMultiplier} bonus)`)
+                  console.log(`✅ Awarded ${retweetPoints} points to ${retweeter.username} for retweeting (x${bonusMultiplier} bonus)`)
+                  
+                  // Also award like points (assuming they liked it if they retweeted)
+                  if (!usersAwardedLikePoints.has(connection)) {
+                    const likeRule = await redis.json.get(`engagement:rules:${userConnection.tier}-like`)
+                    const likeBasePoints = likeRule?.points || 1
+                    const likePoints = Math.round(likeBasePoints * bonusMultiplier)
+                    
+                    const existingLikeLog = await redis.get(`engagement:interaction:${tweet.tweetId}:${connection}:like`)
+                    if (!existingLikeLog) {
+                      const likeLogId = nanoid()
+                      const likeLog = {
+                        id: likeLogId,
+                        tweetId: tweet.tweetId,
+                        userDiscordId: connection,
+                        interactionType: 'like',
+                        points: likePoints,
+                        timestamp: new Date(),
+                        batchId,
+                        bonusMultiplier
+                      }
+                      
+                      await redis.json.set(`engagement:log:${likeLogId}`, '$', likeLog)
+                      await redis.zadd(`engagement:user:${connection}:logs`, { score: Date.now(), member: likeLogId })
+                      await redis.zadd(`engagement:tweet:${tweet.tweetId}:logs`, { score: Date.now(), member: likeLogId })
+                      await redis.set(`engagement:interaction:${tweet.tweetId}:${connection}:like`, likeLogId)
+                      
+                      await redis.json.numincrby(`engagement:connection:${connection}`, '$.totalPoints', likePoints)
+                      
+                      engagementsFound++
+                      tweetEngagements++
+                      usersAwardedLikePoints.add(connection)
+                      console.log(`✅ Awarded ${likePoints} points to ${retweeter.username} for implied like (x${bonusMultiplier} bonus)`)
+                    }
+                  }
                 } else {
                   console.log(`      ⏭️  Skipping @${retweeter.username} - already awarded points for this retweet`)
                 }
@@ -398,6 +308,170 @@ async function processBatch(forceDetailedCheck = false) {
           if (metrics.retweet_count > 0) {
             console.log(`   🚫 ISSUE: Tweet has ${metrics.retweet_count} retweets but API returned 0 results`)
             console.log(`      This indicates Twitter API access level limitation (need Elevated access)`)
+          }
+        }
+        
+        // Get users who replied/commented
+        console.log(`\n   💬 Attempting to get users who replied/commented...`)
+        let repliesResponse
+        try {
+          // Search for replies to this tweet
+          const repliesParams = {
+            query: `conversation_id:${tweet.tweetId}`,
+            max_results: 100,
+            'tweet.fields': ['author_id', 'in_reply_to_user_id'],
+            expansions: ['author_id'],
+            'user.fields': ['username']
+          }
+          console.log(`   📤 API Request:`)
+          console.log(`      Endpoint: GET /2/tweets/search/recent`)
+          console.log(`      Query: conversation_id:${tweet.tweetId}`)
+          
+          repliesResponse = await readOnlyClient.v2.search(repliesParams.query, {
+            max_results: repliesParams.max_results,
+            'tweet.fields': repliesParams['tweet.fields'],
+            expansions: repliesParams.expansions,
+            'user.fields': repliesParams['user.fields']
+          })
+          
+          // Log the full response
+          console.log(`   📥 API Response:`)
+          console.log(`      Has Data: ${!!repliesResponse.data}`)
+          console.log(`      Data Length: ${repliesResponse.data?.length || 0}`)
+          
+          if (repliesResponse.data && repliesResponse.data.length > 0) {
+            console.log(`      Found ${repliesResponse.data.length} replies`)
+          }
+          
+          // Log rate limit info
+          const repliesRateLimit = repliesResponse._rateLimit || repliesResponse.rateLimit || 
+                                   repliesResponse._realData?._rateLimit || repliesResponse._realData?.rateLimit;
+          if (repliesRateLimit) {
+            console.log(`   📊 Rate Limit (search):`)
+            console.log(`      Limit: ${repliesRateLimit.limit}`)
+            console.log(`      Remaining: ${repliesRateLimit.remaining}`)
+            console.log(`      Reset: ${new Date(repliesRateLimit.reset * 1000).toLocaleTimeString()}`)
+            if (repliesRateLimit.remaining === 0) {
+              console.log(`      ⚠️ RATE LIMIT REACHED! Reset at ${new Date(repliesRateLimit.reset * 1000).toLocaleTimeString()}`)
+            }
+          } else {
+            // Rate limit info not available - likely due to API access level
+            console.log(`   📊 Rate Limit: Not available (Essential API access may not provide rate limit headers)`);
+          }
+        } catch (replyError) {
+          console.log(`   ❌ ERROR getting replies:`)
+          console.log(`      Message: ${replyError.message}`)
+          console.log(`      Error Code: ${replyError.code || 'N/A'}`)
+          console.log(`      HTTP Status: ${replyError.statusCode || replyError.status || 'N/A'}`)
+          
+          if (replyError.data) {
+            console.log(`      Error Response Body:`, JSON.stringify(replyError.data, null, 2))
+          }
+          
+          repliesResponse = { data: [] }
+        }
+        
+        // Handle replies
+        if (repliesResponse.data && repliesResponse.data.length > 0 && repliesResponse.includes?.users) {
+          console.log(`   ✅ Found ${repliesResponse.data.length} replies`)
+          
+          // Create a map of author IDs to usernames
+          const authorMap = new Map()
+          repliesResponse.includes.users.forEach(user => {
+            authorMap.set(user.id, user.username)
+          })
+          
+          for (const reply of repliesResponse.data) {
+            const replierUsername = authorMap.get(reply.author_id)
+            if (!replierUsername) continue
+            
+            const connection = await redis.get(`engagement:twitter:${replierUsername.toLowerCase()}`)
+            if (connection) {
+              console.log(`      👤 User @${replierUsername} is connected (Discord ID: ${connection})`)
+              const userConnection = await redis.json.get(`engagement:connection:${connection}`)
+              if (userConnection) {
+                // Award reply points
+                const replyRule = await redis.json.get(`engagement:rules:${userConnection.tier}-reply`)
+                const replyBasePoints = replyRule?.points || 3
+                
+                // Get tier scenarios for bonus multiplier
+                const scenarios = await redis.json.get(`engagement:scenarios:tier${userConnection.tier}`)
+                const bonusMultiplier = scenarios?.bonusMultiplier || 1.0
+                const replyPoints = Math.round(replyBasePoints * bonusMultiplier)
+                
+                const existingReplyLog = await redis.get(`engagement:interaction:${tweet.tweetId}:${connection}:reply`)
+                if (!existingReplyLog) {
+                  const replyLogId = nanoid()
+                  const replyLog = {
+                    id: replyLogId,
+                    tweetId: tweet.tweetId,
+                    userDiscordId: connection,
+                    interactionType: 'reply',
+                    points: replyPoints,
+                    timestamp: new Date(),
+                    batchId,
+                    bonusMultiplier
+                  }
+                  
+                  await redis.json.set(`engagement:log:${replyLogId}`, '$', replyLog)
+                  await redis.zadd(`engagement:user:${connection}:logs`, { score: Date.now(), member: replyLogId })
+                  await redis.zadd(`engagement:tweet:${tweet.tweetId}:logs`, { score: Date.now(), member: replyLogId })
+                  await redis.set(`engagement:interaction:${tweet.tweetId}:${connection}:reply`, replyLogId)
+                  
+                  await redis.json.numincrby(`engagement:connection:${connection}`, '$.totalPoints', replyPoints)
+                  
+                  engagementsFound++
+                  tweetEngagements++
+                  console.log(`✅ Awarded ${replyPoints} points to ${replierUsername} for replying (x${bonusMultiplier} bonus)`)
+                  
+                  // Also award like points (assuming they liked it if they replied)
+                  if (!usersAwardedLikePoints.has(connection)) {
+                    const likeRule = await redis.json.get(`engagement:rules:${userConnection.tier}-like`)
+                    const likeBasePoints = likeRule?.points || 1
+                    const likePoints = Math.round(likeBasePoints * bonusMultiplier)
+                    
+                    const existingLikeLog = await redis.get(`engagement:interaction:${tweet.tweetId}:${connection}:like`)
+                    if (!existingLikeLog) {
+                      const likeLogId = nanoid()
+                      const likeLog = {
+                        id: likeLogId,
+                        tweetId: tweet.tweetId,
+                        userDiscordId: connection,
+                        interactionType: 'like',
+                        points: likePoints,
+                        timestamp: new Date(),
+                        batchId,
+                        bonusMultiplier
+                      }
+                      
+                      await redis.json.set(`engagement:log:${likeLogId}`, '$', likeLog)
+                      await redis.zadd(`engagement:user:${connection}:logs`, { score: Date.now(), member: likeLogId })
+                      await redis.zadd(`engagement:tweet:${tweet.tweetId}:logs`, { score: Date.now(), member: likeLogId })
+                      await redis.set(`engagement:interaction:${tweet.tweetId}:${connection}:like`, likeLogId)
+                      
+                      await redis.json.numincrby(`engagement:connection:${connection}`, '$.totalPoints', likePoints)
+                      
+                      engagementsFound++
+                      tweetEngagements++
+                      usersAwardedLikePoints.add(connection)
+                      console.log(`✅ Awarded ${likePoints} points to ${replierUsername} for implied like (x${bonusMultiplier} bonus)`)
+                    }
+                  }
+                } else {
+                  console.log(`      ⏭️  Skipping @${replierUsername} - already awarded points for this reply`)
+                }
+              } else {
+                console.log(`      ⚠️  Connection data not found for Discord ID: ${connection}`)
+              }
+            } else {
+              console.log(`      ❌ User @${replierUsername} not connected to Discord`)
+            }
+          }
+        } else {
+          console.log(`   ⚠️  No replies found or unable to retrieve reply data`)
+          if (metrics.reply_count > 0) {
+            console.log(`   🚫 ISSUE: Tweet has ${metrics.reply_count} replies but API returned 0 results`)
+            console.log(`      This might indicate API access limitation`)
           }
         }
         
@@ -442,7 +516,8 @@ async function processBatch(forceDetailedCheck = false) {
     console.log(`\n🔑 API Usage Note:`)
     if (shouldDoDetailedCheck) {
       console.log(`   - Detailed checks run hourly to minimize API calls`)
-      console.log(`   - If you see "⚠️ RATE LIMIT REACHED!" above, wait until reset time`)
+      console.log(`   - Twitter /liking_users endpoint removed (no longer available)`)
+      console.log(`   - Like points are now awarded with comments/retweets`)
       console.log(`   - Force detailed check with: node discord-bots/engagement-batch-processor.js --force-detailed`)
     } else {
       console.log(`   - Only tweet metrics were updated (likes, RTs, replies)`)
