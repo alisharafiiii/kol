@@ -35,55 +35,108 @@ export default function CampaignModal({ onClose, onCampaignCreated }: CampaignMo
   const modalRef = useRef<HTMLDivElement>(null)
   const projectDropdownRef = useRef<HTMLDivElement>(null)
   const userDropdownRef = useRef<HTMLDivElement>(null)
+  
+  // Add error state
+  const [error, setError] = useState<string | null>(null)
+  const [projectsLoading, setProjectsLoading] = useState(true)
+  const [usersLoading, setUsersLoading] = useState(true)
 
-  // Fetch projects
+  // Fetch projects with error handling
   useEffect(() => {
-    fetch('/api/projects/all')
-      .then(res => res.json())
-      .then(data => {
-        // Support both {projects: [...]} and direct array formats
-        const arr = Array.isArray(data) ? data : Array.isArray(data?.projects) ? data.projects : []
-        if (!Array.isArray(arr)) {
-          console.error('Projects API did not return an array:', data)
+    const fetchProjects = async () => {
+      console.log('[CampaignModal] Fetching projects...')
+      setProjectsLoading(true)
+      try {
+        const res = await fetch('/api/projects/all')
+        
+        if (!res.ok) {
+          throw new Error(`Failed to fetch projects: ${res.status} ${res.statusText}`)
         }
-        setProjects(arr as Project[])
-      })
-      .catch(error => {
-        console.error('Error fetching projects:', error)
+        
+        const data = await res.json()
+        console.log('[CampaignModal] Projects API response:', data)
+        
+        // Support both {projects: [...]} and direct array formats
+        let projectsArray: Project[] = []
+        if (Array.isArray(data)) {
+          projectsArray = data
+        } else if (data && Array.isArray(data.projects)) {
+          projectsArray = data.projects
+        } else {
+          console.warn('[CampaignModal] Unexpected projects data format:', data)
+          projectsArray = []
+        }
+        
+        console.log(`[CampaignModal] Loaded ${projectsArray.length} projects`)
+        setProjects(projectsArray)
+      } catch (error) {
+        console.error('[CampaignModal] Error fetching projects:', error)
+        setError('Failed to load projects. Some features may be limited.')
         setProjects([])
-      })
+      } finally {
+        setProjectsLoading(false)
+      }
+    }
+    
+    fetchProjects()
   }, [])
 
-  // Fetch approved users with caching
+  // Fetch approved users with caching and error handling
   useEffect(() => {
     const fetchApprovedUsers = async () => {
+      console.log('[CampaignModal] Fetching approved users...')
+      
       // Check if cache is valid
       if (approvedUsersCache && Date.now() - approvedUsersCacheTime < CACHE_DURATION) {
+        console.log('[CampaignModal] Using cached approved users')
         setApprovedUsers(approvedUsersCache)
+        setUsersLoading(false)
         return
       }
 
+      setUsersLoading(true)
       try {
         const res = await fetch('/api/users?approved=true')
+        
+        if (!res.ok) {
+          throw new Error(`Failed to fetch users: ${res.status} ${res.statusText}`)
+        }
+        
         const data = await res.json()
+        console.log('[CampaignModal] Users API response:', data)
         
         // Ensure data is an array before processing
+        let userHandles: string[] = []
         if (Array.isArray(data)) {
-          const handles = data.map((user: any) => user.handle || user.twitterHandle?.replace('@', ''))
-          const validHandles = handles.filter(Boolean)
-          
-          // Update cache
-          approvedUsersCache = validHandles
-          approvedUsersCacheTime = Date.now()
-          
-          setApprovedUsers(validHandles)
+          userHandles = data
+            .map((user: any) => {
+              // Try multiple possible fields for the handle
+              return user.handle || user.twitterHandle?.replace('@', '') || user.name
+            })
+            .filter(Boolean) // Remove null/undefined values
+        } else if (data && Array.isArray(data.users)) {
+          // Handle {users: [...]} format
+          userHandles = data.users
+            .map((user: any) => user.handle || user.twitterHandle?.replace('@', '') || user.name)
+            .filter(Boolean)
         } else {
-          console.error('Users API did not return an array:', data)
-          setApprovedUsers([])
+          console.warn('[CampaignModal] Unexpected users data format:', data)
+          userHandles = []
         }
+        
+        console.log(`[CampaignModal] Loaded ${userHandles.length} approved users`)
+        
+        // Update cache
+        approvedUsersCache = userHandles
+        approvedUsersCacheTime = Date.now()
+        
+        setApprovedUsers(userHandles)
       } catch (error) {
-        console.error('Error fetching approved users:', error)
+        console.error('[CampaignModal] Error fetching approved users:', error)
+        setError('Failed to load team members. You can still create a campaign.')
         setApprovedUsers([])
+      } finally {
+        setUsersLoading(false)
       }
     }
     
@@ -105,53 +158,74 @@ export default function CampaignModal({ onClose, onCampaignCreated }: CampaignMo
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const filteredProjects = projects.filter(p => 
-    p.twitterHandle.toLowerCase().includes(projectSearch.toLowerCase()) ||
-    p.notes?.toLowerCase().includes(projectSearch.toLowerCase())
-  )
+  const filteredProjects = projects.filter(p => {
+    if (!p) return false // Guard against null/undefined projects
+    const searchLower = projectSearch.toLowerCase()
+    return (
+      (p.twitterHandle && p.twitterHandle.toLowerCase().includes(searchLower)) ||
+      (p.notes && p.notes.toLowerCase().includes(searchLower))
+    )
+  })
 
-  const filteredUsers = approvedUsers.filter(handle => 
-    handle.toLowerCase().includes(teamMemberInput.toLowerCase()) &&
-    !teamMembers.includes(handle) &&
-    handle !== session?.user?.name
-  )
+  const filteredUsers = approvedUsers.filter(handle => {
+    if (!handle || !teamMemberInput) return false // Guard against null/undefined
+    return (
+      handle.toLowerCase().includes(teamMemberInput.toLowerCase()) &&
+      !teamMembers.includes(handle) &&
+      handle !== session?.user?.name
+    )
+  })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!session?.user?.name) return
+    if (!session?.user?.name) {
+      setError('You must be logged in to create a campaign')
+      return
+    }
 
+    console.log('[CampaignModal] Creating campaign...')
     setLoading(true)
+    setError(null)
+    
     try {
+      const campaignData = {
+        name,
+        startDate,
+        endDate,
+        chains: selectedChains,
+        projects: selectedProjects,
+        teamMembers,
+        projectBudgets
+      }
+      
+      console.log('[CampaignModal] Campaign data:', campaignData)
+      
       const res = await fetch('/api/campaigns', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          startDate,
-          endDate,
-          chains: selectedChains,
-          projects: selectedProjects,
-          teamMembers,
-          projectBudgets
-        })
+        body: JSON.stringify(campaignData)
       })
 
+      const responseData = await res.json()
+      
       if (res.ok) {
-        const campaign = await res.json()
-        onCampaignCreated(campaign)
+        console.log('[CampaignModal] Campaign created successfully:', responseData)
+        onCampaignCreated(responseData)
       } else {
-        const error = await res.json()
-        alert(error.error || 'Failed to create campaign')
+        console.error('[CampaignModal] Failed to create campaign:', responseData)
+        throw new Error(responseData.error || 'Failed to create campaign')
       }
     } catch (error) {
-      console.error('Error creating campaign:', error)
-      alert('Failed to create campaign')
+      console.error('[CampaignModal] Error creating campaign:', error)
+      setError(error instanceof Error ? error.message : 'Failed to create campaign. Please try again.')
     } finally {
       setLoading(false)
     }
   }
 
   const toggleProject = (projectId: string) => {
+    if (!projectId) return // Guard against null/undefined
+    
     setSelectedProjects(prev => 
       prev.includes(projectId) 
         ? prev.filter(id => id !== projectId)
@@ -163,6 +237,8 @@ export default function CampaignModal({ onClose, onCampaignCreated }: CampaignMo
   }
 
   const addTeamMember = (handle: string) => {
+    if (!handle) return // Guard against null/undefined
+    
     setTeamMembers(prev => [...prev, handle])
     setTeamMemberInput('')
     setShowUserDropdown(false)
@@ -182,6 +258,13 @@ export default function CampaignModal({ onClose, onCampaignCreated }: CampaignMo
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50" onClick={handleBackdropClick}>
       <div ref={modalRef} className="bg-black border-2 border-green-300 p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto font-sans" onClick={(e) => e.stopPropagation()}>
         <h2 className="text-xl font-bold mb-6">CREATE NEW CAMPAIGN</h2>
+
+        {/* Error display */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-900/20 border border-red-500 text-red-400 text-sm">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Campaign Name */}
@@ -302,20 +385,25 @@ export default function CampaignModal({ onClose, onCampaignCreated }: CampaignMo
 
           {/* Projects */}
           <div>
-            <label className="block text-xs uppercase mb-2">Assign Projects</label>
+            <label className="block text-xs uppercase mb-2">
+              Assign Projects {projectsLoading && <span className="text-xs text-gray-500">(loading...)</span>}
+            </label>
             <div className="relative" ref={projectDropdownRef}>
               <input
                 type="text"
                 value={projectSearch}
                 onChange={(e) => setProjectSearch(e.target.value)}
                 onFocus={() => setShowProjectDropdown(true)}
-                placeholder="Search projects..."
+                placeholder={projectsLoading ? "Loading projects..." : "Search projects..."}
                 className="w-full px-3 py-2 bg-black border border-green-300 text-green-300 focus:outline-none focus:border-green-400"
+                disabled={projectsLoading}
               />
-              {showProjectDropdown && (
+              {showProjectDropdown && !projectsLoading && (
                 <div className="absolute top-full left-0 right-0 bg-black border border-green-300 max-h-48 overflow-y-auto z-20 mt-1">
                   {filteredProjects.length === 0 ? (
-                    <div className="p-2 text-gray-500 text-sm">No projects found</div>
+                    <div className="p-2 text-gray-500 text-sm">
+                      {projects.length === 0 ? "No projects available" : "No projects found"}
+                    </div>
                   ) : (
                     filteredProjects.map(project => (
                       <div
@@ -394,20 +482,25 @@ export default function CampaignModal({ onClose, onCampaignCreated }: CampaignMo
 
           {/* Team Members */}
           <div>
-            <label className="block text-xs uppercase mb-2">Team Members</label>
+            <label className="block text-xs uppercase mb-2">
+              Team Members {usersLoading && <span className="text-xs text-gray-500">(loading...)</span>}
+            </label>
             <div className="relative" ref={userDropdownRef}>
               <input
                 type="text"
                 value={teamMemberInput}
                 onChange={(e) => setTeamMemberInput(e.target.value)}
                 onFocus={() => setShowUserDropdown(true)}
-                placeholder="Search approved users..."
+                placeholder={usersLoading ? "Loading users..." : "Search approved users..."}
                 className="w-full px-3 py-2 bg-black border border-green-300 text-green-300 focus:outline-none focus:border-green-400"
+                disabled={usersLoading}
               />
-              {showUserDropdown && teamMemberInput && (
+              {showUserDropdown && teamMemberInput && !usersLoading && (
                 <div className="absolute top-full left-0 right-0 bg-black border border-green-300 max-h-48 overflow-y-auto z-20 mt-1">
                   {filteredUsers.length === 0 ? (
-                    <div className="p-2 text-gray-500 text-sm">No users found</div>
+                    <div className="p-2 text-gray-500 text-sm">
+                      {approvedUsers.length === 0 ? "No approved users available" : "No users found"}
+                    </div>
                   ) : (
                     filteredUsers.map(handle => (
                       <div
@@ -447,7 +540,7 @@ export default function CampaignModal({ onClose, onCampaignCreated }: CampaignMo
           <div className="flex gap-4 mt-6">
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || projectsLoading || usersLoading}
               className="px-4 py-2 bg-green-900 border border-green-300 hover:bg-green-800 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-green-400"
             >
               {loading ? 'Creating...' : 'Create Campaign'}
@@ -464,4 +557,4 @@ export default function CampaignModal({ onClose, onCampaignCreated }: CampaignMo
       </div>
     </div>
   )
-} 
+}

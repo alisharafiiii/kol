@@ -1,7 +1,7 @@
 'use client'
 
 import { useSession } from 'next-auth/react'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import ProjectCard from '@/components/ProjectCard'
 import ProjectModal from '@/components/ProjectModal'
 import { Project } from '@/lib/project'
@@ -23,6 +23,7 @@ export default function ScoutPage() {
   const [activeTab, setActiveTab] = useState<'my' | 'all'>('my')
   const [userRole, setUserRole] = useState<string>('scout')
   const [isApproved, setIsApproved] = useState<boolean | null>(null)
+  const [retryCount, setRetryCount] = useState(0)
 
   const userHandle = getTwitterHandleFromSession(session) || ''
   const userImage = session?.user?.image
@@ -34,94 +35,138 @@ export default function ScoutPage() {
     console.log('[Scout Page] User handle:', userHandle);
   }, [session, status, userHandle]);
 
-  // FIXED: Removed duplicate auth check - middleware already handles authentication
-  // Only check approval status if we have a session
+  // Check approval status with error handling
   useEffect(() => {
     if (status === 'loading') return
     
     // Trust that middleware has already validated authentication
     // We only need to check approval status
     if (status === 'authenticated' && userHandle && isApproved === null) {
-      ;(async () => {
+      const checkApproval = async () => {
         try {
+          console.log('[Scout Page] Checking approval status for:', userHandle)
           const res = await fetch(`/api/user/profile?handle=${userHandle}`)
+          
+          if (!res.ok) {
+            throw new Error(`Failed to check approval: ${res.status}`)
+          }
+          
           const data = await res.json()
+          console.log('[Scout Page] Approval check response:', data)
+          
           if (data.user?.approvalStatus === 'approved') {
             setIsApproved(true)
           } else {
             setIsApproved(false)
+            console.log('[Scout Page] User not approved, redirecting to access-denied')
             router.replace('/access-denied')
           }
-        } catch {
+        } catch (error) {
+          console.error('[Scout Page] Error checking approval:', error)
           setIsApproved(false)
-          router.replace('/access-denied')
+          setError('Failed to verify access. Please try refreshing the page.')
+          
+          // Retry logic
+          if (retryCount < 3) {
+            setTimeout(() => {
+              setRetryCount(prev => prev + 1)
+            }, 2000)
+          }
         }
-      })()
+      }
+      
+      checkApproval()
     }
-  }, [session, status, router, userHandle])
+  }, [session, status, router, userHandle, isApproved, retryCount])
 
-  // Load projects
-  useEffect(() => {
-    // Only load projects if we have a session with userHandle
-    if (status === 'authenticated' && userHandle) {
-      loadProjects()
-      fetchUserRole()
+  // Load projects with error handling
+  const loadProjects = useCallback(async () => {
+    if (!userHandle) {
+      console.log('[Scout Page] No user handle, skipping project load')
+      return
     }
-  }, [status, userHandle])
-
-  const loadProjects = async () => {
+    
     try {
       setLoading(true)
-      setError(null) // Clear any previous errors
-      console.log('🔍 Loading projects for scout:', userHandle)
+      setError(null)
+      console.log('[Scout Page] Loading projects for scout:', userHandle)
       
       // Load user's projects
       const res = await fetch('/api/scout/projects')
-      console.log('🔍 Scout projects API response status:', res.status)
+      console.log('[Scout Page] Scout projects API response status:', res.status)
       
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({ error: 'Failed to load projects' }))
-        throw new Error(errorData.error || 'Failed to load projects')
+        throw new Error(errorData.error || `Failed to load projects: ${res.status}`)
       }
       
       const data = await res.json()
-      console.log('🔍 Scout projects API response data:', data)
-      console.log('🔍 Number of my projects received:', data.projects?.length || 0)
+      console.log('[Scout Page] Scout projects data:', data)
+      console.log('[Scout Page] Number of my projects received:', data.projects?.length || 0)
       
-      setProjects(data.projects || [])
+      // Ensure projects is always an array
+      const myProjects = Array.isArray(data.projects) ? data.projects : []
+      setProjects(myProjects)
       
-      // Load all projects
-      const allRes = await fetch('/api/projects/all')
-      console.log('🔍 All projects API response status:', allRes.status)
-      
-      if (allRes.ok) {
-        const allData = await allRes.json()
-        console.log('🔍 Number of all projects received:', allData.projects?.length || 0)
-        setAllProjects(allData.projects || [])
-      } else {
-        console.error('Failed to load all projects')
+      // Load all projects with error handling
+      try {
+        const allRes = await fetch('/api/projects/all')
+        console.log('[Scout Page] All projects API response status:', allRes.status)
+        
+        if (allRes.ok) {
+          const allData = await allRes.json()
+          console.log('[Scout Page] Number of all projects received:', allData.projects?.length || 0)
+          
+          // Ensure all projects is always an array
+          const allProjectsData = Array.isArray(allData.projects) ? allData.projects : []
+          setAllProjects(allProjectsData)
+        } else {
+          console.error('[Scout Page] Failed to load all projects')
+          setAllProjects([])
+        }
+      } catch (allError) {
+        console.error('[Scout Page] Error loading all projects:', allError)
+        setAllProjects([])
       }
     } catch (err) {
-      console.error('❌ Error loading projects:', err)
+      console.error('[Scout Page] Error loading projects:', err)
       setError(err instanceof Error ? err.message : 'Failed to load projects')
+      setProjects([])
+      setAllProjects([])
     } finally {
       setLoading(false)
     }
-  }
+  }, [userHandle])
 
-  const fetchUserRole = async () => {
+  // Fetch user role with error handling
+  const fetchUserRole = useCallback(async () => {
+    if (!userHandle) return
+    
     try {
       const normalizedHandle = userHandle.replace('@', '').toLowerCase()
       const res = await fetch(`/api/user/role?handle=${normalizedHandle}`)
+      
       if (res.ok) {
         const data = await res.json()
         setUserRole(data.role || 'scout')
-        console.log('User role fetched:', data.role)
+        console.log('[Scout Page] User role fetched:', data.role)
+      } else {
+        console.error('[Scout Page] Failed to fetch user role')
+        setUserRole('scout')
       }
     } catch (err) {
-      console.error('Error fetching user role:', err)
+      console.error('[Scout Page] Error fetching user role:', err)
+      setUserRole('scout')
     }
-  }
+  }, [userHandle])
+
+  // Load projects when authenticated and approved
+  useEffect(() => {
+    if (status === 'authenticated' && userHandle && isApproved === true) {
+      loadProjects()
+      fetchUserRole()
+    }
+  }, [status, userHandle, isApproved, loadProjects, fetchUserRole])
 
   const handleSaveProject = async (data: Partial<Project>) => {
     try {
@@ -130,7 +175,8 @@ export default function ScoutPage() {
         createdBy: userHandle
       }
       setSaving(true)
-      console.log('🚀 Creating project with data:', body)
+      setError(null)
+      console.log('[Scout Page] Creating project with data:', body)
       
       const res = await fetch('/api/projects/create', {
         method: 'POST',
@@ -138,48 +184,45 @@ export default function ScoutPage() {
         body: JSON.stringify(body)
       })
 
+      const responseData = await res.json()
+      
       if (res.ok) {
-        const json = await res.json()
-        console.log('✅ Project created successfully:', json.project)
+        console.log('[Scout Page] Project created successfully:', responseData.project)
         
         // Add to local state immediately
-        setProjects(prev => {
-          const newProjects = [...prev, json.project]
-          console.log('📝 Updated projects list, now has:', newProjects.length, 'projects')
-          return newProjects
-        })
-        // Also add to all projects
-        setAllProjects(prev => [...prev, json.project])
+        if (responseData.project) {
+          setProjects(prev => [...prev, responseData.project])
+          setAllProjects(prev => [...prev, responseData.project])
+        }
+        
         setShowModal(false)
         
-        // Force reload projects from server immediately and after a short delay
-        console.log('🔄 Reloading projects from server...')
+        // Reload projects to ensure consistency
+        console.log('[Scout Page] Reloading projects from server...')
         await loadProjects()
-        
-        // Also reload after a delay to ensure indexing is complete
-        setTimeout(async () => {
-          console.log('🔄 Second reload after indexing delay...')
-          await loadProjects()
-        }, 2000) // Increased delay to ensure indexing is complete
       } else {
-        const error = await res.json()
-        console.error('❌ Project creation failed:', error)
-        alert(error.error || 'Failed to create project')
+        console.error('[Scout Page] Project creation failed:', responseData)
+        throw new Error(responseData.error || 'Failed to create project')
       }
     } catch (e) {
-      console.error('❌ Failed to save project:', e)
-      alert('Failed to save project')
+      console.error('[Scout Page] Failed to save project:', e)
+      setError(e instanceof Error ? e.message : 'Failed to save project')
     } finally {
       setSaving(false)
     }
   }
 
   const handleDeleteProject = async (projectId: string) => {
+    if (!projectId) return
+    
     try {
+      setError(null)
       const res = await fetch(`/api/projects/${projectId}`, {
         method: 'DELETE',
       })
 
+      const responseData = await res.json().catch(() => ({}))
+      
       if (res.ok) {
         // Remove from local state
         setProjects(prev => prev.filter(p => p.id !== projectId))
@@ -190,12 +233,11 @@ export default function ScoutPage() {
         // Reload projects to ensure consistency
         await loadProjects()
       } else {
-        const error = await res.json()
-        alert(error.error || 'Failed to delete project')
+        throw new Error(responseData.error || 'Failed to delete project')
       }
     } catch (e) {
-      console.error('Failed to delete project:', e)
-      alert('Failed to delete project')
+      console.error('[Scout Page] Failed to delete project:', e)
+      setError(e instanceof Error ? e.message : 'Failed to delete project')
     }
   }
 
@@ -203,23 +245,30 @@ export default function ScoutPage() {
 
   const filteredProjects = useMemo(() => {
     if (!searchTerm) return currentProjects
+    
     const term = searchTerm.toLowerCase()
-    return currentProjects.filter(p => 
-      p.twitterHandle.toLowerCase().includes(term) ||
-      p.notes?.toLowerCase().includes(term)
-    )
+    return currentProjects.filter(p => {
+      if (!p) return false // Guard against null/undefined
+      return (
+        (p.twitterHandle && p.twitterHandle.toLowerCase().includes(term)) ||
+        (p.notes && p.notes.toLowerCase().includes(term))
+      )
+    })
   }, [currentProjects, searchTerm])
 
   if (status === 'loading' || loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black font-mono text-green-300">
-        <div className="animate-pulse">Loading scout dashboard...</div>
+        <div className="text-center">
+          <div className="animate-pulse mb-4">Loading scout dashboard...</div>
+          <div className="text-xs text-gray-500">Please wait while we verify your access</div>
+        </div>
       </div>
     )
   }
 
   if (isApproved === false) {
-    return null
+    return null // Will redirect to access-denied
   }
 
   return (
@@ -269,6 +318,22 @@ export default function ScoutPage() {
           </div>
         </div>
 
+        {/* Error display */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-900/20 border border-red-500 text-red-400 text-sm rounded-md">
+            {error}
+            <button 
+              onClick={() => {
+                setError(null)
+                loadProjects()
+              }}
+              className="ml-4 underline hover:text-red-300"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+
         {/* Tabs */}
         <div className="flex gap-2 sm:gap-4 mb-4 sm:mb-6 overflow-x-auto">
           <button
@@ -312,19 +377,7 @@ export default function ScoutPage() {
         </div>
 
         {/* Projects Grid */}
-        {error ? (
-          <div className="text-center py-12">
-            <div className="border border-red-500 p-6 max-w-md mx-auto bg-red-900/10 rounded-md">
-              <p className="text-red-400 mb-4">{error}</p>
-              <button 
-                onClick={loadProjects}
-                className="px-4 py-2 border border-red-400 hover:bg-red-900/30 text-red-300 transition-colors"
-              >
-                Retry
-              </button>
-            </div>
-          </div>
-        ) : filteredProjects.length === 0 ? (
+        {filteredProjects.length === 0 ? (
           <div className="text-center py-12 text-yellow-300 border border-dashed border-yellow-500 p-8 rounded-lg bg-yellow-900/5">
             <div className="mb-4">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-yellow-400/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -377,7 +430,9 @@ export default function ScoutPage() {
         <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
           <div className="border border-green-400 bg-black p-8 flex flex-col items-center gap-4 rounded-md shadow-lg">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-400"></div>
-            <p className="text-green-300 font-bold">Creating project...</p>
+            <p className="text-green-300 font-bold">
+              {selectedProject ? 'Updating project...' : 'Creating project...'}
+            </p>
             <p className="text-green-400 text-sm">Please wait while we save your project</p>
           </div>
         </div>
