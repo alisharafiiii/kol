@@ -29,6 +29,8 @@ async function processBatch() {
   console.log(`   - Redis configured: ${!!process.env.UPSTASH_REDIS_REST_URL}`)
   console.log(`   - Twitter API Key: ${process.env.TWITTER_API_KEY ? process.env.TWITTER_API_KEY.substring(0, 8) + '...' : 'NOT SET'}`)
   console.log(`   - Twitter Access Token: ${process.env.TWITTER_ACCESS_TOKEN ? process.env.TWITTER_ACCESS_TOKEN.substring(0, 8) + '...' : 'NOT SET'}`)
+  console.log(`   - Twitter API Version: v2`)
+  console.log(`   - Authentication Type: OAuth 1.0a (User Context)`)
   
   // Create batch job
   const batchId = nanoid()
@@ -99,24 +101,52 @@ async function processBatch() {
         console.log(`\n   👍 Attempting to get users who liked the tweet...`)
         let likersResponse
         try {
-          likersResponse = await readOnlyClient.v2.tweetLikedBy(tweet.tweetId, {
+          // Log the API request details
+          const likesParams = {
             max_results: 100,
             'user.fields': ['username']
-          })
-          console.log(`   📥 Likes API Response:`, {
-            hasData: !!likersResponse.data,
-            dataLength: likersResponse.data?.length || 0,
-            errors: likersResponse.errors,
-            rateLimit: likersResponse.rateLimit
-          })
+          }
+          console.log(`   📤 API Request:`)
+          console.log(`      Endpoint: GET /2/tweets/${tweet.tweetId}/liking_users`)
+          console.log(`      Full URL: https://api.twitter.com/2/tweets/${tweet.tweetId}/liking_users`)
+          console.log(`      Parameters:`, JSON.stringify(likesParams, null, 2))
+          
+          likersResponse = await readOnlyClient.v2.tweetLikedBy(tweet.tweetId, likesParams)
+          
+          // Log the full response
+          console.log(`   📥 API Response:`)
+          console.log(`      HTTP Status: ${likersResponse._realData?._response?.statusCode || 'Unknown'}`)
+          console.log(`      Has Data: ${!!likersResponse.data}`)
+          console.log(`      Data Length: ${likersResponse.data?.length || 0}`)
+          
+          if (likersResponse.data && likersResponse.data.length > 0) {
+            console.log(`      First 3 users: ${likersResponse.data.slice(0, 3).map(u => u.username).join(', ')}`)
+          }
+          
+          if (likersResponse.errors) {
+            console.log(`      Errors:`, JSON.stringify(likersResponse.errors, null, 2))
+          }
+          
+          // Log raw response for debugging
+          console.log(`      Raw Response Body:`, JSON.stringify({
+            data: likersResponse.data?.length ? `Array[${likersResponse.data.length}]` : likersResponse.data,
+            meta: likersResponse.meta,
+            errors: likersResponse.errors
+          }, null, 2))
         } catch (likeError) {
-          console.log(`   ❌ ERROR getting likes:`, likeError.message)
-          if (likeError.code) {
-            console.log(`      Error code: ${likeError.code}`)
-          }
+          console.log(`   ❌ ERROR getting likes:`)
+          console.log(`      Message: ${likeError.message}`)
+          console.log(`      Error Code: ${likeError.code || 'N/A'}`)
+          console.log(`      HTTP Status: ${likeError.statusCode || likeError.status || 'N/A'}`)
+          
           if (likeError.data) {
-            console.log(`      Error details:`, JSON.stringify(likeError.data, null, 2))
+            console.log(`      Error Response Body:`, JSON.stringify(likeError.data, null, 2))
           }
+          
+          if (likeError.errors) {
+            console.log(`      Twitter API Errors:`, JSON.stringify(likeError.errors, null, 2))
+          }
+          
           likersResponse = { data: [] }
         }
         
@@ -177,30 +207,62 @@ async function processBatch() {
           }
         } else {
           console.log(`   ⚠️  No likes found or unable to retrieve likes data`)
+          if (metrics.like_count > 0) {
+            console.log(`   🚫 ISSUE: Tweet has ${metrics.like_count} likes but API returned 0 results`)
+            console.log(`      This indicates Twitter API access level limitation (need Elevated access)`)
+          }
         }
         
         // Get users who retweeted
         console.log(`\n   🔁 Attempting to get users who retweeted...`)
         let retweetersResponse
         try {
-          retweetersResponse = await readOnlyClient.v2.tweetRetweetedBy(tweet.tweetId, {
+          // Log the API request details
+          const retweetsParams = {
             max_results: 100,
             'user.fields': ['username']
-          })
-          console.log(`   📥 Retweets API Response:`, {
-            hasData: !!retweetersResponse.data,
-            dataLength: retweetersResponse.data?.length || 0,
-            errors: retweetersResponse.errors,
-            rateLimit: retweetersResponse.rateLimit
-          })
+          }
+          console.log(`   📤 API Request:`)
+          console.log(`      Endpoint: GET /2/tweets/${tweet.tweetId}/retweeted_by`)
+          console.log(`      Full URL: https://api.twitter.com/2/tweets/${tweet.tweetId}/retweeted_by`)
+          console.log(`      Parameters:`, JSON.stringify(retweetsParams, null, 2))
+          
+          retweetersResponse = await readOnlyClient.v2.tweetRetweetedBy(tweet.tweetId, retweetsParams)
+          
+          // Log the full response
+          console.log(`   📥 API Response:`)
+          console.log(`      HTTP Status: ${retweetersResponse._realData?._response?.statusCode || 'Unknown'}`)
+          console.log(`      Has Data: ${!!retweetersResponse.data}`)
+          console.log(`      Data Length: ${retweetersResponse.data?.length || 0}`)
+          
+          if (retweetersResponse.data && retweetersResponse.data.length > 0) {
+            console.log(`      First 3 users: ${retweetersResponse.data.slice(0, 3).map(u => u.username).join(', ')}`)
+          }
+          
+          if (retweetersResponse.errors) {
+            console.log(`      Errors:`, JSON.stringify(retweetersResponse.errors, null, 2))
+          }
+          
+          // Log raw response for debugging
+          console.log(`      Raw Response Body:`, JSON.stringify({
+            data: retweetersResponse.data?.length ? `Array[${retweetersResponse.data.length}]` : retweetersResponse.data,
+            meta: retweetersResponse.meta,
+            errors: retweetersResponse.errors
+          }, null, 2))
         } catch (retweetError) {
-          console.log(`   ❌ ERROR getting retweets:`, retweetError.message)
-          if (retweetError.code) {
-            console.log(`      Error code: ${retweetError.code}`)
-          }
+          console.log(`   ❌ ERROR getting retweets:`)
+          console.log(`      Message: ${retweetError.message}`)
+          console.log(`      Error Code: ${retweetError.code || 'N/A'}`)
+          console.log(`      HTTP Status: ${retweetError.statusCode || retweetError.status || 'N/A'}`)
+          
           if (retweetError.data) {
-            console.log(`      Error details:`, JSON.stringify(retweetError.data, null, 2))
+            console.log(`      Error Response Body:`, JSON.stringify(retweetError.data, null, 2))
           }
+          
+          if (retweetError.errors) {
+            console.log(`      Twitter API Errors:`, JSON.stringify(retweetError.errors, null, 2))
+          }
+          
           retweetersResponse = { data: [] }
         }
         
@@ -257,6 +319,10 @@ async function processBatch() {
           }
         } else {
           console.log(`   ⚠️  No retweets found or unable to retrieve retweet data`)
+          if (metrics.retweet_count > 0) {
+            console.log(`   🚫 ISSUE: Tweet has ${metrics.retweet_count} retweets but API returned 0 results`)
+            console.log(`      This indicates Twitter API access level limitation (need Elevated access)`)
+          }
         }
         
         console.log(`\n   ✅ Finished processing tweet ${tweet.tweetId}`)
