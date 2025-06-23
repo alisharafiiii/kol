@@ -23,7 +23,7 @@ const twitterClient = new TwitterApi({
 const readOnlyClient = twitterClient.readOnly
 
 // Process batch job
-async function processBatch() {
+async function processBatch(forceDetailedCheck = false) {
   console.log('🔄 Starting batch processing...')
   console.log('📋 Configuration:')
   console.log(`   - Redis configured: ${!!process.env.UPSTASH_REDIS_REST_URL}`)
@@ -31,6 +31,24 @@ async function processBatch() {
   console.log(`   - Twitter Access Token: ${process.env.TWITTER_ACCESS_TOKEN ? process.env.TWITTER_ACCESS_TOKEN.substring(0, 8) + '...' : 'NOT SET'}`)
   console.log(`   - Twitter API Version: v2`)
   console.log(`   - Authentication Type: OAuth 1.0a (User Context)`)
+  
+  // Declare variable in proper scope
+  let hoursSinceLastCheck = 0
+  
+  // Check if we should do detailed engagement processing
+  const lastDetailedCheck = await redis.get('engagement:lastDetailedCheck')
+  hoursSinceLastCheck = lastDetailedCheck ? 
+    (Date.now() - parseInt(lastDetailedCheck)) / (1000 * 60 * 60) : 
+    Infinity
+  
+  const shouldDoDetailedCheck = forceDetailedCheck || hoursSinceLastCheck >= 1 // Check every hour
+  
+  if (shouldDoDetailedCheck) {
+    console.log(`\n🔍 Running DETAILED engagement check (last check: ${hoursSinceLastCheck.toFixed(1)} hours ago)`)
+    await redis.set('engagement:lastDetailedCheck', Date.now())
+  } else {
+    console.log(`\n📊 Running METRICS ONLY update (next detailed check in ${(1 - hoursSinceLastCheck).toFixed(1)} hours)`)
+  }
   
   // Create batch job
   const batchId = nanoid()
@@ -54,6 +72,7 @@ async function processBatch() {
     
     let tweetsProcessed = 0
     let engagementsFound = 0
+    let metricsUpdated = 0
     
     for (const tweetId of tweetIds) {
       let tweetEngagements = 0 // Track engagements per tweet
@@ -109,6 +128,18 @@ async function processBatch() {
           retweets: metrics.retweet_count,
           replies: metrics.reply_count
         })
+        
+        console.log(`   ✅ Metrics updated successfully`)
+        metricsUpdated++
+        
+        // Skip detailed engagement processing if not needed
+        if (!shouldDoDetailedCheck) {
+          console.log(`   ⏭️  Skipping detailed engagement processing (metrics-only mode)`)
+          tweetsProcessed++
+          continue
+        }
+        
+        console.log(`   🎯 Proceeding with detailed engagement processing...`)
         
         // Get users who liked the tweet
         console.log(`\n   👍 Attempting to get users who liked the tweet...`)
@@ -399,14 +430,25 @@ async function processBatch() {
     
     console.log(`\n📊 Batch Processing Summary:`)
     console.log(`   - Batch ID: ${batchId}`)
+    console.log(`   - Mode: ${shouldDoDetailedCheck ? 'DETAILED (metrics + engagement)' : 'METRICS ONLY'}`)
     console.log(`   - Tweets processed: ${tweetsProcessed}`)
-    console.log(`   - Total engagements awarded: ${engagementsFound}`)
+    console.log(`   - Metrics updated: ${metricsUpdated}`)
+    if (shouldDoDetailedCheck) {
+      console.log(`   - Total engagements awarded: ${engagementsFound}`)
+    }
     console.log(`   - Status: Completed successfully`)
     
     // Add rate limit summary
-    console.log(`\n🔑 Rate Limit Note:`)
-    console.log(`   If you see "⚠️ RATE LIMIT REACHED!" above, wait until reset time.`)
-    console.log(`   Twitter API rate limits may prevent retrieving engagement data.`)
+    console.log(`\n🔑 API Usage Note:`)
+    if (shouldDoDetailedCheck) {
+      console.log(`   - Detailed checks run hourly to minimize API calls`)
+      console.log(`   - If you see "⚠️ RATE LIMIT REACHED!" above, wait until reset time`)
+      console.log(`   - Force detailed check with: node discord-bots/engagement-batch-processor.js --force-detailed`)
+    } else {
+      console.log(`   - Only tweet metrics were updated (likes, RTs, replies)`)
+      console.log(`   - No engagement points were processed in this run`)
+      console.log(`   - Next detailed check scheduled in ${(1 - hoursSinceLastCheck).toFixed(1)} hours`)
+    }
     
     console.log(`\n✅ Batch processing completed!`)
     
@@ -421,7 +463,10 @@ async function processBatch() {
 
 // Run immediately if called directly
 if (require.main === module) {
-  processBatch()
+  // Check for --force-detailed flag
+  const forceDetailed = process.argv.includes('--force-detailed')
+  
+  processBatch(forceDetailed)
     .then(() => process.exit(0))
     .catch(error => {
       console.error(error)
