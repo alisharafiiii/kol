@@ -158,6 +158,9 @@ async function processBatch() {
             if (likesRateLimit.remaining === 0) {
               console.log(`      ⚠️ RATE LIMIT REACHED! Reset at ${new Date(likesRateLimit.reset * 1000).toLocaleTimeString()}`)
             }
+          } else {
+            // Rate limit info not available - likely due to API access level
+            console.log(`   📊 Rate Limit: Not available (Essential API access may not provide rate limit headers)`);
           }
         } catch (likeError) {
           console.log(`   ❌ ERROR getting likes:`)
@@ -287,6 +290,9 @@ async function processBatch() {
             if (retweetsRateLimit.remaining === 0) {
               console.log(`      ⚠️ RATE LIMIT REACHED! Reset at ${new Date(retweetsRateLimit.reset * 1000).toLocaleTimeString()}`)
             }
+          } else {
+            // Rate limit info not available - likely due to API access level
+            console.log(`   📊 Rate Limit: Not available (Essential API access may not provide rate limit headers)`);
           }
         } catch (retweetError) {
           console.log(`   ❌ ERROR getting retweets:`)
