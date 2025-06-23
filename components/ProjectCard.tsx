@@ -92,7 +92,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, showCreator
   
   // Memoize the creator identicon to prevent flickering
   const creatorIdenticon = useMemo(() => 
-    `https://api.dicebear.com/8.x/identicon/svg?seed=${project.createdBy}`,
+    `https://api.dicebear.com/8.x/identicon/svg?seed=${project.createdBy || 'unknown'}`,
     [project.createdBy]
   );
   
@@ -201,7 +201,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, showCreator
             </div>
           )}
           <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-center">
-            <div className="text-[8px] text-green-300">ID-{project.id.substring(0, 4)}</div>
+            <div className="text-[8px] text-green-300">ID-{(project.id || 'unknown').substring(0, 4)}</div>
           </div>
           {/* Creator avatar overlay */}
           {creatorImage && (
@@ -235,13 +235,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, showCreator
           </div>
           <div className="license-field flex items-center">
             <span className="opacity-70 mr-1">PRIORITY:</span> 
-            <span className={`font-bold px-1.5 py-0.5 rounded text-[10px] border ${getPriorityColor(project.priority)}`}>
-              {project.priority.toUpperCase()}
+            <span className={`font-bold px-1.5 py-0.5 rounded text-[10px] border ${getPriorityColor(project.priority || 'low')}`}>
+              {(project.priority || 'low').toUpperCase()}
             </span>
           </div>
           <div className="license-field flex items-center">
             <span className="opacity-70 mr-1">STAGE:</span>
-            <span className={`font-bold text-[10px] ${getStageColor(project.stage)}`}>{getStageName(project.stage)}</span>
+            <span className={`font-bold text-[10px] ${getStageColor(project.stage || 'dmd')}`}>{getStageName(project.stage || 'dmd')}</span>
           </div>
           
           {project.website && (
@@ -274,11 +274,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, showCreator
           
           {showCreator && project.assignedTo ? (
             <div className="license-creator text-[8px] opacity-70">
-              ASSIGNED TO: {project.assignedTo.substring(0, 8)}...
+              ASSIGNED TO: {(project.assignedTo || 'Unknown').substring(0, 8)}...
             </div>
           ) : (
             <div className="license-creator text-[8px] opacity-70">
-              BY: {project.createdBy.substring(0, 8)}...
+              BY: {(project.createdBy || 'Unknown').substring(0, 8)}...
             </div>
           )}
         </div>
