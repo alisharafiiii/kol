@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Trophy, Users, Twitter, RefreshCw, Settings, Activity, Plus, Trash2 } from 'lucide-react'
@@ -58,28 +58,117 @@ export default function EngagementAdminPage() {
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   
+  // Add refs to track component state and prevent unnecessary refreshes
+  const isComponentMounted = useRef(true)
+  const lastFetchTime = useRef<number>(0)
+  const fetchInterval = useRef<NodeJS.Timeout | null>(null)
+  
+  // Minimum time between fetches (in milliseconds)
+  const FETCH_COOLDOWN = 5000 // 5 seconds
+  
+  useEffect(() => {
+    return () => {
+      isComponentMounted.current = false
+      if (fetchInterval.current) {
+        clearInterval(fetchInterval.current)
+      }
+    }
+  }, [])
+  
+  // Handle visibility change to prevent unnecessary refreshes
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        console.log('[Engagement Admin] Page hidden, pausing updates')
+        if (fetchInterval.current) {
+          clearInterval(fetchInterval.current)
+          fetchInterval.current = null
+        }
+      } else {
+        console.log('[Engagement Admin] Page visible, resuming updates if needed')
+        // Only fetch if enough time has passed since last fetch
+        const timeSinceLastFetch = Date.now() - lastFetchTime.current
+        if (timeSinceLastFetch > FETCH_COOLDOWN) {
+          fetchData()
+        }
+        // Restart periodic updates
+        startPeriodicUpdates()
+      }
+    }
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [])
+  
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/api/auth/signin')
     } else if (session) {
       // Check if user has admin role
       const userRole = (session as any).role || (session.user as any)?.role
+      console.log('[Engagement Admin] User role:', userRole, 'Session:', session)
+      
       if (!['admin', 'core'].includes(userRole)) {
         router.push('/')
       } else {
         fetchData()
+        startPeriodicUpdates()
       }
     }
   }, [session, status, router])
   
+  const startPeriodicUpdates = useCallback(() => {
+    // Clear any existing interval
+    if (fetchInterval.current) {
+      clearInterval(fetchInterval.current)
+    }
+    
+    // Set up periodic updates for recent tweets
+    fetchInterval.current = setInterval(() => {
+      if (!document.hidden && isComponentMounted.current) {
+        console.log('[Engagement Admin] Periodic update: fetching recent tweets')
+        fetchRecentTweets()
+      }
+    }, 30000) // Update every 30 seconds
+  }, [])
+  
+  const fetchRecentTweets = async () => {
+    try {
+      const tweetsRes = await fetch('/api/engagement/tweets')
+      if (tweetsRes.ok) {
+        const data = await tweetsRes.json()
+        if (isComponentMounted.current) {
+          setTweets(data.tweets || [])
+          console.log('[Engagement Admin] Updated tweets:', data.tweets?.length || 0)
+        }
+      }
+    } catch (error) {
+      console.error('[Engagement Admin] Error fetching recent tweets:', error)
+    }
+  }
+  
   const fetchData = async () => {
+    // Prevent too frequent fetches
+    const timeSinceLastFetch = Date.now() - lastFetchTime.current
+    if (timeSinceLastFetch < FETCH_COOLDOWN && lastFetchTime.current > 0) {
+      console.log('[Engagement Admin] Skipping fetch, too soon since last fetch')
+      return
+    }
+    
+    lastFetchTime.current = Date.now()
     setLoading(true)
+    console.log('[Engagement Admin] Fetching all data...')
+    
     try {
       // Fetch tweets
       const tweetsRes = await fetch('/api/engagement/tweets')
       if (tweetsRes.ok) {
         const data = await tweetsRes.json()
         setTweets(data.tweets || [])
+        console.log('[Engagement Admin] Fetched tweets:', data.tweets?.length || 0)
       }
       
       // Fetch leaderboard
@@ -103,7 +192,7 @@ export default function EngagementAdminPage() {
         setBatchJobs(data.jobs || [])
       }
     } catch (error) {
-      console.error('Error fetching data:', error)
+      console.error('[Engagement Admin] Error fetching data:', error)
     } finally {
       setLoading(false)
     }
@@ -111,10 +200,19 @@ export default function EngagementAdminPage() {
   
   const runBatchJob = async () => {
     setRefreshing(true)
+    console.log('[Engagement Admin] Creating batch job...')
+    
     try {
+      // Include session information in the request headers
       const res = await fetch('/api/engagement/batch', {
-        method: 'POST'
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include' // Ensure cookies are sent
       })
+      
+      console.log('[Engagement Admin] Batch job response:', res.status, res.statusText)
       
       if (res.ok) {
         const data = await res.json()
@@ -123,10 +221,11 @@ export default function EngagementAdminPage() {
         setTimeout(() => fetchData(), 2000)
       } else {
         const data = await res.json()
+        console.error('[Engagement Admin] Batch job error:', data)
         alert(data.error || 'Failed to create batch job')
       }
     } catch (error) {
-      console.error('Error creating batch job:', error)
+      console.error('[Engagement Admin] Error creating batch job:', error)
       alert('Failed to create batch job')
     } finally {
       setRefreshing(false)
@@ -138,7 +237,8 @@ export default function EngagementAdminPage() {
     
     try {
       const res = await fetch(`/api/engagement/tweets?id=${tweetId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        credentials: 'include'
       })
       
       if (res.ok) {
@@ -147,7 +247,7 @@ export default function EngagementAdminPage() {
         alert('Failed to delete tweet')
       }
     } catch (error) {
-      console.error('Error deleting tweet:', error)
+      console.error('[Engagement Admin] Error deleting tweet:', error)
       alert('Failed to delete tweet')
     }
   }
@@ -157,7 +257,8 @@ export default function EngagementAdminPage() {
       const res = await fetch('/api/engagement/rules', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tier, interactionType, points })
+        body: JSON.stringify({ tier, interactionType, points }),
+        credentials: 'include'
       })
       
       if (res.ok) {
@@ -166,7 +267,7 @@ export default function EngagementAdminPage() {
         alert('Failed to update rule')
       }
     } catch (error) {
-      console.error('Error updating rule:', error)
+      console.error('[Engagement Admin] Error updating rule:', error)
       alert('Failed to update rule')
     }
   }
@@ -174,7 +275,8 @@ export default function EngagementAdminPage() {
   const setupDefaultRules = async () => {
     try {
       const res = await fetch('/api/engagement/rules?action=setup-defaults', {
-        method: 'PUT'
+        method: 'PUT',
+        credentials: 'include'
       })
       
       if (res.ok) {
@@ -184,7 +286,7 @@ export default function EngagementAdminPage() {
         alert('Failed to setup default rules')
       }
     } catch (error) {
-      console.error('Error setting up default rules:', error)
+      console.error('[Engagement Admin] Error setting up default rules:', error)
       alert('Failed to setup default rules')
     }
   }
@@ -208,13 +310,15 @@ function TierScenarios() {
 
   const fetchScenarios = async () => {
     try {
-      const response = await fetch('/api/engagement/scenarios')
+      const response = await fetch('/api/engagement/scenarios', {
+        credentials: 'include'
+      })
       if (response.ok) {
         const data = await response.json()
         setScenarios(data)
       }
     } catch (error) {
-      console.error('Error fetching scenarios:', error)
+      console.error('[Engagement Admin] Error fetching scenarios:', error)
     }
   }
 
@@ -233,7 +337,8 @@ function TierScenarios() {
         body: JSON.stringify({
           tier: editingTier,
           scenarios: editForm
-        })
+        }),
+        credentials: 'include'
       })
 
       if (response.ok) {
@@ -241,7 +346,7 @@ function TierScenarios() {
         setEditingTier(null)
       }
     } catch (error) {
-      console.error('Error saving scenarios:', error)
+      console.error('[Engagement Admin] Error saving scenarios:', error)
     }
   }
 
@@ -391,6 +496,9 @@ function TierScenarios() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-green-300 mb-2">Engagement Tracker</h1>
           <p className="text-gray-400">Manage Twitter engagement tracking and points system</p>
+          <p className="text-xs text-gray-500 mt-1">
+            {session ? `Logged in as: ${(session as any).twitterHandle || session.user?.name} (${(session as any).role || 'unknown'})` : ''}
+          </p>
         </div>
         
         {/* Stats Cards */}
@@ -470,24 +578,47 @@ function TierScenarios() {
                   <Settings className="w-4 h-4" />
                   Setup Default Rules
                 </button>
+                <button
+                  onClick={fetchRecentTweets}
+                  className="px-4 py-2 bg-blue-900 text-blue-100 rounded hover:bg-blue-800 flex items-center gap-2"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Refresh Tweets
+                </button>
               </div>
               <div className="mt-4 p-3 bg-black border border-yellow-500 rounded text-sm">
-                <p className="text-yellow-300 font-semibold mb-1">ℹ️ Note: Batch Processing</p>
+                <p className="text-yellow-300 font-semibold mb-1">ℹ️ How Batch Processing Works</p>
                 <p className="text-gray-300">
-                  The batch processor runs separately from the web app. To process engagement data:
+                  Creating a batch job only queues it. To actually process tweets and award points:
                 </p>
                 <ol className="list-decimal list-inside mt-2 text-gray-400 space-y-1">
-                  <li>Run <code className="bg-gray-800 px-1 rounded">npm install discord.js twitter-api-v2 node-cron</code></li>
-                  <li>Start the cron job: <code className="bg-gray-800 px-1 rounded">node scripts/engagement-cron.js</code></li>
-                  <li>Or run once: <code className="bg-gray-800 px-1 rounded">node scripts/engagement-batch-processor.js</code></li>
+                  <li>Run once: <code className="bg-gray-800 px-1 rounded">node discord-bots/engagement-batch-processor.js</code></li>
+                  <li>Or use the helper: <code className="bg-gray-800 px-1 rounded">node scripts/run-engagement-batch.mjs</code></li>
+                  <li>Set up cron for automation: <code className="bg-gray-800 px-1 rounded">*/30 * * * * cd /path/to/project && node discord-bots/engagement-batch-processor.js</code></li>
                 </ol>
+                <div className="mt-3 p-2 bg-gray-900 rounded">
+                  <p className="text-xs text-gray-400">
+                    <strong>Important:</strong> Points require:
+                  </p>
+                  <ul className="list-disc list-inside text-xs text-gray-500 mt-1">
+                    <li>Users must connect both Discord & Twitter accounts</li>
+                    <li>Twitter API must have "Elevated" access (not just "Essential")</li>
+                    <li>The tweetLikedBy endpoint is needed to see who engaged</li>
+                  </ul>
+                </div>
               </div>
             </div>
             
             <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-green-300 mb-4">Recent Activity</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold text-green-300">Recent Activity</h2>
+                <span className="text-xs text-gray-500">Updates every 30 seconds</span>
+              </div>
               <div className="space-y-3">
-                {tweets.slice(0, 5).map(tweet => (
+                {tweets
+                  .sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime())
+                  .slice(0, 5)
+                  .map(tweet => (
                   <div key={tweet.id} className="flex items-center justify-between py-2 border-b border-gray-800">
                     <div>
                       <p className="text-white">@{tweet.authorHandle}</p>
@@ -505,6 +636,9 @@ function TierScenarios() {
                     </a>
                   </div>
                 ))}
+                {tweets.length === 0 && (
+                  <p className="text-gray-500 text-center py-4">No recent tweets yet</p>
+                )}
               </div>
             </div>
           </div>

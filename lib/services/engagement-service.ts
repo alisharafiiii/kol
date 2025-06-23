@@ -69,14 +69,19 @@ export class EngagementService {
   }
   
   static async getRecentTweets(hours: number = 24): Promise<Tweet[]> {
-    const cutoff = Date.now() - (hours * 60 * 60 * 1000)
-    const tweetIds = await redis.zrange('engagement:tweets:recent', cutoff, '+inf', { byScore: true })
+    // Due to server clock issues, we'll get all tweets and sort by date
+    // instead of using the time-based filter
+    const limit = 100; // Get last 100 tweets
+    const tweetIds = await redis.zrange('engagement:tweets:recent', 0, limit - 1, { rev: true })
     
     const tweets: Tweet[] = []
     for (const id of tweetIds) {
       const tweet = await this.getTweet(id)
       if (tweet) tweets.push(tweet)
     }
+    
+    // Sort by submittedAt date in descending order
+    tweets.sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime())
     
     return tweets
   }
