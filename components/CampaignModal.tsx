@@ -183,7 +183,14 @@ export default function CampaignModal({ onClose, onCampaignCreated }: CampaignMo
       return
     }
 
-    console.log('[CampaignModal] Creating campaign...')
+    // Prevent double submission
+    if (loading) {
+      console.log('[CampaignModal] Already creating campaign, ignoring duplicate submit')
+      return
+    }
+
+    const submissionId = Date.now() // Unique ID for this submission
+    console.log(`[CampaignModal] Creating campaign (submission ID: ${submissionId})...`)
     setLoading(true)
     setError(null)
     
@@ -198,7 +205,7 @@ export default function CampaignModal({ onClose, onCampaignCreated }: CampaignMo
         projectBudgets
       }
       
-      console.log('[CampaignModal] Campaign data:', campaignData)
+      console.log(`[CampaignModal] Campaign data (submission ${submissionId}):`, campaignData)
       
       const res = await fetch('/api/campaigns', {
         method: 'POST',
@@ -209,14 +216,14 @@ export default function CampaignModal({ onClose, onCampaignCreated }: CampaignMo
       const responseData = await res.json()
       
       if (res.ok) {
-        console.log('[CampaignModal] Campaign created successfully:', responseData)
+        console.log(`[CampaignModal] Campaign created successfully (submission ${submissionId}):`, responseData)
         onCampaignCreated(responseData)
       } else {
-        console.error('[CampaignModal] Failed to create campaign:', responseData)
+        console.error(`[CampaignModal] Failed to create campaign (submission ${submissionId}):`, responseData)
         throw new Error(responseData.error || 'Failed to create campaign')
       }
     } catch (error) {
-      console.error('[CampaignModal] Error creating campaign:', error)
+      console.error(`[CampaignModal] Error creating campaign (submission ${submissionId}):`, error)
       setError(error instanceof Error ? error.message : 'Failed to create campaign. Please try again.')
     } finally {
       setLoading(false)

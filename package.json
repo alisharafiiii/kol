@@ -10,7 +10,9 @@
     "lint": "next lint",
     "discord-bot": "tsx discord-bot/bot.ts",
     "fix-kol-profile": "tsx scripts/fix-kol-profile.ts",
-    "update-handle": "tsx scripts/update-twitter-handle.ts"
+    "update-handle": "tsx scripts/update-twitter-handle.ts",
+    "debug:twitter-sync": "node scripts/debug-twitter-sync.mjs",
+    "debug:campaign-tweets": "node scripts/debug-campaign-tweets.mjs"
   },
   "dependencies": {
     "@coinbase/onchainkit": "latest",

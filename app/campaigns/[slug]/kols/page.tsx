@@ -124,24 +124,48 @@ export default function CampaignKOLsPage({ params }: { params: { slug: string } 
   const syncTweets = async () => {
     if (!campaignId) return
     
+    console.log('[DEBUG] Sync Tweets - Starting sync process')
+    console.log('[DEBUG] Campaign ID:', campaignId)
+    console.log('[DEBUG] Current KOLs:', kols.length)
+    
     setSyncing(true)
     try {
+      console.log('[DEBUG] Making POST request to sync-tweets API...')
       const res = await fetch(`/api/campaigns/${campaignId}/sync-tweets`, {
         method: 'POST'
       })
       
+      console.log('[DEBUG] API Response status:', res.status)
+      console.log('[DEBUG] API Response headers:', Object.fromEntries(res.headers.entries()))
+      
+      const responseData = await res.json()
+      console.log('[DEBUG] API Response data:', responseData)
+      
       if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.error || 'Failed to sync tweets')
+        console.error('[DEBUG] Sync failed with error:', responseData)
+        throw new Error(responseData.error || 'Failed to sync tweets')
       }
       
-      const result = await res.json()
+      const result = responseData.result || responseData
+      console.log('[DEBUG] Sync result:', result)
       
       // Reload KOLs to show updated metrics
+      console.log('[DEBUG] Reloading campaign data...')
       await loadCampaignData()
+      console.log('[DEBUG] Campaign data reloaded, new KOLs count:', kols.length)
       
-      alert(`Synced ${result.synced} tweets, ${result.failed} failed`)
+      // Check if any tweets were found
+      if (result.synced === 0 && result.failed === 0) {
+        console.warn('[DEBUG] No tweets were synced - possible issues:')
+        console.warn('- No tweet links added to KOLs')
+        console.warn('- Invalid tweet URLs')
+        console.warn('- Twitter API credentials missing')
+        alert('No tweets found to sync. Make sure KOLs have tweet links added.')
+      } else {
+        alert(`Synced ${result.synced} tweets, ${result.failed} failed`)
+      }
     } catch (err: any) {
+      console.error('[DEBUG] Sync error:', err)
       alert(err.message || 'Failed to sync tweets')
     } finally {
       setSyncing(false)

@@ -129,14 +129,21 @@ export class TwitterSyncService {
    */
   static async fetchTweetMetrics(tweetId: string): Promise<TweetData | null> {
     try {
+      console.log('[DEBUG] fetchTweetMetrics called for tweet:', tweetId)
+      console.log('[DEBUG] Bearer token present:', !!this.BEARER_TOKEN)
+      console.log('[DEBUG] Bearer token length:', this.BEARER_TOKEN?.length || 0)
+      
       if (!this.BEARER_TOKEN) {
+        console.error('[DEBUG] Twitter Bearer Token not configured in environment')
         throw new Error('Twitter Bearer Token not configured')
       }
       
       if (!(await this.canMakeRequest())) {
+        console.warn('[DEBUG] Rate limited, cannot make request')
         throw new Error('Rate limited')
       }
       
+      console.log('[DEBUG] Making Twitter API request...')
       const response = await fetch(
         `https://api.twitter.com/2/tweets/${tweetId}?tweet.fields=public_metrics`,
         {
@@ -146,17 +153,20 @@ export class TwitterSyncService {
         }
       )
       
+      console.log('[DEBUG] Twitter API response status:', response.status)
       await this.updateRateLimit(response.headers)
       
       if (!response.ok) {
         const error = await response.json()
+        console.error('[DEBUG] Twitter API error response:', error)
         throw new Error(`Twitter API error: ${error.detail || response.statusText}`)
       }
       
       const data = await response.json()
+      console.log('[DEBUG] Tweet data received:', data)
       return data.data
     } catch (error) {
-      console.error(`Error fetching tweet ${tweetId}:`, error)
+      console.error(`[DEBUG] Error fetching tweet ${tweetId}:`, error)
       return null
     }
   }
@@ -167,12 +177,22 @@ export class TwitterSyncService {
   static async batchFetchTweets(tweetIds: string[]): Promise<Map<string, TweetData>> {
     const results = new Map<string, TweetData>()
     
+    console.log('[DEBUG] batchFetchTweets called with', tweetIds.length, 'tweet IDs')
+    console.log('[DEBUG] Bearer token present:', !!this.BEARER_TOKEN)
+    console.log('[DEBUG] First few tweet IDs:', tweetIds.slice(0, 3))
+    
     try {
       if (!this.BEARER_TOKEN) {
+        console.error('[DEBUG] Twitter Bearer Token not configured in environment')
+        console.error('[DEBUG] Please ensure TWITTER_BEARER_TOKEN is set in .env.local')
         throw new Error('Twitter Bearer Token not configured')
       }
       
-      if (!(await this.canMakeRequest())) {
+      const canMakeRequest = await this.canMakeRequest()
+      console.log('[DEBUG] Can make request:', canMakeRequest)
+      
+      if (!canMakeRequest) {
+        console.warn('[DEBUG] Rate limited, cannot make batch request')
         throw new Error('Rate limited')
       }
       
@@ -181,6 +201,9 @@ export class TwitterSyncService {
       for (let i = 0; i < tweetIds.length; i += batchSize) {
         const batch = tweetIds.slice(i, i + batchSize)
         const ids = batch.join(',')
+        
+        console.log(`[DEBUG] Fetching batch ${i/batchSize + 1}, tweets: ${batch.length}`)
+        console.log('[DEBUG] Twitter API URL:', `https://api.twitter.com/2/tweets?ids=${ids.substring(0, 100)}...`)
         
         const response = await fetch(
           `https://api.twitter.com/2/tweets?ids=${ids}&tweet.fields=public_metrics`,
@@ -191,29 +214,47 @@ export class TwitterSyncService {
           }
         )
         
+        console.log('[DEBUG] Batch response status:', response.status)
+        console.log('[DEBUG] Batch response headers:', Object.fromEntries(response.headers.entries()))
+        
         await this.updateRateLimit(response.headers)
         
         if (!response.ok) {
-          console.error('Batch fetch failed:', await response.text())
+          const errorText = await response.text()
+          console.error('[DEBUG] Batch fetch failed:', errorText)
           continue
         }
         
         const data = await response.json()
+        console.log('[DEBUG] Batch response data:', {
+          hasData: !!data.data,
+          tweetCount: data.data?.length || 0,
+          errors: data.errors
+        })
+        
         if (data.data) {
           data.data.forEach((tweet: TweetData) => {
+            console.log('[DEBUG] Tweet metrics:', {
+              id: tweet.id,
+              impressions: tweet.public_metrics.impression_count,
+              likes: tweet.public_metrics.like_count,
+              retweets: tweet.public_metrics.retweet_count
+            })
             results.set(tweet.id, tweet)
           })
         }
         
         // Small delay between batches
         if (i + batchSize < tweetIds.length) {
+          console.log('[DEBUG] Waiting 1s before next batch...')
           await new Promise(resolve => setTimeout(resolve, 1000))
         }
       }
     } catch (error) {
-      console.error('Error batch fetching tweets:', error)
+      console.error('[DEBUG] Error batch fetching tweets:', error)
     }
     
+    console.log('[DEBUG] Batch fetch complete, fetched', results.size, 'tweets')
     return results
   }
   
@@ -233,6 +274,18 @@ export class TwitterSyncService {
     console.log('='.repeat(80))
     console.log('Campaign ID:', campaignId)
     console.log('Start time:', new Date().toISOString())
+    console.log('Bearer Token present:', !!this.BEARER_TOKEN)
+    console.log('Bearer Token length:', this.BEARER_TOKEN?.length || 0)
+    
+    if (!this.BEARER_TOKEN) {
+      console.error('❌ TWITTER_BEARER_TOKEN environment variable is not set!')
+      console.error('Please add TWITTER_BEARER_TOKEN to your environment variables')
+      return {
+        synced: 0,
+        failed: 0,
+        rateLimited: false,
+      }
+    }
     
     const result = {
       synced: 0,
@@ -246,61 +299,78 @@ export class TwitterSyncService {
       let kols = await CampaignKOLService.getCampaignKOLs(campaignId)
       console.log(`   Found ${kols.length} KOLs in service`)
       
-      // If no KOLs found, try getting from campaign object (old format)
-      if (kols.length === 0) {
-        console.log('\n2. No KOLs in service, checking campaign object...')
-        const { getCampaign } = await import('@/lib/campaign')
-        const campaign = await getCampaign(campaignId)
-        console.log('   Campaign found:', !!campaign)
+      // ALWAYS check campaign object for old format KOLs regardless
+      console.log('\n2. Checking campaign object for additional KOLs...')
+      const { getCampaign } = await import('@/lib/campaign')
+      const campaign = await getCampaign(campaignId)
+      console.log('   Campaign found:', !!campaign)
+      
+      if (campaign && campaign.kols && campaign.kols.length > 0) {
+        console.log(`   Found ${campaign.kols.length} KOLs in campaign object`)
         
-        if (campaign && campaign.kols && campaign.kols.length > 0) {
-          console.log(`   Found ${campaign.kols.length} KOLs in campaign object`)
-          // Log first KOL to see structure
-          if (campaign.kols[0]) {
-            console.log('   Sample KOL structure:', {
-              id: campaign.kols[0].id,
-              handle: campaign.kols[0].handle,
-              hasLinks: !!campaign.kols[0].links,
-              linksCount: campaign.kols[0].links?.length || 0,
-              firstLink: campaign.kols[0].links?.[0] || 'No links'
-            })
-          }
-          // Convert old format KOLs to format expected by sync
-          kols = campaign.kols.map(kol => ({
-            id: kol.id,
-            campaignId: campaignId,
-            kolId: kol.id,
-            kolHandle: kol.handle,
-            kolName: kol.name,
-            kolImage: kol.pfp,
-            tier: kol.tier as any,
-            stage: kol.stage as any,
-            deviceStatus: kol.device as any,
-            budget: typeof kol.budget === 'string' ? parseFloat(kol.budget) || 0 : kol.budget || 0,
-            paymentStatus: kol.payment as any,
-            links: kol.links || [],
-            platform: Array.isArray(kol.platform) ? kol.platform[0] as any : kol.platform as any,
-            contentType: 'tweet' as any,
-            totalViews: kol.views || 0,
-            totalEngagement: (kol.likes || 0) + (kol.retweets || 0) + (kol.comments || 0),
-            engagementRate: 0,
-            score: 0,
-            addedAt: kol.lastUpdated || new Date(),
-            addedBy: 'system',
-          }))
-        } else {
-          console.log('   No KOLs found in campaign object')
+        // Check if we already have some KOLs from service
+        if (kols.length > 0) {
+          console.log(`   ⚠️  Both formats present: ${kols.length} in service, ${campaign.kols.length} in campaign`)
+          console.log('   Using campaign object KOLs as primary source')
         }
+        
+        // Log first KOL to see structure
+        if (campaign.kols[0]) {
+          console.log('   Sample KOL structure:', {
+            id: campaign.kols[0].id,
+            handle: campaign.kols[0].handle,
+            hasLinks: !!campaign.kols[0].links,
+            linksCount: campaign.kols[0].links?.length || 0,
+            firstLink: campaign.kols[0].links?.[0] || 'No links'
+          })
+        }
+        
+        // Convert old format KOLs to format expected by sync
+        const oldFormatKols = campaign.kols.map(kol => ({
+          id: kol.id,
+          campaignId: campaignId,
+          kolId: kol.id,
+          kolHandle: kol.handle,
+          kolName: kol.name,
+          kolImage: kol.pfp,
+          tier: kol.tier as any,
+          stage: kol.stage as any,
+          deviceStatus: kol.device as any,
+          budget: typeof kol.budget === 'string' ? parseFloat(kol.budget) || 0 : kol.budget || 0,
+          paymentStatus: kol.payment as any,
+          links: kol.links || [],
+          platform: Array.isArray(kol.platform) ? kol.platform[0] as any : kol.platform as any,
+          contentType: 'tweet' as any,
+          totalViews: kol.views || 0,
+          totalEngagement: (kol.likes || 0) + (kol.retweets || 0) + (kol.comments || 0),
+          engagementRate: 0,
+          score: 0,
+          addedAt: kol.lastUpdated || new Date(),
+          addedBy: 'system',
+        }))
+        
+        // Use old format KOLs as primary source
+        kols = oldFormatKols
+      } else if (kols.length === 0) {
+        console.log('   No KOLs found in either format')
       }
       
       // Collect all tweet IDs grouped by KOL
       console.log('\n3. Collecting tweet IDs...')
+      console.log(`   Processing ${kols.length} KOLs`)
       const kolTweetMap = new Map<string, string[]>() // kolId -> tweetIds[]
       const allTweetIds = new Set<string>()
       
       for (const kol of kols) {
         const tweetIds: string[] = []
-        console.log(`   KOL ${kol.kolHandle}: ${kol.links.length} links`)
+        console.log(`   KOL ${kol.kolHandle}: ${kol.links?.length || 0} links`)
+        
+        // Check if links exist and is an array
+        if (!kol.links || !Array.isArray(kol.links)) {
+          console.log(`      ⚠️  No links array for ${kol.kolHandle}`)
+          continue
+        }
+        
         for (const link of kol.links) {
           console.log(`      Link: ${link}`)
           const tweetId = this.extractTweetId(link)
@@ -388,8 +458,21 @@ export class TwitterSyncService {
             totalComments
           })
           
-          // If it's from old format, update the campaign directly
-          if (kols.length > 0 && !await CampaignKOLService.getCampaignKOLs(campaignId).then(k => k.length)) {
+          // Check if this KOL exists in new format
+          const serviceKols = await CampaignKOLService.getCampaignKOLs(campaignId)
+          const existsInService = serviceKols.some(sk => sk.kolHandle === kol.kolHandle)
+          
+          if (existsInService) {
+            console.log(`Updating KOL ${kol.kolHandle} using CampaignKOLService`)
+            // Update using CampaignKOLService
+            await CampaignKOLService.updateKOLMetrics(kolId, {
+              views: totalViews,
+              likes: totalLikes,
+              retweets: totalRetweets,
+              replies: totalComments,
+            })
+          } else {
+            console.log(`Updating KOL ${kol.kolHandle} directly in campaign object`)
             // Directly update the campaign in Redis to bypass authorization
             const campaign = await redis.json.get(campaignId, '$') as any
             if (campaign && campaign[0]) {
@@ -403,16 +486,11 @@ export class TwitterSyncService {
                 campaignData.kols[kolIndex].lastUpdated = new Date()
                 
                 await redis.json.set(campaignId, '$', campaignData)
+                console.log(`Successfully updated KOL ${kol.kolHandle} in campaign object`)
+              } else {
+                console.log(`Could not find KOL ${kol.kolHandle} in campaign object`)
               }
             }
-          } else {
-            // Update using CampaignKOLService
-            await CampaignKOLService.updateKOLMetrics(kolId, {
-              views: totalViews,
-              likes: totalLikes,
-              retweets: totalRetweets,
-              replies: totalComments,
-            })
           }
           
           result.synced += tweetsFound

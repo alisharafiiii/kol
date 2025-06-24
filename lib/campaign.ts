@@ -67,8 +67,20 @@ export async function createCampaign(data: {
   teamMembers: string[]
   createdBy: string
 }): Promise<Campaign> {
+  const createId = Date.now() // Unique ID for this creation
+  console.log(`[createCampaign] Function called (create ID: ${createId})`)
+  console.log(`[createCampaign] Data (create ${createId}):`, {
+    name: data.name,
+    createdBy: data.createdBy,
+    projectsCount: data.projects?.length || 0,
+    teamMembersCount: data.teamMembers?.length || 0
+  })
+  
   const id = `campaign:${nanoid()}`
+  console.log(`[createCampaign] Generated campaign ID (create ${createId}): ${id}`)
+  
   const slug = generateSlug(data.name)
+  console.log(`[createCampaign] Generated slug (create ${createId}): ${slug}`)
   
   // Check if slug already exists
   let finalSlug = slug
@@ -77,6 +89,7 @@ export async function createCampaign(data: {
     finalSlug = `${slug}-${counter}`
     counter++
   }
+  console.log(`[createCampaign] Final slug (create ${createId}): ${finalSlug}`)
   
   const campaign: Campaign = {
     id,
@@ -95,17 +108,29 @@ export async function createCampaign(data: {
     status: 'draft'
   }
   
+  console.log(`[createCampaign] Saving to Redis (create ${createId})...`)
+  
   // Save campaign
   await redis.json.set(id, '$', campaign as any)
+  console.log(`[createCampaign] Campaign saved to Redis (create ${createId})`)
   
   // Save slug mapping
   await redis.set(`campaign:slug:${finalSlug}`, id)
+  console.log(`[createCampaign] Slug mapping saved (create ${createId})`)
   
   // Add to campaigns list
   await redis.sadd('campaigns:all', id)
+  console.log(`[createCampaign] Added to campaigns:all (create ${createId})`)
   
   // Add to creator's campaigns
   await redis.sadd(`campaigns:creator:${data.createdBy}`, id)
+  console.log(`[createCampaign] Added to creator's campaigns (create ${createId})`)
+  
+  console.log(`[createCampaign] Campaign creation complete (create ${createId}):`, {
+    id: campaign.id,
+    name: campaign.name,
+    slug: campaign.slug
+  })
   
   return campaign
 }

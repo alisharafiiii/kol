@@ -158,8 +158,8 @@ export default function CampaignCard({ campaign, onDelete, currentUser }: Campai
           </div>
         </div>
         
-        {/* Team Members - Show only on larger screens or if few members */}
-        {campaign.teamMembers.length > 0 && campaign.teamMembers.length <= 3 && (
+        {/* Team Members */}
+        {campaign.teamMembers.length > 0 && (
           <div className="pt-2">
             <span className="text-gray-500 text-xs block mb-2">Team ({campaign.teamMembers.length})</span>
             <div className="flex -space-x-2">
@@ -184,11 +184,11 @@ export default function CampaignCard({ campaign, onDelete, currentUser }: Campai
       </div>
       
       {/* Action Buttons - Responsive Grid */}
-      <div className="mt-4 grid grid-cols-2 md:flex gap-2">
+      <div className="mt-4 flex flex-wrap gap-2">
         <button
           onClick={() => handleNavigation(`/campaigns/${campaign.slug}`)}
           disabled={isNavigating}
-          className={`col-span-2 md:col-span-1 flex-1 px-3 py-2 border border-green-300 hover:bg-green-900 text-xs md:text-sm transition-all rounded ${
+          className={`flex-1 md:flex-initial px-3 py-2 border border-green-300 hover:bg-green-900 text-xs md:text-sm transition-all ${
             isNavigating ? 'opacity-50 cursor-not-allowed' : ''
           }`}
         >
@@ -199,25 +199,27 @@ export default function CampaignCard({ campaign, onDelete, currentUser }: Campai
             <button
               onClick={() => handleNavigation(`/campaigns/${campaign.slug}/kols`)}
               disabled={isNavigating}
-              className={`px-3 py-2 border border-green-300 hover:bg-green-900 text-xs md:text-sm rounded ${
+              className={`px-3 py-2 border border-green-300 hover:bg-green-900 text-xs md:text-sm ${
                 isNavigating ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
               KOLs
             </button>
-            <button
-              onClick={() => handleNavigation(`/campaigns/${campaign.slug}/analytics`)}
-              disabled={isNavigating}
-              className={`px-3 py-2 border border-purple-300 text-purple-300 hover:bg-purple-900 text-xs md:text-sm rounded ${
-                isNavigating ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-            >
-              Analytics
-            </button>
+            {campaign.status !== 'draft' && (
+              <button
+                onClick={() => handleNavigation(`/campaigns/${campaign.slug}/analytics`)}
+                disabled={isNavigating}
+                className={`px-3 py-2 border border-purple-300 text-purple-300 hover:bg-purple-900 text-xs md:text-sm ${
+                  isNavigating ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+              >
+                Analytics
+              </button>
+            )}
             <button
               onClick={() => handleNavigation(`/campaigns/${campaign.slug}/edit`)}
               disabled={isNavigating}
-              className={`px-3 py-2 border border-green-300 hover:bg-green-900 text-xs md:text-sm rounded ${
+              className={`px-3 py-2 border border-green-300 hover:bg-green-900 text-xs md:text-sm ${
                 isNavigating ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
@@ -227,7 +229,7 @@ export default function CampaignCard({ campaign, onDelete, currentUser }: Campai
               <button
                 onClick={() => onDelete(campaign.id)}
                 disabled={isNavigating}
-                className={`px-3 py-2 border border-red-500 text-red-500 hover:bg-red-900 text-xs md:text-sm rounded ${
+                className={`px-3 py-2 border border-red-500 text-red-500 hover:bg-red-900 text-xs md:text-sm ${
                   isNavigating ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >

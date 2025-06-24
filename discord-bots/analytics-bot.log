@@ -3540,3 +3540,402 @@ Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https
 📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
 📌 Tracking 4 channels for project: NABULINES
 ✅ Loaded 2 active projects
+😐 [Ledger] #☕┃general @btfam: Hey!
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😊 [Ledger] #☕┃general @drippyy42: Yes this good idea
+❌ Points API call failed: invalid json response body at http://localhost:3000/api/discord/award-points reason: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"45s"}]
+😐 [Ledger] #☕┃general @drippyy42: Use good external ssd for games
+⏭️ Skipping ignored channel: #🎮┃ledger-quest
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+⏭️ Skipping ignored channel: #🎮┃ledger-quest
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-1.5-flash","location":"global"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"18s"}]
+😐 [Ledger] #☕┃general @btfam: I'm using Samsung T9.
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"23s"}]
+😐 [Ledger] #☕┃general @bigtree0507: i will help the first 15 people earn  150k from tr...
+⏭️ Skipping ignored channel: #🎮┃ledger-quest
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"21s"}]
+😐 [Ledger] #☕┃general @drippyy42: i have heard its not worth it
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"58s"}]
+😐 [Ledger] #☕┃general @drippyy42: the T7 is gives almost same speed and cheaper
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+⏭️ Skipping ignored channel: #🚫┃scam-reports
+⏭️ Skipping ignored channel: #🚫┃scam-reports
+⏭️ Skipping ignored channel: #🚫┃scam-reports
+⏭️ Skipping ignored channel: #🚫┃scam-reports
+⏭️ Skipping ignored channel: #🚫┃scam-reports
+⏭️ Skipping ignored channel: #🚫┃scam-reports
+⏭️ Skipping ignored channel: #🚫┃scam-reports
+⏭️ Skipping ignored channel: #🚫┃scam-reports
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"48s"}]
+😐 [Ledger] #☕┃general @xxxxxxxxxxxxxxxxxxxxxxxxx: lol btc has a huge recovery
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"53s"}]
+😐 [Ledger] #☕┃general @drippyy42: does someone understand how tf ecc work
+❌ Points API call failed: invalid json response body at http://localhost:3000/api/discord/award-points reason: Unexpected token '<', ..."          <pre>missi"... is not valid JSON
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"0s"}]
+😐 [Ledger] #☕┃general @drippyy42: yes bitcoin holders diamond hands
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"38s"}]
+😐 [Ledger] #☕┃general @xxxxxxxxxxxxxxxxxxxxxxxxx: i agree
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-1.5-flash","location":"global"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"41s"}]
+😐 [Ledger] #☕┃general @drippyy42: But remember what happened in 2022
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"13s"}]
+😐 [Ledger] #☕┃general @drippyy42: Investors tend to forget that bitcoin is a risky a...
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"27s"}]
+😐 [Ledger] #☕┃general @enteng_kabishawty: https://tenor.com/view/phonte-good-morning-gif-180...
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😐 [Ledger] #☕┃general @the.notorious.v: 🤨
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"16s"}]
+😐 [Ledger] #☕┃general @drippyy42: summer guys
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"43s"}]
+😐 [Ledger] #☕┃general @enteng_kabishawty: still summer in your location?
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"27s"}]
+😐 [Ledger] #☕┃general @drippyy42: its started today
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"21s"}]
+😐 [Ledger] #☕┃general @drippyy42: for me
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"14s"}]
+😐 [Ledger] #☕┃general @drippyy42: feels so hot Rn
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-1.5-flash","location":"global"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"49s"}]
+😐 [Ledger] #☕┃general @enteng_kabishawty: where are you from? already rainy season for us he...
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"41s"}]
+😐 [Ledger] #☕┃general @drippyy42: canada
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"21s"}]
+😐 [Ledger] #☕┃general @drippyy42: huge country tho
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-1.5-flash","location":"global"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"57s"}]
+😐 [Ledger] #☕┃general @enteng_kabishawty: whats the temp for today?
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"5s"}]
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😐 [Ledger] #☕┃general @drippyy42: around 30 degrees celsius
+😐 [Ledger] #☕┃general @drippyy42: 86 °F
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-1.5-flash","location":"global"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"6s"}]
+😐 [Ledger] #☕┃general @drippyy42: is hot right
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"50s"}]
+😐 [Ledger] #☕┃general @enteng_kabishawty: 29 deg here but its raining
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-1.5-flash","location":"global"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"35s"}]
+😐 [Ledger] #☕┃general @drippyy42: is that hot for youÉ
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-1.5-flash","location":"global"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"23s"}]
+😐 [Ledger] #☕┃general @drippyy42: i know in some countries they consider it as cold
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-1.5-flash","location":"global"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"39s"}]
+😐 [Ledger] #☕┃general @drippyy42: i was melting
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"26s"}]
+😐 [Ledger] #☕┃general @enteng_kabishawty: normal. record last summer was 42
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"4s"}]
+😐 [Ledger] #☕┃general @enteng_kabishawty: you can fry an egg outside
+😐 [Ledger] #☕┃general @drippyy42: alr
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-1.5-flash","location":"global"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"55s"}]
+😐 [Ledger] #☕┃general @drippyy42: a few days ago it was cold outside
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"45s"}]
+😐 [Ledger] #☕┃general @drippyy42: for me
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"36s"}]
+😐 [Ledger] #☕┃general @drippyy42: its usually always cold in canada
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"29s"}]
+😐 [Ledger] #☕┃general @drippyy42: but not in summer
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-1.5-flash","location":"global"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"10s"}]
+😐 [Ledger] #☕┃general @enteng_kabishawty: you have snow there right.
+😐 [Ledger] #☕┃general @drippyy42: sure
+😐 [Ledger] #☕┃general @drippyy42: a lot
+😐 [Ledger] #☕┃general @drippyy42: 😂
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-1.5-flash","location":"global"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"35s"}]
+😐 [Ledger] #☕┃general @drippyy42: dont worry theres snow for everybody here
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-1.5-flash","location":"global"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"56s"}]
+😐 [Ledger] #☕┃general @enteng_kabishawty: still hoping for my first experience of snow 😦
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"22s"}]
+😐 [Ledger] #☕┃general @drippyy42: i dislike snow
+❌ Points API call failed: invalid json response body at http://localhost:3000/api/discord/award-points reason: Unexpected token 'I', "Internal S"... is not valid JSON
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-1.5-flash","location":"global"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"54s"}]
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"53s"}]
+😐 [Ledger] #☕┃general @enteng_kabishawty: cause you have it most of the time 😄 I think I wo...
+😐 [Ledger] #☕┃general @drippyy42: you will definitely hate it at some point
+❌ Points API call failed: invalid json response body at http://localhost:3000/api/discord/award-points reason: Unexpected token 'I', "Internal S"... is not valid JSON
+❌ Points API call failed: invalid json response body at http://localhost:3000/api/discord/award-points reason: Unexpected token 'I', "Internal S"... is not valid JSON
+😐 [Ledger] #☕┃general @drippyy42: yea
+❌ Points API call failed: invalid json response body at http://localhost:3000/api/discord/award-points reason: Unexpected token 'I', "Internal S"... is not valid JSON
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-1.5-flash","location":"global"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"29s"}]
+😐 [Ledger] #☕┃general @drippyy42: if u get used to something too much, its gets anno...
+❌ Points API call failed: invalid json response body at http://localhost:3000/api/discord/award-points reason: Unexpected token 'I', "Internal S"... is not valid JSON
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"1s"}]
+😐 [Ledger] #☕┃general @drippyy42: issue is that theres too much snow
+❌ Points API call failed: invalid json response body at http://localhost:3000/api/discord/award-points reason: Unexpected token 'I', "Internal S"... is not valid JSON
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"52s"}]
+😐 [Ledger] #☕┃general @drippyy42: a litlle bit is fine sometimes
+❌ Points API call failed: invalid json response body at http://localhost:3000/api/discord/award-points reason: Unexpected token 'I', "Internal S"... is not valid JSON
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"37s"}]
+😐 [Ledger] #☕┃general @enteng_kabishawty: cant imagine it would be super slippery in the str...
+❌ Points API call failed: invalid json response body at http://localhost:3000/api/discord/award-points reason: Unexpected token 'I', "Internal S"... is not valid JSON
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects
+😐 [Ledger] #☕┃general @shashisenses: nice
+❌ Points API call failed: invalid json response body at http://localhost:3000/api/discord/award-points reason: Unexpected token 'I', "Internal S"... is not valid JSON
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-1.5-flash"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"47s"}]
+😐 [Ledger] #☕┃general @drippyy42: its slippery if you use normal shoes
+❌ Points API call failed: invalid json response body at http://localhost:3000/api/discord/award-points reason: Unexpected token 'I', "Internal S"... is not valid JSON
+Error analyzing sentiment: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. [{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-1.5-flash","location":"global"},"quotaValue":"50"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"34s"}]
+😐 [Ledger] #☕┃general @drippyy42: but we wear boots
+❌ Points API call failed: invalid json response body at http://localhost:3000/api/discord/award-points reason: Unexpected token 'I', "Internal S"... is not valid JSON
+📊 Loading tracked channels...
+📌 Tracking 9 channels for project: Ledger
+📊 Loaded sentiment settings for project: project:discord:OVPuPOX3_zHBnLUscRbdM
+📌 Tracking 4 channels for project: NABULINES
+✅ Loaded 2 active projects

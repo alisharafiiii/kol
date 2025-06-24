@@ -233,26 +233,23 @@ export default function CampaignsPage() {
       return true
     })
 
-  const handleCreateCampaign = async (campaignData: any) => {
+  const handleCreateCampaign = async (newCampaign: any) => {
+    const handlerId = Date.now() // Unique ID for this handler call
+    console.log(`[CampaignsPage] handleCreateCampaign called (handler ID: ${handlerId})`)
+    console.log(`[CampaignsPage] New campaign received (handler ${handlerId}):`, newCampaign)
+    
     try {
-      const response = await fetch('/api/campaigns', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(campaignData)
-      })
-      
-      if (response.ok) {
-        const newCampaign = await response.json()
-        // Refresh campaigns from server to avoid duplicates
-        const refreshRes = await fetch(activeTab === 'my' ? '/api/campaigns?user=true' : '/api/campaigns')
-        if (refreshRes.ok) {
-          const data = await refreshRes.json()
-          setCampaigns(Array.isArray(data) ? data : [])
-        }
-        setShowModal(false)
+      // The CampaignModal already created the campaign, we just need to refresh the list
+      console.log(`[CampaignsPage] Refreshing campaigns list (handler ${handlerId})...`)
+      const refreshRes = await fetch(activeTab === 'my' ? '/api/campaigns?user=true' : '/api/campaigns')
+      if (refreshRes.ok) {
+        const data = await refreshRes.json()
+        console.log(`[CampaignsPage] Refreshed campaigns (handler ${handlerId}):`, data.length, 'campaigns')
+        setCampaigns(Array.isArray(data) ? data : [])
       }
+      setShowModal(false)
     } catch (error) {
-      console.error('Error creating campaign:', error)
+      console.error(`[CampaignsPage] Error refreshing campaigns (handler ${handlerId}):`, error)
     }
   }
 
