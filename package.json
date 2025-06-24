@@ -12,7 +12,12 @@
     "fix-kol-profile": "tsx scripts/fix-kol-profile.ts",
     "update-handle": "tsx scripts/update-twitter-handle.ts",
     "debug:twitter-sync": "node scripts/debug-twitter-sync.mjs",
-    "debug:campaign-tweets": "node scripts/debug-campaign-tweets.mjs"
+    "debug:campaign-tweets": "node scripts/debug-campaign-tweets.mjs",
+    "debug:email-test": "node scripts/debug-email-test.mjs",
+    "add:test-emails": "node scripts/add-test-emails.mjs",
+    "check:notification-keys": "node scripts/check-notification-keys.mjs",
+    "fix:notification-keys": "node scripts/fix-notification-keys.mjs",
+    "test:email-flow": "node scripts/test-email-notification-flow.mjs"
   },
   "dependencies": {
     "@coinbase/onchainkit": "latest",
@@ -40,6 +45,7 @@
     "nanoid": "^5.1.5",
     "next": "^14.2.15",
     "next-auth": "^4.24.11",
+    "nodemailer": "^6.10.1",
     "oauth-1.0a": "^2.2.6",
     "open": "^10.1.2",
     "pino-pretty": "^13.0.0",

@@ -1,5 +1,6 @@
 import { redis } from './redis'
 import type { UnifiedProfile } from './types/profile'
+import nodemailer from 'nodemailer'
 
 // Notification types
 export type NotificationType = 
@@ -55,7 +56,26 @@ export class NotificationService {
       status: 'pending'
     }
     
-    await redis.lpush(this.QUEUE_KEY, JSON.stringify(notification))
+    try {
+      console.log(`[NotificationService] Attempting LPUSH to key: ${this.QUEUE_KEY}`)
+      await redis.lpush(this.QUEUE_KEY, JSON.stringify(notification))
+      console.log(`[NotificationService] Successfully queued notification ${notification.id}`)
+    } catch (error: any) {
+      if (error.message?.includes('WRONGTYPE')) {
+        console.error(`[NotificationService] Redis WRONGTYPE error on key: ${this.QUEUE_KEY}`)
+        console.error(`[NotificationService] Expected: list, but key holds different type`)
+        console.error(`[NotificationService] Full error:`, error)
+        
+        // Try to get the actual type
+        try {
+          const actualType = await redis.type(this.QUEUE_KEY)
+          console.error(`[NotificationService] Actual Redis type for ${this.QUEUE_KEY}: ${actualType}`)
+        } catch (typeError) {
+          console.error(`[NotificationService] Could not determine type:`, typeError)
+        }
+      }
+      throw error
+    }
     
     // Process immediately if high priority
     if (data.priority === 'high') {
@@ -67,11 +87,34 @@ export class NotificationService {
   
   // Process pending notifications
   static async processPending(limit = 10): Promise<void> {
-    const pending = await redis.lrange(this.QUEUE_KEY, 0, limit - 1)
+    let pending: any[] = []
+    
+    try {
+      console.log(`[NotificationService] Attempting LRANGE on key: ${this.QUEUE_KEY}`)
+      pending = await redis.lrange(this.QUEUE_KEY, 0, limit - 1)
+      console.log(`[NotificationService] Retrieved ${pending.length} pending notifications`)
+    } catch (error: any) {
+      if (error.message?.includes('WRONGTYPE')) {
+        console.error(`[NotificationService] Redis WRONGTYPE error on key: ${this.QUEUE_KEY}`)
+        console.error(`[NotificationService] Expected: list for LRANGE operation`)
+        
+        try {
+          const actualType = await redis.type(this.QUEUE_KEY)
+          console.error(`[NotificationService] Actual Redis type: ${actualType}`)
+        } catch (typeError) {
+          console.error(`[NotificationService] Could not determine type:`, typeError)
+        }
+      }
+      console.error('[NotificationService] Error in processPending:', error)
+      return
+    }
     
     for (const item of pending) {
       try {
-        const notification = JSON.parse(item) as QueuedNotification
+        // Handle both string and object responses from Redis
+        const notification = typeof item === 'string' 
+          ? JSON.parse(item) as QueuedNotification 
+          : item as QueuedNotification
         
         if (notification.status === 'pending' || 
             (notification.status === 'failed' && notification.attempts < 3)) {
@@ -85,12 +128,27 @@ export class NotificationService {
   
   // Process a single notification
   private static async processNotification(notification: QueuedNotification): Promise<void> {
+    console.log('📧 [processNotification] Processing notification:', notification.id)
+    console.log('📧 [processNotification] Type:', notification.type)
+    console.log('📧 [processNotification] Recipient:', notification.recipientEmail)
+    console.log('📧 [processNotification] Attempt:', notification.attempts + 1)
+    
+    const originalNotification = { ...notification }
+    
     try {
       notification.status = 'sending'
       notification.attempts++
       
-      // Update in queue
-      await redis.lrem(this.QUEUE_KEY, 0, JSON.stringify(notification))
+      // Update in queue - remove old entry and add updated one
+      // We need to match the exact stored format (might be object or string)
+      const pending = await redis.lrange(this.QUEUE_KEY, 0, -1)
+      for (const item of pending) {
+        const stored = typeof item === 'string' ? JSON.parse(item) : item
+        if (stored.id === originalNotification.id) {
+          await redis.lrem(this.QUEUE_KEY, 0, typeof item === 'string' ? item : JSON.stringify(item))
+          break
+        }
+      }
       await redis.lpush(this.QUEUE_KEY, JSON.stringify(notification))
       
       // Send email
@@ -98,7 +156,18 @@ export class NotificationService {
       
       // Mark as sent
       notification.status = 'sent'
-      await redis.lrem(this.QUEUE_KEY, 0, JSON.stringify(notification))
+      
+      // Remove from queue
+      const queueItems = await redis.lrange(this.QUEUE_KEY, 0, -1)
+      for (const item of queueItems) {
+        const stored = typeof item === 'string' ? JSON.parse(item) : item
+        if (stored.id === notification.id) {
+          await redis.lrem(this.QUEUE_KEY, 0, typeof item === 'string' ? item : JSON.stringify(item))
+          break
+        }
+      }
+      
+      // Add to sent queue
       await redis.lpush(this.SENT_KEY, JSON.stringify({
         ...notification,
         sentAt: new Date().toISOString()
@@ -109,7 +178,14 @@ export class NotificationService {
       notification.error = error.message
       
       // Update in queue
-      await redis.lrem(this.QUEUE_KEY, 0, JSON.stringify(notification))
+      const queueItems = await redis.lrange(this.QUEUE_KEY, 0, -1)
+      for (const item of queueItems) {
+        const stored = typeof item === 'string' ? JSON.parse(item) : item
+        if (stored.id === notification.id) {
+          await redis.lrem(this.QUEUE_KEY, 0, typeof item === 'string' ? item : JSON.stringify(item))
+          break
+        }
+      }
       
       if (notification.attempts >= 3) {
         // Move to failed queue
@@ -125,8 +201,15 @@ export class NotificationService {
   
   // Send email via SMTP
   private static async sendEmail(notification: NotificationData): Promise<void> {
-    // In production, use nodemailer or similar
-    // For now, we'll simulate sending
+    console.log('📧 [sendEmail] Starting email send process')
+    console.log('📧 [sendEmail] Recipient:', notification.recipientEmail)
+    console.log('📧 [sendEmail] Subject:', notification.subject)
+    console.log('📧 [sendEmail] Type:', notification.type)
+    
+    // Check if this is HTML content
+    const isHtml = notification.message.includes('<') && notification.message.includes('>')
+    
+    // Check SMTP configuration
     if (!SMTP_CONFIG.auth.user || !SMTP_CONFIG.auth.pass) {
       console.log('📧 [EMAIL SIMULATION] - No SMTP credentials configured')
       console.log('📧 =================== EMAIL CONTENT ===================')
@@ -134,8 +217,14 @@ export class NotificationService {
       console.log('📧 SUBJECT:', notification.subject)
       console.log('📧 TYPE:', notification.type)
       console.log('📧 PRIORITY:', notification.priority || 'normal')
+      console.log('📧 FORMAT:', isHtml ? 'HTML' : 'Plain Text')
       console.log('📧 MESSAGE:')
-      console.log(notification.message)
+      if (isHtml) {
+        console.log('📧 [HTML Content - Preview not shown in console]')
+        console.log('📧 [Length: ' + notification.message.length + ' characters]')
+      } else {
+        console.log(notification.message)
+      }
       if (notification.metadata) {
         console.log('📧 METADATA:', JSON.stringify(notification.metadata, null, 2))
       }
@@ -143,14 +232,55 @@ export class NotificationService {
       return
     }
     
-    // TODO: Implement actual email sending with nodemailer
-    // const transporter = nodemailer.createTransport(SMTP_CONFIG)
-    // await transporter.sendMail({
-    //   from: SMTP_CONFIG.from,
-    //   to: notification.recipientEmail,
-    //   subject: notification.subject,
-    //   html: this.generateEmailHTML(notification)
-    // })
+    // Send actual email with nodemailer
+    try {
+      console.log('📧 [SMTP] Creating nodemailer transporter...')
+      console.log('📧 [SMTP] Config:', {
+        host: SMTP_CONFIG.host,
+        port: SMTP_CONFIG.port,
+        secure: SMTP_CONFIG.secure,
+        user: SMTP_CONFIG.auth.user,
+        from: SMTP_CONFIG.from
+      })
+      
+      const transporter = nodemailer.createTransport({
+        host: SMTP_CONFIG.host,
+        port: SMTP_CONFIG.port,
+        secure: SMTP_CONFIG.secure,
+        auth: {
+          user: SMTP_CONFIG.auth.user,
+          pass: SMTP_CONFIG.auth.pass
+        }
+      })
+      
+      console.log('📧 [SMTP] Verifying transporter connection...')
+      await transporter.verify()
+      console.log('📧 [SMTP] Transporter verified successfully')
+      
+      const mailOptions = {
+        from: SMTP_CONFIG.from,
+        to: notification.recipientEmail,
+        subject: notification.subject,
+        html: isHtml ? notification.message : this.generateEmailHTML(notification),
+        text: isHtml ? this.stripHtml(notification.message) : notification.message
+      }
+      
+      console.log('📧 [SMTP] Sending email...')
+      const info = await transporter.sendMail(mailOptions)
+      
+      console.log('📧 [SMTP] Email sent successfully!')
+      console.log('📧 [SMTP] Message ID:', info.messageId)
+      console.log('📧 [SMTP] Response:', info.response)
+    } catch (error: any) {
+      console.error('📧 [SMTP ERROR] Failed to send email:', error.message)
+      console.error('📧 [SMTP ERROR] Full error:', error)
+      throw error
+    }
+  }
+  
+  // Helper to strip HTML tags for text version
+  private static stripHtml(html: string): string {
+    return html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
   }
   
   // Generate HTML email template
@@ -307,7 +437,10 @@ export class NotificationService {
     const limit = filter?.limit || 100
     const sent = await redis.lrange(this.SENT_KEY, 0, limit - 1)
     
-    let notifications = sent.map(item => JSON.parse(item) as QueuedNotification)
+    let notifications = sent.map(item => {
+      // Handle both string and object responses from Redis
+      return typeof item === 'string' ? JSON.parse(item) as QueuedNotification : item as QueuedNotification
+    })
     
     if (filter?.type) {
       notifications = notifications.filter(n => n.type === filter.type)
@@ -326,13 +459,37 @@ export class NotificationService {
     sent: number
     failed: number
   }> {
-    const [pending, sent, failed] = await Promise.all([
-      redis.llen(this.QUEUE_KEY),
-      redis.llen(this.SENT_KEY),
-      redis.llen(this.FAILED_KEY)
-    ])
+    const results = { pending: 0, sent: 0, failed: 0 }
     
-    return { pending, sent, failed }
+    // Check each key individually to identify which one might have the wrong type
+    const keys = [
+      { name: 'QUEUE_KEY', key: this.QUEUE_KEY, field: 'pending' as keyof typeof results },
+      { name: 'SENT_KEY', key: this.SENT_KEY, field: 'sent' as keyof typeof results },
+      { name: 'FAILED_KEY', key: this.FAILED_KEY, field: 'failed' as keyof typeof results }
+    ]
+    
+    for (const { name, key, field } of keys) {
+      try {
+        console.log(`[NotificationService] Attempting LLEN on ${name}: ${key}`)
+        results[field] = await redis.llen(key)
+      } catch (error: any) {
+        if (error.message?.includes('WRONGTYPE')) {
+          console.error(`[NotificationService] Redis WRONGTYPE error on ${name}: ${key}`)
+          console.error(`[NotificationService] Expected: list for LLEN operation`)
+          
+          try {
+            const actualType = await redis.type(key)
+            console.error(`[NotificationService] Actual Redis type for ${key}: ${actualType}`)
+          } catch (typeError) {
+            console.error(`[NotificationService] Could not determine type:`, typeError)
+          }
+        } else {
+          console.error(`[NotificationService] Error checking ${name}:`, error)
+        }
+      }
+    }
+    
+    return results
   }
   
   // Clear old notifications (older than 30 days)
@@ -343,18 +500,34 @@ export class NotificationService {
     // Clean sent notifications
     const sent = await redis.lrange(this.SENT_KEY, 0, -1)
     for (const item of sent) {
-      const notification = JSON.parse(item) as QueuedNotification
-      if (new Date(notification.createdAt) < thirtyDaysAgo) {
-        await redis.lrem(this.SENT_KEY, 0, item)
+      try {
+        // Handle both string and object responses from Redis
+        const notification = typeof item === 'string' 
+          ? JSON.parse(item) as QueuedNotification 
+          : item as QueuedNotification
+        
+        if (new Date(notification.createdAt) < thirtyDaysAgo) {
+          await redis.lrem(this.SENT_KEY, 0, typeof item === 'string' ? item : JSON.stringify(item))
+        }
+      } catch (error) {
+        console.error('Error parsing notification during cleanup:', error)
       }
     }
     
     // Clean failed notifications
     const failed = await redis.lrange(this.FAILED_KEY, 0, -1)
     for (const item of failed) {
-      const notification = JSON.parse(item) as QueuedNotification
-      if (new Date(notification.createdAt) < thirtyDaysAgo) {
-        await redis.lrem(this.FAILED_KEY, 0, item)
+      try {
+        // Handle both string and object responses from Redis
+        const notification = typeof item === 'string' 
+          ? JSON.parse(item) as QueuedNotification 
+          : item as QueuedNotification
+        
+        if (new Date(notification.createdAt) < thirtyDaysAgo) {
+          await redis.lrem(this.FAILED_KEY, 0, typeof item === 'string' ? item : JSON.stringify(item))
+        }
+      } catch (error) {
+        console.error('Error parsing notification during cleanup:', error)
       }
     }
   }
