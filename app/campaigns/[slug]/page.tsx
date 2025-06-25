@@ -121,8 +121,8 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
   }, [session, status, campaign, router])
 
   useEffect(() => {
-    // Only fetch campaign after we've checked authentication
-    if (status !== 'loading') {
+    // Only fetch campaign if user is authenticated
+    if (status === 'authenticated' && session) {
       fetchCampaign()
     }
     
@@ -133,12 +133,13 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
       // Clean up when component unmounts
       delete (window as any).refreshCampaignData
     }
-  }, [params.slug, status])
+  }, [params.slug, status, session])
 
   // Fetch project details with caching
   useEffect(() => {
     const getProjects = async () => {
-      if (!campaign || !campaign.projects || campaign.projects.length === 0) {
+      // Only fetch if authenticated and have campaign data
+      if (!session || !campaign || !campaign.projects || campaign.projects.length === 0) {
         setProjectDetails([])
         return
       }
@@ -168,7 +169,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
       }
     }
     getProjects()
-  }, [campaign])
+  }, [campaign, session])
 
   const isOwner = session?.user?.name === campaign?.createdBy
   const isTeamMember = campaign?.teamMembers?.includes(session?.user?.name || '') || false
