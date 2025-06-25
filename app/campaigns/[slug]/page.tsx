@@ -9,6 +9,7 @@ import KOLTable from '@/components/KOLTable'
 import AddKOLModal from '@/components/AddKOLModal'
 import CampaignBrief from '@/components/CampaignBrief'
 import EditCampaignModal from '@/components/EditCampaignModal'
+import LoginModal from '@/components/LoginModal'
 import { ArrowLeft, Users, Calendar, DollarSign, Briefcase, TrendingUp } from '@/components/icons'
 import { getAllProjects } from '@/lib/project'
 
@@ -34,7 +35,7 @@ function LoadingSkeleton() {
 }
 
 export default function CampaignPage({ params }: { params: { slug: string } }) {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const router = useRouter()
   const [campaign, setCampaign] = useState<Campaign | null>(null)
   const [loading, setLoading] = useState(true)
@@ -44,6 +45,9 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
   const [projectDetails, setProjectDetails] = useState<Project[]>([])
   const [allProjects, setAllProjects] = useState<Project[]>([])
   const [syncing, setSyncing] = useState(false)
+  const [showLoginModal, setShowLoginModal] = useState(false)
+  const [hasAccess, setHasAccess] = useState(false)
+  const [accessChecked, setAccessChecked] = useState(false)
 
   const fetchCampaign = async () => {
     try {
@@ -66,8 +70,62 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
     }
   }
 
+  // Check access when session and campaign are loaded
   useEffect(() => {
-    fetchCampaign()
+    // Wait for session to load
+    if (status === 'loading') return
+
+    // If not logged in, show login modal
+    if (status === 'unauthenticated' || !session) {
+      console.log('Campaign page: User not authenticated, showing login modal')
+      setShowLoginModal(true)
+      setAccessChecked(true)
+      return
+    }
+
+    // If campaign is not loaded yet, wait
+    if (!campaign) return
+
+    // Check access for authenticated users
+    const userRole = (session as any)?.role || (session?.user as any)?.role || 'user'
+    const twitterHandle = (session as any)?.twitterHandle || 
+                         (session as any)?.user?.twitterHandle ||
+                         session?.user?.name ||
+                         (session as any)?.user?.username
+
+    // Check if user is admin
+    const isAdmin = userRole === 'admin'
+    
+    // Check if user is a team member of this specific campaign
+    const isTeamMember = campaign.teamMembers?.includes(twitterHandle) || false
+
+    console.log('Campaign page access check:', {
+      userRole,
+      twitterHandle,
+      isAdmin,
+      isTeamMember,
+      campaignTeamMembers: campaign.teamMembers
+    })
+
+    // Grant access if admin OR team member
+    if (isAdmin || isTeamMember) {
+      setHasAccess(true)
+      setShowLoginModal(false)
+    } else {
+      // No access - redirect to access denied
+      console.log('Campaign page access denied. Not admin or team member.')
+      router.push('/access-denied')
+    }
+    
+    setAccessChecked(true)
+  }, [session, status, campaign, router])
+
+  useEffect(() => {
+    // Only fetch campaign after we've checked authentication
+    if (status !== 'loading') {
+      fetchCampaign()
+    }
+    
     // Make refresh function available globally for child components
     ;(window as any).refreshCampaignData = fetchCampaign
     
@@ -75,7 +133,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
       // Clean up when component unmounts
       delete (window as any).refreshCampaignData
     }
-  }, [params.slug])
+  }, [params.slug, status])
 
   // Fetch project details with caching
   useEffect(() => {
@@ -273,9 +331,19 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
     }
   }
 
-  // Show loading skeleton while data is being fetched
-  if (loading) {
+  // Show loading while session or campaign is loading
+  if (status === 'loading' || loading || !accessChecked) {
     return <LoadingSkeleton />
+  }
+
+  // Show login modal if not authenticated
+  if (showLoginModal) {
+    return (
+      <>
+        <LoginModal />
+        <LoadingSkeleton />
+      </>
+    )
   }
 
   // Show error state
@@ -290,7 +358,8 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
     )
   }
 
-  if (!campaign) {
+  // If access hasn't been granted yet, don't render the campaign
+  if (!hasAccess || !campaign) {
     return null
   }
 
@@ -341,12 +410,14 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
                     >
                       <span className="text-base">+</span> Add KOL
                     </button>
-                    <button
-                      onClick={() => router.push(`/campaigns/${campaign.slug}/analytics`)}
-                      className="px-3 py-1 bg-purple-900/50 border border-purple-500 hover:bg-purple-800/50 text-purple-300 text-xs font-medium rounded flex items-center gap-1"
-                    >
-                      <span>📊</span> Analytics
-                    </button>
+                    {campaign.status !== 'draft' && (
+                      <button
+                        onClick={() => router.push(`/campaigns/${campaign.slug}/analytics`)}
+                        className="px-3 py-1 bg-purple-900/50 border border-purple-500 hover:bg-purple-800/50 text-purple-300 text-xs font-medium rounded flex items-center gap-1"
+                      >
+                        <span>📊</span> Analytics
+                      </button>
+                    )}
                     <button
                       onClick={syncTweets}
                       disabled={syncing}
