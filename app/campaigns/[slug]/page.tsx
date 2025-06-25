@@ -94,8 +94,9 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
                          session?.user?.name ||
                          (session as any)?.user?.username
 
-    // Check if user is admin
+    // Check if user is admin or core
     const isAdmin = userRole === 'admin'
+    const isCore = userRole === 'core'
     
     // Check if user is a team member of this specific campaign
     const isTeamMember = campaign.teamMembers?.includes(twitterHandle) || false
@@ -104,17 +105,28 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
       userRole,
       twitterHandle,
       isAdmin,
+      isCore,
       isTeamMember,
-      campaignTeamMembers: campaign.teamMembers
+      campaignTeamMembers: campaign.teamMembers,
+      sessionUser: session?.user,
+      sessionData: session
     })
+    
+    // Additional debug for team member matching
+    if (campaign.teamMembers && campaign.teamMembers.length > 0 && !isTeamMember) {
+      console.log('Team member check failed. Checking for match:')
+      console.log('Looking for:', twitterHandle)
+      console.log('In team members:', campaign.teamMembers)
+      console.log('Exact matches:', campaign.teamMembers.map(m => m === twitterHandle))
+    }
 
-    // Grant access if admin OR team member
-    if (isAdmin || isTeamMember) {
+    // Grant access if admin, core, OR team member
+    if (isAdmin || isCore || isTeamMember) {
       setHasAccess(true)
       setShowLoginModal(false)
     } else {
       // No access - redirect to access denied
-      console.log('Campaign page access denied. Not admin or team member.')
+      console.log('Campaign page access denied. Not admin, core, or team member.')
       router.push('/access-denied')
     }
     
