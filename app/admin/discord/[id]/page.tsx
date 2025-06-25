@@ -19,6 +19,7 @@ import {
   Filler
 } from 'chart.js'
 import type { DiscordProject, DiscordAnalytics, DiscordChannel } from '@/lib/types/discord'
+import AuthLoginModal from '@/components/AuthLoginModal'
 
 // Register Chart.js components
 ChartJS.register(
@@ -35,7 +36,7 @@ ChartJS.register(
 )
 
 export default function DiscordProjectPage() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const router = useRouter()
   const params = useParams()
   // Convert URL-safe format back to original format (replace -- with :)
@@ -585,6 +586,26 @@ export default function DiscordProjectPage() {
       backgroundColor: '#ef4444',
       stack: 'Stack 0'
     }]
+  }
+
+  // Show loading while session is loading
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-green-300">Loading...</div>
+      </div>
+    )
+  }
+
+  // Show login screen for unauthenticated users
+  if (status === 'unauthenticated') {
+    return (
+      <AuthLoginModal 
+        title="Discord Analytics Access"
+        description="Please sign in to view Discord analytics"
+        icon="📊"
+      />
+    )
   }
 
   if (loading || session === undefined) {

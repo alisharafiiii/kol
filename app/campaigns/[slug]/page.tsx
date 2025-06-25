@@ -10,6 +10,7 @@ import AddKOLModal from '@/components/AddKOLModal'
 import CampaignBrief from '@/components/CampaignBrief'
 import EditCampaignModal from '@/components/EditCampaignModal'
 import LoginModal from '@/components/LoginModal'
+import AuthLoginModal from '@/components/AuthLoginModal'
 import { ArrowLeft, Users, Calendar, DollarSign, Briefcase, TrendingUp } from '@/components/icons'
 import { getAllProjects } from '@/lib/project'
 
@@ -332,19 +333,25 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
     }
   }
 
-  // Show loading while session or campaign is loading
-  if (status === 'loading' || loading || !accessChecked) {
+    // Show loading while session is loading
+  if (status === 'loading') {
     return <LoadingSkeleton />
   }
 
-  // Show login modal if not authenticated
-  if (showLoginModal) {
+  // Show login screen for unauthenticated users
+  if (status === 'unauthenticated') {
     return (
-      <>
-        <LoginModal />
-        <LoadingSkeleton />
-      </>
+      <AuthLoginModal 
+        title="Campaign Access"
+        description="Please sign in to view this campaign"
+        icon="🚀"
+      />
     )
+  }
+
+  // Show loading while campaign is loading
+  if (loading || !accessChecked) {
+    return <LoadingSkeleton />
   }
 
   // Show error state
