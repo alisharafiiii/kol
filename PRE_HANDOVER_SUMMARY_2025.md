@@ -123,6 +123,19 @@ This document summarizes the debugging session and fixes implemented for the KOL
 - `app/campaigns/[slug]/page.tsx` - Updated to use AuthLoginModal
 - `app/admin/discord/[id]/page.tsx` - Added authentication check with AuthLoginModal
 
+### 9. ✅ Core Role Campaign Access
+**Problem**: Core role users were getting "access denied" when viewing campaign detail pages.
+
+**Fix Applied**:
+- Updated access check to include core role: `if (isAdmin || isCore || isTeamMember)`
+- Core users now have full access to all campaign detail pages
+- Added enhanced debug logging for troubleshooting team member matching
+
+**Access Rules**:
+- Admin: Access to all campaigns
+- Core: Access to all campaigns
+- Others: Access only if team member or owner
+
 ## Debug Tools Added
 
 ```bash
@@ -168,11 +181,11 @@ node scripts/test-campaign-access.mjs [campaign-id]
 
 ### 📋 Role Permissions for Campaigns:
 - **Admin**: Full access to all campaigns (edit, sync, analytics, settings)
-- **Core**: Can edit campaigns, sync tweets, view analytics, add KOLs
-- **Team**: Can edit campaigns they have access to
+- **Core**: Full access to all campaigns (view, edit, sync tweets, analytics, add KOLs)
+- **Team**: Can edit campaigns they have access to (as owner or team member)
 - **Campaign Owner**: Full control over their campaign
 - **Team Members**: Can edit campaigns they're added to
-- **Other Roles**: View-only access (if granted)
+- **Other Roles**: No access unless explicitly added as team member
 
 ### ⚠️ Known Issues/Considerations:
 1. **Auth Errors in Console**: JWEInvalid errors appear but don't affect functionality
