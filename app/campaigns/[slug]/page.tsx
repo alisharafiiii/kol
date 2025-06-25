@@ -186,6 +186,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
   const isOwner = session?.user?.name === campaign?.createdBy
   const isTeamMember = campaign?.teamMembers?.includes(session?.user?.name || '') || false
   const userRole = (session as any)?.role || (session as any)?.user?.role || 'user'
+  // Core role users can edit campaigns (including sync tweets and view analytics)
   const canEditByRole = ['admin', 'core', 'team'].includes(userRole)
   const canEdit = !!(isOwner || isTeamMember || canEditByRole)
   const canManage = !!(isOwner || isTeamMember || ['admin', 'core'].includes(userRole))
@@ -279,6 +280,7 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
     console.log('Campaign:', campaign?.id, campaign?.slug)
     console.log('Session:', session)
     console.log('User role:', userRole)
+    console.log('Can edit:', canEdit, '(owner:', isOwner, ', team:', isTeamMember, ', role:', canEditByRole, ')')
     
     if (!campaign) {
       console.error('No campaign loaded')
