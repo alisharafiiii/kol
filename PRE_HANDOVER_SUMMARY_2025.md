@@ -166,6 +166,14 @@ node scripts/test-campaign-access.mjs [campaign-id]
 6. Authentication and role-based access
 7. Campaign-specific access control with Twitter/X login
 
+### 📋 Role Permissions for Campaigns:
+- **Admin**: Full access to all campaigns (edit, sync, analytics, settings)
+- **Core**: Can edit campaigns, sync tweets, view analytics, add KOLs
+- **Team**: Can edit campaigns they have access to
+- **Campaign Owner**: Full control over their campaign
+- **Team Members**: Can edit campaigns they're added to
+- **Other Roles**: View-only access (if granted)
+
 ### ⚠️ Known Issues/Considerations:
 1. **Auth Errors in Console**: JWEInvalid errors appear but don't affect functionality
 2. **Webpack Cache Warnings**: Can be ignored, related to Next.js dev server
