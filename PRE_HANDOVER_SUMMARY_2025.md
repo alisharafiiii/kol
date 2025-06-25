@@ -104,9 +104,24 @@ This document summarizes the debugging session and fixes implemented for the KOL
 - `app/campaigns/[slug]/page.tsx`
 - Added `scripts/test-campaign-access.mjs` for testing
 
-**Additional Fix**: 
+**Additional Fixes**: 
 - Fixed page loading issue when not authenticated - API calls now only happen after authentication check
 - Prevents "Unexpected token '<'" error from API returning HTML instead of JSON
+- Fixed LoginModal not showing - Added trigger to call window.openLogin() when modal should display
+- Replaced hidden LoginModal with unified AuthLoginModal component for consistent authentication experience
+
+### 8. ✅ Unified Authentication Modal
+**Implementation**: Created reusable AuthLoginModal component based on campaign brief UI design.
+
+**Features**:
+- Clean, centered login UI with customizable title, description, and icon
+- Used across all protected pages (campaigns, discord analytics, briefs)
+- Consistent authentication experience throughout the application
+
+**Files Created/Modified**:
+- `components/AuthLoginModal.tsx` - New reusable authentication modal
+- `app/campaigns/[slug]/page.tsx` - Updated to use AuthLoginModal
+- `app/admin/discord/[id]/page.tsx` - Added authentication check with AuthLoginModal
 
 ## Debug Tools Added
 
@@ -216,4 +231,4 @@ UPSTASH_REDIS_REST_TOKEN=<your-redis-token>
 
 ---
 *Document created: June 25, 2025*
-*Last updated: June 25, 2025 04:39 GMT* 
+*Last updated: June 25, 2025 05:12 GMT* 
