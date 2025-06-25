@@ -37,6 +37,7 @@ async function testCoreRoleAccess() {
     const canEditByRole = ['admin', 'core', 'team'].includes(role)
     
     console.log('📋 Campaign Permissions:')
+    console.log(`✓ Can View Campaign Details: ${['admin', 'core'].includes(role) ? 'YES (all campaigns)' : 'Only as team member'}`)
     console.log(`✓ Can Edit Campaigns: ${canEditByRole ? 'YES' : 'NO'}`)
     
     if (canEditByRole) {
@@ -71,11 +72,14 @@ async function testCoreRoleAccess() {
     console.log(`\n✅ Test Instructions:`)
     console.log(`1. Login as @${testHandle}`)
     console.log(`2. Visit any campaign detail page`)
-    console.log(`3. Verify you can see:`)
-    console.log(`   - Add KOL button`)
-    console.log(`   - Sync button (🔄)`)
-    console.log(`   - Analytics button (📊) for active/completed campaigns`)
-    console.log(`4. Click Sync and check console for: "Can edit: true (... role: true)"`)
+    console.log(`3. Verify:`)
+    console.log(`   - Page loads without "access denied"`)
+    console.log(`   - You can see Add KOL button`)
+    console.log(`   - You can see Sync button (🔄)`)
+    console.log(`   - You can see Analytics button (📊) for non-draft campaigns`)
+    console.log(`4. Check browser console for access check:`)
+    console.log(`   - "isCore: true"`)
+    console.log(`   - "Grant access if admin, core, OR team member"`)
 
   } catch (error) {
     console.error('Error:', error)
