@@ -120,6 +120,17 @@ export default function CampaignPage({ params }: { params: { slug: string } }) {
     setAccessChecked(true)
   }, [session, status, campaign, router])
 
+  // Trigger LoginModal to open when showLoginModal is true
+  useEffect(() => {
+    if (showLoginModal && typeof window !== 'undefined' && (window as any).openLogin) {
+      // Small delay to ensure LoginModal is mounted
+      setTimeout(() => {
+        console.log('Campaign page: Triggering login modal to open')
+        ;(window as any).openLogin()
+      }, 100)
+    }
+  }, [showLoginModal])
+
   useEffect(() => {
     // Only fetch campaign if user is authenticated
     if (status === 'authenticated' && session) {
