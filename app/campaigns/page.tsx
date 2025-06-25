@@ -56,8 +56,9 @@ export default function CampaignsPage() {
         setIsAuthorized(true)
         setUserRole('admin')
         setLoading(false)
-        // Fetch campaigns in background
-        fetch('/api/campaigns').then(res => res.json()).then(data => {
+        // Fetch campaigns based on initial tab setting
+        const campaignUrl = activeTab === 'my' ? '/api/campaigns?user=true' : '/api/campaigns'
+        fetch(campaignUrl).then(res => res.json()).then(data => {
           console.log('CAMPAIGNS PAGE: Campaigns data received:', data);
           setCampaigns(Array.isArray(data) ? data : [])
           setIsInitialLoad(false)
@@ -124,11 +125,13 @@ export default function CampaignsPage() {
         
         console.log('CAMPAIGNS PAGE: Access check - isAdmin:', isAdmin, 'isApproved:', isApproved);
         
-        // Fetch campaigns first
+        // Fetch campaigns first - use appropriate endpoint based on initial tab
         let allCampaigns = []
         try {
-          const campaignsRes = await fetchWithTimeout('/api/campaigns')
+          const campaignUrl = activeTab === 'my' && !isAdmin ? '/api/campaigns?user=true' : '/api/campaigns'
+          const campaignsRes = await fetchWithTimeout(campaignUrl)
           console.log('CAMPAIGNS PAGE: Campaign API response status:', campaignsRes.status);
+          console.log('CAMPAIGNS PAGE: Using endpoint:', campaignUrl);
           
           if (campaignsRes.ok) {
             const data = await campaignsRes.json()
@@ -155,12 +158,12 @@ export default function CampaignsPage() {
           }
         }
         
-        // Check if user is a team member in any campaign
+        // Check if user is a team member in any campaign (only needed if we fetched all campaigns)
         const userHandle = getTwitterHandleFromSession(session) || ''
-        const isTeamMember = allCampaigns.some((campaign: Campaign) => 
+        const isTeamMember = activeTab === 'all' ? allCampaigns.some((campaign: Campaign) => 
           campaign.teamMembers.includes(userHandle) || 
           campaign.createdBy === userHandle
-        )
+        ) : true // If we fetched user campaigns, they're already a team member
         
         // Allow access if: admin OR approved OR team member
         if (isAdmin || isApproved || isTeamMember) {
@@ -191,7 +194,8 @@ export default function CampaignsPage() {
     
     const fetchCampaigns = async () => {
       try {
-        const url = activeTab === 'my' ? '/api/campaigns?user=true' : '/api/campaigns'
+        const url = activeTab === 'my' && userRole !== 'admin' ? '/api/campaigns?user=true' : '/api/campaigns'
+        console.log('CAMPAIGNS PAGE: Tab changed, fetching from:', url)
         const res = await fetch(url)
         if (res.ok) {
           const data = await res.json()
@@ -204,13 +208,14 @@ export default function CampaignsPage() {
     }
     
     fetchCampaigns()
-  }, [activeTab, isAuthorized, loading, isInitialLoad])
+  }, [activeTab, isAuthorized, loading, isInitialLoad, userRole])
 
   // Filter campaigns based on search and status
   const filteredCampaigns = (Array.isArray(campaigns) ? campaigns : [])
     .filter(campaign => {
-      // Filter by active tab (skip for admins on 'all' tab)
-      if (activeTab === 'my' && userRole !== 'admin') {
+      // No need to filter by tab anymore since we fetch the right data from the API
+      // Only apply client-side filtering for admins viewing "my" campaigns
+      if (activeTab === 'my' && userRole === 'admin') {
         const userHandle = (session as any)?.twitterHandle || session?.user?.name
         const isTeamMember = campaign.teamMembers.includes(userHandle)
         const isCreator = campaign.createdBy === userHandle
@@ -241,7 +246,7 @@ export default function CampaignsPage() {
     try {
       // The CampaignModal already created the campaign, we just need to refresh the list
       console.log(`[CampaignsPage] Refreshing campaigns list (handler ${handlerId})...`)
-      const refreshRes = await fetch(activeTab === 'my' ? '/api/campaigns?user=true' : '/api/campaigns')
+      const refreshRes = await fetch(activeTab === 'my' && userRole !== 'admin' ? '/api/campaigns?user=true' : '/api/campaigns')
       if (refreshRes.ok) {
         const data = await refreshRes.json()
         console.log(`[CampaignsPage] Refreshed campaigns (handler ${handlerId}):`, data.length, 'campaigns')

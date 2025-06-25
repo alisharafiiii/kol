@@ -68,7 +68,13 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
     }
     setEditingId(kolId)
     setEditingField(field)
-    setEditValue(value)
+    
+    // For links, ensure we have an array
+    if (field === 'links') {
+      setEditValue(Array.isArray(value) ? value : [])
+    } else {
+      setEditValue(value)
+    }
   }
 
   const saveEdit = async (kolId: string, field: string) => {
@@ -77,42 +83,54 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
     if (field === 'views' || field === 'likes' || field === 'retweets' || field === 'comments') {
       value = parseInt(String(editValue)) || 0
     } else if (field === 'links') {
-      // For links, editValue is already an array
-      value = editValue
+      // For links, editValue is already an array - ensure it's valid
+      value = Array.isArray(editValue) ? editValue.filter((link: string) => link && link.trim()) : []
+      console.log('[KOLTable] Saving links:', value)
+      console.log('[KOLTable] editValue before save:', editValue)
+      console.log('[KOLTable] Current KOL links:', kols.find(k => k.id === kolId)?.links)
     } else if (field === 'platform') {
       value = String(editValue).split(',').map((v: string) => v.trim()).filter(Boolean)
     }
     
     // Find the KOL being edited
     const editedKOL = kols.find(k => k.id === kolId)
-    if (!editedKOL) return
+    if (!editedKOL) {
+      console.error('[KOLTable] KOL not found:', kolId)
+      return
+    }
     
     // If editing a non-product field, update all entries for this handle
     if (!['productId', 'productCost', 'productQuantity'].includes(field)) {
       const kolsWithSameHandle = kols.filter(k => k.handle === editedKOL.handle)
       
+      console.log('[KOLTable] Updating KOLs with handle:', editedKOL.handle, 'Field:', field, 'Value:', value)
+      
       // Update all KOL entries with the same handle
       try {
         await Promise.all(
-          kolsWithSameHandle.map(k => onUpdate(k.id, { [field]: value }))
+          kolsWithSameHandle.map(k => {
+            console.log('[KOLTable] Updating KOL:', k.id, 'with', { [field]: value })
+            return onUpdate(k.id, { [field]: value })
+          })
         )
         setEditingId(null)
         setEditingField(null)
         setEditValue('')
         setNewLinkInput('')
       } catch (error) {
-        console.error('Error updating KOLs:', error)
+        console.error('[KOLTable] Error updating KOLs:', error)
         alert('Failed to update. Please try again.')
       }
     } else {
       // For product fields, only update the specific entry
       try {
+        console.log('[KOLTable] Updating product field for KOL:', kolId, 'Field:', field, 'Value:', value)
         await onUpdate(kolId, { [field]: value })
         setEditingId(null)
         setEditingField(null)
         setEditValue('')
       } catch (error) {
-        console.error('Error updating KOL:', error)
+        console.error('[KOLTable] Error updating KOL:', error)
         alert('Failed to update. Please try again.')
       }
     }
@@ -955,24 +973,28 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
                 <td className="p-2">
                   {editingId === kol.id && editingField === 'links' ? (
                     <div className="space-y-2 bg-black border border-green-300 p-2 rounded min-w-[200px]">
+                      {/* Instructions */}
+                      <div className="text-xs text-green-400 mb-2">
+                        Type a URL and press Enter or click + to add
+                      </div>
+                      
                       {/* Existing links */}
-                      {((editValue as string[]) || kol.links || []).map((link, i) => (
+                      {(Array.isArray(editValue) ? editValue : kol.links || []).map((link, i) => (
                         <div key={i} className="flex items-center gap-1">
                           <input
                             type="text"
                             value={link}
                             onChange={(e) => {
-                              const currentLinks = editValue as string[] || kol.links || []
-                              const newLinks = [...currentLinks]
-                              newLinks[i] = e.target.value
-                              setEditValue(newLinks)
+                              const currentLinks = Array.isArray(editValue) ? [...editValue] : [...(kol.links || [])]
+                              currentLinks[i] = e.target.value
+                              setEditValue(currentLinks)
                             }}
                             className="bg-gray-900 border border-gray-600 text-xs p-1 flex-1"
                             placeholder="https://..."
                           />
                           <button
                             onClick={() => {
-                              const currentLinks = editValue as string[] || kol.links || []
+                              const currentLinks = Array.isArray(editValue) ? [...editValue] : [...(kol.links || [])]
                               const newLinks = currentLinks.filter((_, idx) => idx !== i)
                               setEditValue(newLinks)
                             }}
@@ -988,44 +1010,107 @@ export default function KOLTable({ kols, campaignId, onUpdate, onDelete, canEdit
                         <input
                           type="text"
                           value={newLinkInput}
-                          onChange={(e) => setNewLinkInput(e.target.value)}
+                          onChange={(e) => {
+                            const value = e.target.value
+                            console.log('[KOLTable] Input onChange - value:', value)
+                            console.log('[KOLTable] Input onChange - value length:', value.length)
+                            setNewLinkInput(value)
+                          }}
                           onKeyDown={(e) => {
-                            if (e.key === 'Enter' && newLinkInput.trim()) {
+                            if (e.key === 'Enter') {
                               e.preventDefault()
-                              const currentLinks = editValue as string[] || kol.links || []
-                              const newLinks = [...currentLinks, newLinkInput.trim()]
-                              setEditValue(newLinks)
-                              setNewLinkInput('')
+                              const trimmedInput = newLinkInput.trim()
+                              console.log('[KOLTable] Enter pressed, trimmed input:', trimmedInput)
+                              
+                              if (trimmedInput && trimmedInput.startsWith('http')) {
+                                const currentLinks = Array.isArray(editValue) ? [...editValue] : [...(kol.links || [])]
+                                currentLinks.push(trimmedInput)
+                                console.log('[KOLTable] New links array after Enter:', currentLinks)
+                                setEditValue(currentLinks)
+                                setNewLinkInput('')
+                              } else if (trimmedInput) {
+                                console.log('[KOLTable] Invalid URL format, not adding:', trimmedInput)
+                                alert('Please enter a valid URL starting with http:// or https://')
+                              }
                             }
                           }}
                           className="bg-gray-900 border border-gray-600 text-xs p-1 flex-1"
-                          placeholder="Add new link..."
+                          placeholder="https://x.com/username/status/..."
+                          autoFocus
                         />
                         <button
                           onClick={() => {
-                            if (newLinkInput.trim()) {
-                              const currentLinks = editValue as string[] || kol.links || []
-                              const newLinks = [...currentLinks, newLinkInput.trim()]
-                              setEditValue(newLinks)
+                            const trimmedInput = newLinkInput.trim()
+                            console.log('[KOLTable] + button clicked, trimmed input:', trimmedInput)
+                            
+                            if (trimmedInput && trimmedInput.startsWith('http')) {
+                              const currentLinks = Array.isArray(editValue) ? [...editValue] : [...(kol.links || [])]
+                              currentLinks.push(trimmedInput)
+                              console.log('[KOLTable] New links array after +:', currentLinks)
+                              setEditValue(currentLinks)
                               setNewLinkInput('')
+                            } else if (trimmedInput) {
+                              console.log('[KOLTable] Invalid URL format, not adding:', trimmedInput)
+                              alert('Please enter a valid URL starting with http:// or https://')
+                            } else {
+                              console.log('[KOLTable] Input is empty')
                             }
                           }}
                           className="text-green-400 hover:text-green-300 text-xs px-1"
+                          title="Add link"
                         >
                           +
                         </button>
                       </div>
                       
+                      {/* Current links count */}
+                      <div className="text-xs text-gray-500">
+                        {Array.isArray(editValue) ? editValue.length : (kol.links || []).length} link(s)
+                      </div>
+                      
                       {/* Save/Cancel buttons */}
                       <div className="flex gap-2 pt-1">
                         <button
-                          onClick={() => saveEdit(kol.id, 'links')}
+                          onClick={async () => {
+                            console.log('[KOLTable] Save clicked')
+                            console.log('[KOLTable] Current newLinkInput:', newLinkInput)
+                            console.log('[KOLTable] Current editValue:', editValue)
+                            
+                            // If there's text in the input, add it before saving
+                            const trimmedInput = newLinkInput.trim()
+                            let linksToSave = Array.isArray(editValue) ? [...editValue] : [...(kol.links || [])]
+                            
+                            if (trimmedInput && trimmedInput.startsWith('http')) {
+                              console.log('[KOLTable] Auto-adding valid URL:', trimmedInput)
+                              linksToSave.push(trimmedInput)
+                              setNewLinkInput('')
+                            } else if (trimmedInput) {
+                              console.log('[KOLTable] Invalid URL in input, not auto-adding:', trimmedInput)
+                              alert('Please enter a valid URL starting with http:// or https://')
+                              return
+                            }
+                            
+                            console.log('[KOLTable] Saving links:', linksToSave)
+                            console.log('[KOLTable] editValue before save:', editValue)
+                            console.log('[KOLTable] Current KOL links:', kol.links)
+                            
+                            // Save directly with the computed links array
+                            try {
+                              await onUpdate(kol.id, { links: linksToSave })
+                              cancelEdit()
+                            } catch (error) {
+                              console.error('[KOLTable] Error saving links:', error)
+                              alert('Failed to save links')
+                            }
+                          }}
                           className="text-xs bg-green-900/50 border border-green-500 text-green-300 px-2 py-1 rounded hover:bg-green-800/50"
                         >
                           Save
                         </button>
                         <button
                           onClick={() => {
+                            console.log('[KOLTable] Cancel clicked')
+                            setNewLinkInput('')
                             cancelEdit()
                           }}
                           className="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded hover:bg-gray-700"

@@ -17,7 +17,17 @@
     "add:test-emails": "node scripts/add-test-emails.mjs",
     "check:notification-keys": "node scripts/check-notification-keys.mjs",
     "fix:notification-keys": "node scripts/fix-notification-keys.mjs",
-    "test:email-flow": "node scripts/test-email-notification-flow.mjs"
+    "test:email-flow": "node scripts/test-email-notification-flow.mjs",
+    "process:notifications": "tsx scripts/process-pending-notifications.mjs",
+    "test:campaign-filtering": "tsx scripts/test-campaign-filtering.mjs",
+    "check:user-role": "tsx scripts/check-user-role.mjs",
+    "grant:admin": "tsx scripts/grant-admin-role.mjs",
+    "debug:user-role": "tsx scripts/debug-user-role.mjs",
+    "check:project-creator": "tsx scripts/check-project-creator.mjs",
+    "test:engagement-log": "node scripts/test-engagement-log.mjs",
+    "clean:test-engagement-log": "node scripts/clean-test-engagement-log.mjs",
+    "test:kol-links": "node scripts/test-kol-links.mjs",
+    "fix:jwt-session": "node scripts/fix-jwt-session.mjs"
   },
   "dependencies": {
     "@coinbase/onchainkit": "latest",
