@@ -104,6 +104,10 @@ This document summarizes the debugging session and fixes implemented for the KOL
 - `app/campaigns/[slug]/page.tsx`
 - Added `scripts/test-campaign-access.mjs` for testing
 
+**Additional Fix**: 
+- Fixed page loading issue when not authenticated - API calls now only happen after authentication check
+- Prevents "Unexpected token '<'" error from API returning HTML instead of JSON
+
 ## Debug Tools Added
 
 ```bash
@@ -212,4 +216,4 @@ UPSTASH_REDIS_REST_TOKEN=<your-redis-token>
 
 ---
 *Document created: June 25, 2025*
-*Last updated: June 25, 2025 04:30 GMT* 
+*Last updated: June 25, 2025 04:39 GMT* 
