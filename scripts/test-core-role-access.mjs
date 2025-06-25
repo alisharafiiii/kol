@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 
-import Redis from 'ioredis'
+import { Redis } from '@upstash/redis'
 import dotenv from 'dotenv'
 
 dotenv.config({ path: '.env.local' })
 
-const redis = new Redis(process.env.UPSTASH_REDIS_REST_URL)
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+})
 
 async function testCoreRoleAccess() {
   console.log('\n🔍 Testing Core Role Access to Campaign Features\n')
@@ -76,8 +79,6 @@ async function testCoreRoleAccess() {
 
   } catch (error) {
     console.error('Error:', error)
-  } finally {
-    redis.disconnect()
   }
 }
 
