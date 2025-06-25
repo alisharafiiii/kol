@@ -27,7 +27,8 @@
     "test:engagement-log": "node scripts/test-engagement-log.mjs",
     "clean:test-engagement-log": "node scripts/clean-test-engagement-log.mjs",
     "test:kol-links": "node scripts/test-kol-links.mjs",
-    "fix:jwt-session": "node scripts/fix-jwt-session.mjs"
+    "fix:jwt-session": "node scripts/fix-jwt-session.mjs",
+    "test:core-access": "node scripts/test-core-role-access.mjs"
   },
   "dependencies": {
     "@coinbase/onchainkit": "latest",
